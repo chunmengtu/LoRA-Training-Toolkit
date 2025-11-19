@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lora 训练工具箱</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="theme-dark" data-theme="dark" data-lang="zh">
+    <div class="wizard-container">
+        <!-- 左侧导航栏 -->
+        <aside class="wizard-sidebar">
+            <div class="brand-block">
+                <div class="brand-icon">⚙️</div>
+                <div>
+                    <p class="eyebrow" data-i18n="brand.eyebrow">AI Toolkit</p>
+                    <h2 data-i18n="brand.title">Lora 训练工具箱</h2>
+                </div>
+            </div>
+            
+            <!-- 步骤进度指示器 -->
+            <div class="step-progress">
+                <div class="step-progress-bar">
+                    <div class="step-progress-fill" id="progressFill"></div>
+                </div>
+                <p class="step-progress-text" id="progressText">第 1 / 6 步</p>
+            </div>
+            
+            <!-- 步骤列表 -->
+            <nav class="step-nav">
+                <button class="step-nav-item active completed" data-step="overview" data-step-num="1">
+                    <span class="step-badge">1</span>
+                    <span class="step-label" data-i18n="nav.overview">概览</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="environment" data-step-num="2">
+                    <span class="step-badge">2</span>
+                    <span class="step-label" data-i18n="nav.environment">环境初始化</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="download" data-step-num="3">
+                    <span class="step-badge">3</span>
+                    <span class="step-label" data-i18n="nav.download">模型下载</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="images" data-step-num="4">
+                    <span class="step-badge">4</span>
+                    <span class="step-label" data-i18n="nav.images">图像处理</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="ai" data-step-num="5">
+                    <span class="step-badge">5</span>
+                    <span class="step-label" data-i18n="nav.ai">AI 处理</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="console" data-step-num="6">
+                    <span class="step-badge">6</span>
+                    <span class="step-label" data-i18n="nav.console">控制台</span>
+                    <span class="step-check">✓</span>
+                </button>
+            </nav>
+            
+            <!-- 系统信息 -->
+            <div class="system-info">
+                <div class="info-item">
+                    <span class="info-label" data-i18n="nav.system">系统</span>
+                    <strong class="info-value">{{ system }}</strong>
+                </div>
+                <div class="info-item">
+                    <span class="info-label" data-i18n="nav.linux">状态</span>
+                    <strong class="info-value" id="linuxStateValue" data-exec-zh="可执行" data-preview-zh="预览" data-exec-en="Executable" data-preview-en="Preview">
+                        可执行
+                    </strong>
+                </div>
+            </div>
+            
+            <!-- 底部工具 -->
+            <div class="sidebar-footer">
+                <button id="themeToggle" class="icon-toggle" title="Theme">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 0 1 12.21 3 7 7 0 1 0 21 12.79z" />
+                    </svg>
+                </button>
+                <button id="langToggle" class="icon-toggle icon-toggle--lang" title="Language">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 - 每次只显示一个页面 -->
+        <main class="wizard-content">
+            <!-- 第1步：概览 -->
+            <div class="wizard-page active" data-page="overview">
+                <div class="page-header">
+                    <span class="page-badge">步骤 1 / 6</span>
+                    <h1 class="page-title" data-i18n="overview.title">一站式部署 & 下载文档</h1>
+                    <p class="page-subtitle" data-i18n="overview.lead">
+                        先阅读每个章节的说明，再依次触发命令。系统将自动记录所有日志与进度。
+                    </p>
+                </div>
+                
+                <div class="page-body">
+                    <div class="welcome-cards">
+                        <div class="welcome-card">
+                            <div class="welcome-icon">🚀</div>
+                            <h3 data-i18n="overview.step1">步骤 1 · 初始化</h3>
+                            <p data-i18n="overview.step1Desc">安装依赖、准备 Node 与工具链。</p>
+                        </div>
+                        <div class="welcome-card">
+                            <div class="welcome-icon">📦</div>
+                            <h3 data-i18n="overview.step2">步骤 2 · 选择模型</h3>
+                            <p data-i18n="overview.step2Desc">挑选模型并选择 ModelScope 或 HuggingFace。</p>
+                        </div>
+                        <div class="welcome-card">
+                            <div class="welcome-icon">🎨</div>
+                            <h3 data-i18n="overview.step3">步骤 3 · 图像处理</h3>
+                            <p data-i18n="overview.step3Desc">上传、管理图片，使用 AI 批量生成。</p>
+                        </div>
+                        <div class="welcome-card">
+                            <div class="welcome-icon">🤖</div>
+                            <h3 data-i18n="overview.step5">步骤 5 · AI 处理</h3>
+                            <p data-i18n="overview.step5Desc">Gemini 批量生成、打标与导出。</p>
+                        </div>
+                        <div class="welcome-card">
+                            <div class="welcome-icon">📊</div>
+                            <h3 data-i18n="overview.step4">步骤 6 · 监控</h3>
+                            <p data-i18n="overview.step4Desc">在控制台查看进度、复制日志、接收弹窗提醒。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" disabled>
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="environment">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第2步：环境初始化 -->
+            <div class="wizard-page" data-page="environment">
+                <div class="page-header">
+                    <span class="page-badge">步骤 2 / 6</span>
+                    <h1 class="page-title" data-i18n="environment.title">环境初始化向导</h1>
+                    <p class="page-subtitle" data-i18n="environment.desc">
+                        自动执行依赖安装脚本。Linux 将串行安装所有依赖，Windows 会调用 Easy Install 脚本。
+                    </p>
+                </div>
+                
+                <div class="page-body">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>执行内容</h3>
+                        </div>
+                        <ol class="step-list">
+                            <li data-i18n="environment.item1">安装 huggingface_hub 与 modelscope</li>
+                            <li data-i18n="environment.item2">配置 Node.js 20 源并安装 nodejs</li>
+                            <li data-i18n="environment.item3">克隆或更新 ai-toolkit，安装 requirements</li>
+                            <li data-i18n="environment.item4">启动ai-toolkit，Linux默认为6006端口，Windows默认为7867端口</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-toggle-stack">
+                        <!-- AutoDL 加速 -->
+                        <div class="feature-row">
+                            <div class="feature-info">
+                                <strong data-i18n="environment.acceleratorTitle">Autodl学术镜像加速功能</strong>
+                                <p class="feature-desc" data-i18n="environment.acceleratorBody">
+                                    仅限 Autodl 环境下使用，提升 github / huggingface 下载速度，默认关闭。
+                                </p>
+                            </div>
+                            <button type="button" class="btn-switch" id="autodlSwitch" data-state="off">
+                                <span class="switch-label" data-on="开启" data-off="关闭">关闭</span>
+                            </button>
+                        </div>
+
+                        <!-- GitHub 加速 -->
+                        <div class="feature-row">
+                            <div class="feature-info">
+                                <strong data-i18n="environment.githubTitle">GitHub 学术加速</strong>
+                                <p class="feature-desc" data-i18n="environment.githubBody">
+                                    GitHub学术加速，第三方提供，不保证可用。开启后将使用 GitHub Proxy 代理。
+                                </p>
+                            </div>
+                            <button type="button" class="btn-switch" id="githubSwitch" data-state="off">
+                                <span class="switch-label" data-on="开启" data-off="关闭">关闭</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-box warning">
+                        <span class="alert-icon">⚠️</span>
+                        <div>
+                            <strong data-i18n="environment.alertTitle">温馨提醒：</strong>
+                            <span data-i18n="environment.alertDesc">
+                                当前界面会维护一份完整的命令日志，执行期间请勿重复点击。
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card-group">
+                        <button id="setupBtn" class="btn-action primary" data-i18n="environment.button">
+                            <span>▶</span> 开始执行
+                        </button>
+                        <button id="startBtn" class="btn-action secondary" data-i18n="environment.startBtn">
+                            <span>🚀</span> 启动 UI
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="overview">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="download">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第3步：模型下载 -->
+            <div class="wizard-page" data-page="download">
+                <div class="page-header">
+                    <span class="page-badge">步骤 3 / 6</span>
+                    <h1 class="page-title" data-i18n="download.title">模型选择与下载渠道</h1>
+                    <p class="page-subtitle" data-i18n="download.desc">
+                        根据用途选择模型，并在两个下载渠道之间切换。系统会自动创建存储目录。
+                    </p>
+                </div>
+                
+                <div class="page-body">
+                    <form id="downloadForm" class="model-form">
+                        <div class="form-section">
+                            <label class="form-label" data-i18n="download.modelLegend">选择模型</label>
+                            <div class="radio-group">
+                                <label class="radio-card">
+                                    <input type="radio" name="model" value="Qwen-Image-Edit-2509" checked>
+                                    <div class="radio-content">
+                                        <span class="radio-title">Qwen-Image-Edit-2509</span>
+                                        <span class="radio-desc">推荐用于图像编辑任务</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="model" value="FLUX.1-Kontext-dev">
+                                    <div class="radio-content">
+                                        <span class="radio-title">FLUX.1-Kontext-dev</span>
+                                        <span class="radio-desc">适合上下文理解场景</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <label class="form-label" data-i18n="download.sourceLegend">下载来源</label>
+                            <div class="radio-group">
+                                <label class="radio-card">
+                                    <input type="radio" name="source" value="modelscope" checked>
+                                    <div class="radio-content">
+                                        <span class="radio-title">ModelScope</span>
+                                        <span class="radio-badge">推荐</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="source" value="huggingface">
+                                    <div class="radio-content">
+                                        <span class="radio-title">HuggingFace</span>
+                                        <span class="radio-desc">HuggingFace</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card">
+                            <button id="downloadBtn" type="submit" class="btn-action secondary" data-i18n="download.button">
+                                <span>⬇</span> 开始下载
+                            </button>
+                            <p class="action-note" data-i18n="download.note">默认目录：{{ base_dir }}/模型名</p>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="environment">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="images">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第4步：图像处理 -->
+            <div class="wizard-page" data-page="images">
+                <div class="page-header">
+                    <span class="page-badge">步骤 4 / 6</span>
+                    <h1 class="page-title" data-i18n="images.title">图像处理 · 管理</h1>
+                    <p class="page-subtitle" data-i18n="images.desc">
+                        上传单图 / 文件夹 / 压缩包，快速整理命名。
+                    </p>
+                </div>
+                
+                <div class="page-body page-body-scroll">
+                    <div class="tools-grid">
+                        <!-- 上传工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="images.uploadTitle">📤 图片上传</h3>
+                            <form id="uploadForm">
+                                <label class="upload-zone">
+                                    <input id="imageInput" name="files" type="file" multiple>
+                                    <div class="upload-icon">📁</div>
+                                    <p data-i18n="images.uploadDrop">拖拽文件到此或点击选择</p>
+                                </label>
+                                <p class="upload-note" data-i18n="images.uploadAutoNote">选择文件后将自动开始上传</p>
+                                <div class="tool-actions">
+                                    <button id="refreshGalleryBtn" type="button" class="btn-tool" data-i18n="images.refreshBtn">刷新</button>
+                                    <button id="deleteSelectedBtn" type="button" class="btn-tool danger" data-i18n="images.deleteSelected">删除所选</button>
+                                    <button id="clearAllBtn" type="button" class="btn-tool danger" data-i18n="images.clearAll">清空所有</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- 重命名工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="images.renameTitle">✏️ 批量重命名</h3>
+                            <form id="renameForm" class="tool-form">
+                                <input id="prefixInput" type="text" placeholder="前缀" data-i18n-placeholder="images.prefixPlaceholder">
+                                <input id="startNumberInput" type="number" min="0" value="1" placeholder="起始数字">
+                                <input id="keywordInput" type="text" placeholder="关键字" data-i18n-placeholder="images.keywordPlaceholder">
+                                <select id="keywordActionSelect">
+                                    <option value="none" data-i18n="images.keywordActionNone">仅重命名</option>
+                                    <option value="filter" data-i18n="images.keywordActionFilter">只作用于命中项</option>
+                                    <option value="delete" data-i18n="images.keywordActionDelete">删除命中项</option>
+                                    <option value="keep" data-i18n="images.keywordActionKeep">仅保留命中项</option>
+                                </select>
+                                <button type="submit" class="btn-tool secondary" data-i18n="images.renameBtn">执行整理</button>
+                            </form>
+                        </div>
+
+                        <!-- 导出工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="images.exportTitle">📦 批量导出</h3>
+                            <div class="tool-actions">
+                                <a href="/api/images/export" target="_blank" class="btn-tool primary" data-i18n="images.exportBtn">导出图片包</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 图片瀑布流 -->
+                    <div class="gallery-section">
+                        <div class="gallery-header">
+                            <h3 data-i18n="images.galleryTitle">图像瀑布流</h3>
+                            <div class="gallery-filter">
+                                <input id="galleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                                <button id="applyFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                            </div>
+                        </div>
+                        <div id="uploadProgressTray" class="upload-progress-tray hidden">
+                            <div class="upload-progress-head">
+                                <strong data-i18n="images.uploadProgressTitle">上传进度</strong>
+                                <span id="uploadProgressHint" data-i18n="images.uploadProgressIdle">暂无上传任务</span>
+                            </div>
+                            <div id="uploadProgressList" class="upload-progress-list"></div>
+                        </div>
+                        <div id="imageGrid" class="image-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="download">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="ai">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第5步：AI 处理 -->
+            <div class="wizard-page" data-page="ai">
+                <div class="page-header">
+                    <span class="page-badge">步骤 5 / 6</span>
+                    <h1 class="page-title" data-i18n="ai.title">AI 批量处理</h1>
+                    <p class="page-subtitle" data-i18n="ai.desc">
+                        使用 Gemini 批量生成 AI 图像，打标并导出。
+                    </p>
+                </div>
+                
+                <div class="page-body page-body-scroll">
+                    <div class="tools-grid">
+                        <!-- AI生成工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="images.generateTitle">🤖 Gemini 批量生成</h3>
+                            <form id="generationForm" class="tool-form">
+                                <div class="form-inline">
+                                    <input id="keyPathInput" type="text" placeholder="KEY_PATH" data-i18n-placeholder="images.keyPathPlaceholder">
+                                    <input id="projectIdInput" type="text" placeholder="PROJECT_ID" data-i18n-placeholder="images.projectIdPlaceholder">
+                                    <input id="locationInput" type="text" placeholder="LOCATION" data-i18n-placeholder="images.locationPlaceholder">
+                                </div>
+                                <textarea id="promptInput" rows="3" placeholder="描述你想生成的风格..." data-i18n-placeholder="images.promptPlaceholder"></textarea>
+                                <label class="checkbox-label">
+                                    <input id="overwriteToggle" type="checkbox">
+                                    <span data-i18n="images.overwriteLabel">生成后覆盖同名文件</span>
+                                </label>
+                                <p class="tool-hint" id="aiSelectionHint" data-i18n="images.selectionHint">未选择图片时默认处理全部</p>
+                                <div class="tool-actions">
+                                    <button id="generateBtn" type="submit" class="btn-tool primary" data-i18n="images.generateBtn">开始生成</button>
+                                    <button id="clearAiSelectionBtn" type="button" class="btn-tool" data-i18n="images.clearSelection">清空</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 打标工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="ai.tagTitle">🏷️ 批量打标</h3>
+                            <form id="tagForm" class="tool-form">
+                                <textarea id="tagInput" rows="3" placeholder="输入标签..." data-i18n-placeholder="ai.tagPlaceholder"></textarea>
+                                <p class="tag-hint" data-i18n="ai.tagHint">
+                                    请用简洁的语言描述你希望将原图转换成的目标图风格或效果（优先使用英文）<br>
+                                    例如：<br>
+                                    - 转换为吉卜力动画风格 (Transform into Ghibli anime style)<br>
+                                    - 转换为水墨画风格 (Transform into inkwash painting style)<br>
+                                    - 给角色戴上眼镜 (Add glasses to the character)
+                                </p>
+                                <div class="tool-actions">
+                                    <button type="submit" class="btn-tool secondary" data-i18n="ai.tagBtn">应用标签</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 导出工具 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="images.exportTitle">📦 批量导出</h3>
+                            <div class="tool-actions">
+                                <a href="/api/ai/export" target="_blank" class="btn-tool primary" data-i18n="ai.exportBtn">导出 AI 数据包</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI 瀑布流 -->
+                    <div class="gallery-section">
+                        <div class="gallery-header">
+                            <h3 data-i18n="ai.galleryTitle">AI 生成预览</h3>
+                            <div class="gallery-filter">
+                                <input id="aiGalleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                                <button id="applyAiFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                            </div>
+                        </div>
+                        <div id="aiGrid" class="ai-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="images">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="console">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第6步：控制台 -->
+            <div class="wizard-page" data-page="console">
+                <div class="page-header">
+                    <span class="page-badge">步骤 6 / 6</span>
+                    <h1 class="page-title" data-i18n="nav.console">控制台监控</h1>
+                    <p class="page-subtitle">
+                        在此汇总查看安装、下载与 AI 生成日志，可随时复制文本或重试任务。
+                    </p>
+                </div>
+                
+                <div class="page-body page-body-scroll">
+                    <div class="console-grid">
+                        <!-- 环境日志 -->
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h3 data-i18n="console.setupTitle">环境执行日志</h3>
+                                <button id="copySetupLog" class="btn-copy" data-i18n="console.copy">复制</button>
+                            </div>
+                            <div class="console-status">
+                                <span id="setupStatus">状态：待命</span>
+                                <span id="setupPercent">0%</span>
+                            </div>
+                            <div class="console-progress">
+                                <div id="setupProgress" class="progress-fill"></div>
+                            </div>
+                            <p id="setupMessage" class="console-message">尚未开始</p>
+                            <pre id="setupLog" class="console-log">等待任务...</pre>
+                        </div>
+                        
+                        <!-- 下载日志 -->
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h3 data-i18n="console.downloadTitle">模型下载日志</h3>
+                                <button id="copyDownloadLog" class="btn-copy" data-i18n="console.copy">复制</button>
+                            </div>
+                            <div class="console-status">
+                                <span id="downloadStatus">状态：待命</span>
+                                <span id="downloadPercent">0%</span>
+                            </div>
+                            <div class="console-progress">
+                                <div id="downloadProgress" class="progress-fill"></div>
+                            </div>
+                            <p id="downloadMessage" class="console-message">尚未开始</p>
+                            <pre id="downloadLog" class="console-log">等待任务...</pre>
+                        </div>
+                        
+                        <!-- 生成日志 -->
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h3 data-i18n="images.consoleTitle">AI 生成日志</h3>
+                                <button id="copyGenerationLog" class="btn-copy" data-i18n="console.copy">复制</button>
+                            </div>
+                            <div class="console-status">
+                                <span id="generationStatus">状态：待命</span>
+                                <span id="generationPercent">0%</span>
+                            </div>
+                            <div class="console-progress">
+                                <div id="generationProgress" class="progress-fill"></div>
+                            </div>
+                            <p id="generationMessage" class="console-message">尚未开始</p>
+                            <pre id="generationLog" class="console-log">等待任务...</pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="ai">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="overview">
+                        <span data-i18n="step.finish">完成</span>
+                        <span>↻</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modalTitle">提示</h3>
+            <p id="modalBody"></p>
+            <div id="modalActions" class="modal-actions hidden"></div>
+            <button id="modalClose" class="btn-modal">知道了</button>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+        window.__APP_CONFIG__ = {{ {
+            "system": system,
+            "isLinux": is_linux,
+            "baseDir": base_dir
+        } | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+
+</html>
