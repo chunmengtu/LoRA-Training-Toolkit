@@ -261,6 +261,11 @@ body {
     height: 20px;
     fill: var(--text);
 }
+/* Special case for Update icon which has stroke instead of fill */
+#updateBtn svg {
+    fill: none;
+    stroke: var(--text);
+}
 
 .icon-toggle--lang span {
     font-weight: 700;
@@ -1142,6 +1147,14 @@ body {
 .btn-modal.secondary {
     background: rgba(148, 163, 184, 0.12);
     color: var(--text);
+}
+
+.modal.modal-force .btn-modal.secondary {
+    display: none; /* 强制更新不显示非主要按钮（如果有） */
+}
+
+.modal.modal-force #modalClose {
+    display: none;
 }
 
 /* Toast */

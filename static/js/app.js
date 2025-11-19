@@ -138,6 +138,14 @@ const dictionary = {
     "toast.copyOk": "已复制",
     "toast.copyFail": "复制失败",
     "toast.preview": "当前为预览模式",
+    "update.title": "发现新版本",
+    "update.current": "当前版本：",
+    "update.latest": "最新版本：",
+    "update.notes": "更新内容：",
+    "update.btn": "前往更新",
+    "update.checking": "正在检查更新...",
+    "update.latestMsg": "当前已是最新版本",
+    "update.fail": "检查更新失败",
   },
   en: {
     "brand.eyebrow": "AI Toolkit",
@@ -269,6 +277,14 @@ const dictionary = {
     "toast.copyOk": "Copied",
     "toast.copyFail": "Copy failed",
     "toast.preview": "Currently in preview mode",
+    "update.title": "New Version Available",
+    "update.current": "Current: ",
+    "update.latest": "Latest: ",
+    "update.notes": "Release Notes:",
+    "update.btn": "Update Now",
+    "update.checking": "Checking for updates...",
+    "update.latestMsg": "You are up to date",
+    "update.fail": "Update check failed",
   },
 };
 
@@ -304,6 +320,7 @@ const dom = {
   toast: document.getElementById("toast"),
   themeToggle: document.getElementById("themeToggle"),
   langToggle: document.getElementById("langToggle"),
+  updateBtn: document.getElementById("updateBtn"),
   uploadForm: document.getElementById("uploadForm"),
   imageInput: document.getElementById("imageInput"),
   refreshGalleryBtn: document.getElementById("refreshGalleryBtn"),
@@ -556,6 +573,68 @@ function applySectionState(section, data) {
   }
 }
 
+function compareVersions(v1, v2) {
+  const p1 = v1.split('.').map(Number);
+  const p2 = v2.split('.').map(Number);
+  for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+    const n1 = p1[i] || 0;
+    const n2 = p2[i] || 0;
+    if (n1 > n2) return 1;
+    if (n1 < n2) return -1;
+  }
+  return 0;
+}
+
+async function checkUpdate(silent = false) {
+  if (!silent) {
+    showToast(getText("update.checking"));
+  }
+  try {
+    // Add timestamp to prevent caching
+    const res = await fetch("/api/check_update?_=" + Date.now());
+    const data = await res.json();
+    
+    if (!res.ok) {
+       if (!silent) showModal(getText("modal.title"), data.message || getText("update.fail"));
+       return;
+    }
+    
+    const current = data.current_version;
+    const latest = data.latest_version;
+    
+    if (compareVersions(latest, current) > 0) {
+      // New version found
+      const body = `
+        <div style="text-align:left">
+            <p><strong>${getText("update.current")}</strong> ${current}</p>
+            <p><strong>${getText("update.latest")}</strong> ${latest}</p>
+            <hr style="margin:10px 0;border:0;border-top:1px solid var(--border)">
+            <p><strong>${getText("update.notes")}</strong></p>
+            <pre style="background:var(--panel-alt);padding:10px;border-radius:6px;max-height:200px;overflow-y:auto;white-space:pre-wrap;font-size:12px;font-family:inherit">${data.release_notes}</pre>
+        </div>
+      `;
+      
+      showModal(getText("update.title"), "", [
+        {
+            label: getText("update.btn"),
+            variant: "primary",
+            handler: () => {
+                window.open(data.release_url, "_blank");
+            }
+        }
+      ], { force: true, html: body });
+    } else {
+      if (!silent) {
+        showToast(getText("update.latestMsg"));
+      }
+    }
+  } catch (err) {
+    if (!silent) {
+       showModal(getText("modal.title"), err.message || getText("update.fail"));
+    }
+  }
+}
+
 async function postJSON(url, payload = {}) {
   const response = await fetch(url, {
     method: "POST",
@@ -569,9 +648,23 @@ async function postJSON(url, payload = {}) {
   return data;
 }
 
-function showModal(title, body, actions = []) {
+function showModal(title, body, actions = [], options = {}) {
   dom.modalTitle.textContent = title || getText("modal.title");
-  dom.modalBody.textContent = body || "";
+  
+  if (options.html) {
+      dom.modalBody.innerHTML = options.html;
+  } else {
+      dom.modalBody.textContent = body || "";
+  }
+  
+  if (options.force) {
+      dom.modal.classList.add('modal-force');
+      if (dom.modalClose) dom.modalClose.classList.add('hidden');
+  } else {
+      dom.modal.classList.remove('modal-force');
+      if (dom.modalClose) dom.modalClose.classList.remove('hidden');
+  }
+
   if (dom.modalActions) {
     dom.modalActions.innerHTML = "";
     if (Array.isArray(actions) && actions.length) {
@@ -1411,8 +1504,11 @@ function initActions() {
 
   dom.modalClose?.addEventListener("click", hideModal);
   dom.modal?.addEventListener("click", (e) => {
+    if (dom.modal.classList.contains('modal-force')) return;
     if (e.target === dom.modal) hideModal();
   });
+
+  dom.updateBtn?.addEventListener("click", () => checkUpdate(false));
 
   bindCopy(dom.copySetupLog, dom.setupLog);
   bindCopy(dom.copyDownloadLog, dom.downloadLog);
@@ -1484,5 +1580,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateAiSelectionHint();
   loadGallery();
   goToStep(0);
-  updateFeatureStatus("autodlAccelerator", featureStates.autodlAccelerator);
+  // Trigger update check in background (will show modal if update available)
+  checkUpdate(true);
 });

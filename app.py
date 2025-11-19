@@ -8,6 +8,7 @@ import uuid
 import zipfile
 import io
 import re
+import json
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib import request as urllib_request
@@ -25,6 +26,9 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+CURRENT_VERSION = "0.0.1"
+GITEE_REPO = "rcangbaohz/lora-training-toolkit"
 
 SYSTEM_NAME = platform.system()
 IS_LINUX = SYSTEM_NAME.lower() == "linux"
@@ -609,8 +613,42 @@ def api_status():
             "setup": dict(task_state["setup"]),
             "download": dict(task_state["download"]),
             "image_generation": dict(task_state["image_generation"]),
+            "version": CURRENT_VERSION,
         }
     return jsonify(payload)
+
+
+@app.route("/api/check_update")
+def api_check_update():
+    try:
+        url = f"https://gitee.com/api/v5/repos/{GITEE_REPO}/releases/latest"
+        req = urllib_request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib_request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            
+        tag_name = data.get("tag_name", "")
+        # Support v1.0.0 or V1.0.0
+        latest_version = re.sub(r'^[vV]', '', tag_name)
+        
+        body = data.get("body", "")
+        name = data.get("name", "")
+        html_url = data.get("html_url", "")
+        
+        # Fallback if release URL is missing
+        if not html_url:
+            html_url = f"https://gitee.com/{GITEE_REPO}/releases"
+        
+        return jsonify({
+            "ok": True,
+            "current_version": CURRENT_VERSION,
+            "latest_version": latest_version,
+            "release_name": name,
+            "release_notes": body,
+            "release_url": html_url
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "message": f"检查更新失败: {str(e)}"}), 500
+
 
 
 @app.route("/api/run-setup", methods=["POST"])
