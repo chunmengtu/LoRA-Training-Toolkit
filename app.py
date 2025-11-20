@@ -29,7 +29,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-CURRENT_VERSION = "0.0.2"
+CURRENT_VERSION = "0.0.3"
 GITEE_REPO = "rcangbaohz/lora-training-toolkit"
 
 SYSTEM_NAME = platform.system()
