@@ -34,7 +34,7 @@ const dictionary = {
     "environment.title": "环境初始化向导",
     "environment.desc": "自动执行依赖安装脚本。Linux 将串行安装所有依赖，Windows 会调用 Easy Install 脚本。",
     "environment.button": "开始执行",
-    "environment.startBtn": "启动 UI",
+    "environment.startBtn": "启动训练脚本",
     "environment.item1": "安装 huggingface_hub 与 modelscope",
     "environment.item2": "配置 Node.js 20 源并安装 nodejs",
     "environment.item3": "克隆或更新 ai-toolkit，安装 requirements",
@@ -1002,8 +1002,11 @@ function renderGallery(images) {
     if (galleryState.selected.has(image.relative_path)) {
       card.classList.add("selected");
     }
+    // Use thumbnail for preview, add modified timestamp to bust cache
+    const thumbUrl = `/api/thumbnail/source/${image.relative_path}?t=${image.modified}`;
+    
     card.innerHTML = `
-      <img src="${image.url}" alt="${image.name}">
+      <img src="${thumbUrl}" alt="${image.name}" loading="lazy">
       <div class="image-meta">
         <strong>${image.name}</strong>
         <span>${formatBytes(image.size)}</span>
@@ -1073,8 +1076,18 @@ function renderAiGallery(pairs) {
     let card = existingCards.get(srcPath);
     const isGenerating = generatingState.active && generatingState.targets.has(srcPath);
 
-    const sourceUrl = pair.source.url;
-    const generatedUrl = pair.generated.length > 0 ? pair.generated[0].url : null;
+    const sourceUrl = `/api/thumbnail/source/${srcPath}?t=${pair.source.modified}`;
+    const fullSourceUrl = `${pair.source.url}?t=${pair.source.modified}`;
+    
+    let generatedUrl = null;
+    let fullGeneratedUrl = null;
+    
+    if (pair.generated.length > 0) {
+        const genItem = pair.generated[0];
+        generatedUrl = `/api/thumbnail/generated/${genItem.relative_path}?t=${genItem.modified}`;
+        fullGeneratedUrl = `${genItem.url}?t=${genItem.modified}`;
+    }
+    
     const tags = pair.tags || "";
     const stem = pair.source.name.replace(/\.[^/.]+$/, "");
 
@@ -1087,7 +1100,7 @@ function renderAiGallery(pairs) {
 
     let generatedHtml = "";
     if (generatedUrl) {
-      generatedHtml = `<img src="${generatedUrl}" class="ai-img-gen" alt="Generated">`;
+      generatedHtml = `<img src="${generatedUrl}" data-full="${fullGeneratedUrl}" class="ai-img-gen" alt="Generated" loading="lazy">`;
     } else {
       generatedHtml = `
         <div class="ai-img-placeholder">
@@ -1109,7 +1122,7 @@ function renderAiGallery(pairs) {
     const innerHTML = `
       <div class="ai-pair">
         <div class="ai-img-box">
-          <img src="${sourceUrl}" class="ai-img-src" alt="Source">
+          <img src="${sourceUrl}" data-full="${fullSourceUrl}" class="ai-img-src" alt="Source" loading="lazy">
         </div>
         <div class="ai-img-box">
           ${generatedHtml}
@@ -1216,7 +1229,8 @@ function attachAiCardEvents(card, stem, srcPath) {
     card.querySelectorAll("img").forEach(img => {
         img.addEventListener("click", (e) => {
             e.stopPropagation();
-            window.open(img.src, "_blank");
+            const full = img.dataset.full || img.src;
+            window.open(full, "_blank");
         });
     });
 }
@@ -1257,9 +1271,9 @@ function clearAiSelection() {
   updateAiSelectionHint();
 }
 
-async function handleUploadSubmit(event) {
+async function handleUploadSubmit(event, droppedFiles = null) {
   event?.preventDefault?.();
-  const files = Array.from(dom.imageInput?.files || []);
+  const files = droppedFiles ? Array.from(droppedFiles) : Array.from(dom.imageInput?.files || []);
   if (!files.length) {
     showToast(getText("images.uploadEmpty"));
     return;
@@ -1522,6 +1536,48 @@ function initActions() {
       handleUploadSubmit();
     }
   });
+  
+  // Drag & Drop for Upload
+  const uploadZone = document.querySelector(".upload-zone");
+  if (uploadZone) {
+      ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+          uploadZone.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+      
+      ["dragenter", "dragover"].forEach(eventName => {
+          uploadZone.addEventListener(eventName, highlight, false);
+      });
+      
+      ["dragleave", "drop"].forEach(eventName => {
+          uploadZone.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight(e) {
+          uploadZone.classList.add("highlight");
+      }
+      
+      function unhighlight(e) {
+          uploadZone.classList.remove("highlight");
+      }
+      
+      uploadZone.addEventListener("drop", handleDrop, false);
+      
+      function handleDrop(e) {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+              // Manually trigger upload with these files
+              // We need to modify handleUploadSubmit to accept files argument
+              handleUploadSubmit(null, files);
+          }
+      }
+  }
+  
   dom.refreshGalleryBtn?.addEventListener("click", () => loadGallery(galleryState.filterKeyword));
   dom.clearAllBtn?.addEventListener("click", handleClearAllClick);
   dom.deleteSelectedBtn?.addEventListener("click", handleDeleteSelectedClick);
@@ -1540,15 +1596,42 @@ function initActions() {
   // Switches
   if (dom.autodlSwitch) {
       dom.autodlSwitch.addEventListener("click", () => {
+          if (featureStates.autodlAccelerator === "off") {
+              // User wants to turn ON
+              if (featureStates.githubAccelerator === "on") {
+                  // Conflict: GitHub is already ON.
+                  // "Default close Autodl and prompt"
+                  showModal(getText("modal.title"), "Autodl 学术加速与 GitHub 加速不能同时开启，请先关闭 GitHub 加速。");
+                  return; 
+              }
+          }
           const newState = featureStates.autodlAccelerator === "on" ? "disable" : "enable";
           handleAcceleratorAction(newState);
       });
   }
   if (dom.githubSwitch) {
       dom.githubSwitch.addEventListener("click", () => {
+          // User toggles GitHub switch
           const newState = featureStates.githubAccelerator === "on" ? "off" : "on";
-          featureStates.githubAccelerator = newState;
-          updateSwitchState(dom.githubSwitch, newState);
+          
+          if (newState === "on" && featureStates.autodlAccelerator === "on") {
+              // Conflict: Autodl is ON, and we are turning GitHub ON.
+              // "Default close Autodl and prompt"
+              
+              // 1. Disable Autodl
+              handleAcceleratorAction("disable"); 
+              
+              // 2. Enable GitHub
+              featureStates.githubAccelerator = "on";
+              updateSwitchState(dom.githubSwitch, "on");
+              
+              // 3. Prompt
+              showModal(getText("modal.title"), "检测到同时开启两个加速功能，已自动关闭 Autodl 学术镜像加速。");
+          } else {
+              // Normal toggle
+              featureStates.githubAccelerator = newState;
+              updateSwitchState(dom.githubSwitch, newState);
+          }
       });
   }
 }

@@ -9,10 +9,12 @@ import zipfile
 import io
 import re
 import json
+import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib import request as urllib_request
 from urllib.error import URLError
+from PIL import Image
 
 from flask import (
     Flask,
@@ -41,6 +43,8 @@ SOURCE_BUCKET_DIR = os.path.join(WORKSPACE_ROOT, "source")
 GENERATED_BUCKET_DIR = os.path.join(WORKSPACE_ROOT, "generated")
 TAGS_BUCKET_DIR = os.path.join(WORKSPACE_ROOT, "tags")
 TEMP_DIR = os.path.join(WORKSPACE_ROOT, "tmp")
+THUMBNAIL_DIR = os.path.join(WORKSPACE_ROOT, "thumbnails")
+
 MEDIA_BUCKETS = {
     "source": SOURCE_BUCKET_DIR,
     "generated": GENERATED_BUCKET_DIR,
@@ -92,6 +96,7 @@ def ensure_workspace() -> None:
         GENERATED_BUCKET_DIR,
         TAGS_BUCKET_DIR,
         TEMP_DIR,
+        THUMBNAIL_DIR,
     ):
         os.makedirs(path, exist_ok=True)
 
@@ -455,18 +460,31 @@ def _generate_images_worker(
         _set_state("image_generation", status="error", message=str(exc))
         return
 
-    for idx, relative_path in enumerate(filenames, start=1):
+    # Queue format: [(relative_path, attempt_count)]
+    queue: List[Tuple[str, int]] = [(f, 0) for f in filenames]
+    processed_count = 0
+    
+    MAX_RETRIES = 3
+    RPM_DELAY = 7  # 10 RPM = 6s/req. Use 7s to be safe.
+
+    while queue:
+        relative_path, attempts = queue.pop(0)
+        
         try:
             source_path = _safe_bucket_path(bucket, relative_path)
         except ValueError as exc:
             _append_log("image_generation", f"[{_timestamp()}] ⚠️ 跳过非法路径：{relative_path} ({exc})")
+            processed_count += 1
             continue
 
         if not source_path.exists():
             _append_log("image_generation", f"[{_timestamp()}] ⚠️ 找不到文件：{relative_path}")
+            processed_count += 1
             continue
 
-        _append_log("image_generation", f"[{_timestamp()}] 🎯 正在生成：{relative_path}")
+        _append_log("image_generation", f"[{_timestamp()}] 🎯 正在生成：{relative_path} (第 {attempts + 1} 次尝试)")
+        
+        success = False
         try:
             request_parts = [
                 Part.from_text(prompt),
@@ -496,18 +514,35 @@ def _generate_images_worker(
                 "image_generation",
                 f"[{_timestamp()}] ✅ 完成 {relative_path}，输出 {len(saved)} 个文件",
             )
+            success = True
+            processed_count += 1
+            
         except Exception as exc:  # noqa: BLE001
             _append_log(
                 "image_generation",
-                f"[{_timestamp()}] ❌ 生成 {relative_path} 时失败：{exc}",
+                f"[{_timestamp()}] ❌ 生成 {relative_path} 失败：{exc}",
             )
+            attempts += 1
+            if attempts < MAX_RETRIES:
+                _append_log("image_generation", f"[{_timestamp()}] 🔄 已重新加入队列，稍后重试...")
+                queue.append((relative_path, attempts))
+            else:
+                _append_log("image_generation", f"[{_timestamp()}] 🚫 达到最大重试次数，跳过此图片")
+                processed_count += 1
 
-        progress = int(idx / total * 100)
+        # RPM Rate Limiting
+        # Wait regardless of success or failure to respect API limits
+        # Unless queue is empty (done)
+        if queue:
+             _append_log("image_generation", f"[{_timestamp()}] ⏳ 等待 {RPM_DELAY} 秒以满足 API 限制...")
+             time.sleep(RPM_DELAY)
+
+        progress = int(processed_count / total * 100)
         _set_state(
             "image_generation",
             progress=progress,
-            processed=idx,
-            message=f"已处理 {idx}/{total} 张图片",
+            processed=processed_count,
+            message=f"已处理 {processed_count}/{total} 张图片 (队列剩余 {len(queue)})",
         )
 
     _set_state("image_generation", status="success", message="全部图片生成完成", progress=100)
@@ -601,6 +636,55 @@ def serve_media(bucket: str, filename: str):
         return send_from_directory(directory, rel_path)
     except ValueError:
         return "Forbidden", 403
+
+
+@app.route("/api/thumbnail/<bucket>/<path:filename>")
+def serve_thumbnail(bucket: str, filename: str):
+    try:
+        source_path = _safe_bucket_path(bucket, filename)
+        if not source_path.exists():
+            return "Not Found", 404
+
+        # Thumbnails only for supported images
+        if not _allowed_image(source_path.name):
+            return "Not Supported", 415
+
+        # Determine thumbnail path
+        # We replicate directory structure in thumbnails/bucket/
+        thumb_root = Path(THUMBNAIL_DIR) / bucket
+        
+        # Calculate relative path from bucket root to keep structure
+        bucket_root = _safe_bucket_path(bucket)
+        rel_path = source_path.relative_to(bucket_root)
+        
+        thumb_path = thumb_root / rel_path
+        
+        # Check if thumbnail exists and is newer than source
+        if thumb_path.exists():
+             if thumb_path.stat().st_mtime >= source_path.stat().st_mtime:
+                 return send_from_directory(str(thumb_path.parent), thumb_path.name)
+        
+        # Create thumbnail
+        thumb_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with Image.open(source_path) as img:
+                img.thumbnail((300, 300))
+                # Convert to RGB if RGBA and format doesn't support transparency (like JPEG)
+                # But we just save as original format usually, or PNG/JPEG.
+                # Let's save as same format or PNG if complex.
+                # To be safe and simple, save as original format if possible, or PNG.
+                # Using original format.
+                img.save(thumb_path)
+        except Exception as e:
+            print(f"Thumbnail generation failed for {source_path}: {e}")
+            # Fallback to original image
+            return send_from_directory(str(bucket_root), str(rel_path))
+            
+        return send_from_directory(str(thumb_path.parent), thumb_path.name)
+            
+    except ValueError:
+        return "Forbidden", 403
+
 
 
 @app.route("/api/status")
@@ -957,8 +1041,46 @@ def api_images_delete():
     if not paths:
         return jsonify({"ok": False, "message": "未找到可删除的图片"}), 400
 
-    removed = _delete_files(paths)
-    return jsonify({"ok": True, "message": f"已删除 {removed} 张图片", "deleted": removed})
+    removed = 0
+    gen_dir = Path(GENERATED_BUCKET_DIR)
+    tags_dir = Path(TAGS_BUCKET_DIR)
+    thumb_dir = Path(THUMBNAIL_DIR) / "source"
+
+    for path in paths:
+        if path.exists() and path.is_file():
+            # 1. Delete Source
+            path.unlink(missing_ok=True)
+            removed += 1
+            
+            # 2. Delete Generated Images ({stem}_gen*)
+            stem = path.stem
+            # Simple glob pattern for generated files
+            # We need to search recursively if we support folders, but here paths are absolute
+            # For simplicity, just look in generated bucket flattened or relative?
+            # generated bucket mirrors source structure.
+            rel_path = path.relative_to(SOURCE_BUCKET_DIR)
+            rel_parent = rel_path.parent
+            
+            target_gen_dir = (gen_dir / rel_parent).resolve()
+            if target_gen_dir.exists():
+                for gen_file in target_gen_dir.glob(f"{stem}_gen*"):
+                    gen_file.unlink(missing_ok=True)
+
+            # 3. Delete Tags ({stem}.txt)
+            # Tags are flat or mirrored? api_images_tag uses tags_dir / f"{stem}.txt" which implies flat!
+            # But api_ai_list uses tags_dir / f"{stem}.txt".
+            # Wait, api_ai_export walks tags_dir.
+            # Let's assume flat for now based on api_images_tag implementation:
+            # tag_file = tags_dir / f"{stem}.txt"
+            # If source structure is deep, this flat tag structure is buggy if filenames conflict.
+            # But we stick to existing logic: tags_dir / f"{stem}.txt"
+            (tags_dir / f"{stem}.txt").unlink(missing_ok=True)
+            
+            # 4. Delete Thumbnail
+            target_thumb = (thumb_dir / rel_path).resolve()
+            target_thumb.unlink(missing_ok=True)
+            
+    return jsonify({"ok": True, "message": f"已删除 {removed} 张图片及其关联文件", "deleted": removed})
 
 
 @app.route("/api/images/clear", methods=["POST"])
@@ -973,8 +1095,34 @@ def api_images_clear():
     if not paths:
         return jsonify({"ok": True, "message": "当前没有可清理的图片", "deleted": 0})
 
+    # Call the delete logic to handle associated files, but optimized for clear all
+    # Actually, just wiping directories might be faster but let's be safe.
+    # Since we need to delete associated generated/tags/thumbs, simpler to just wipe those dirs?
+    # But "generated" might contain things not associated with current source? No, generated is derived.
+    # "tags" might too.
+    # Let's just iterate and delete for safety, or use shell commands if fast.
+    # Let's use the same logic as delete but bulk.
+    
+    removed = 0
+    gen_dir = Path(GENERATED_BUCKET_DIR)
+    tags_dir = Path(TAGS_BUCKET_DIR)
+    thumb_dir = Path(THUMBNAIL_DIR)
+
+    # Remove all source files
     removed = _delete_files(paths)
-    return jsonify({"ok": True, "message": f"已清空 {removed} 张图片", "deleted": removed})
+    
+    # Clear Generated, Tags, Thumbnails
+    # We can just recreate the dirs.
+    def clear_directory(path: Path):
+        if path.exists():
+            shutil.rmtree(path)
+            path.mkdir(parents=True, exist_ok=True)
+            
+    clear_directory(gen_dir)
+    clear_directory(tags_dir)
+    clear_directory(thumb_dir)
+
+    return jsonify({"ok": True, "message": f"已清空 {removed} 张图片及关联数据", "deleted": removed})
 
 
 @app.route("/api/images/tag", methods=["POST"])

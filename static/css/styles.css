@@ -628,6 +628,12 @@ body {
     margin-bottom: 12px;
 }
 
+.upload-zone.highlight {
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.1); /* var(--accent) with opacity */
+    transform: scale(1.02);
+}
+
 .upload-zone:hover {
     border-color: var(--accent);
     background: var(--accent);
