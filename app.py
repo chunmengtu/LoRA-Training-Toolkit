@@ -29,7 +29,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-CURRENT_VERSION = "0.0.3"
+CURRENT_VERSION = "0.0.4"
 GITEE_REPO = "rcangbaohz/lora-training-toolkit"
 
 SYSTEM_NAME = platform.system()
@@ -53,7 +53,7 @@ MEDIA_BUCKETS = {
 SUPPORTED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
 MAX_RECENT_LOG_LINES = 400
 
-GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL_NAME", "gemini-2.5-flash-image")
+GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL_NAME", "gemini-3-pro-image-preview")
 
 task_state: Dict[str, Dict] = {
     "setup": {
@@ -1132,8 +1132,11 @@ def api_images_tag():
     tags = (data.get("tags") or "").strip()
     
     if not targets:
-        return jsonify({"ok": False, "message": "请至少选择一张图片"}), 400
+        targets = [item["relative_path"] for item in _gather_media_items("source")]
         
+    if not targets:
+        return jsonify({"ok": False, "message": "请至少选择一张图片"}), 400
+
     tags_dir = _safe_bucket_path("tags")
     count = 0
     

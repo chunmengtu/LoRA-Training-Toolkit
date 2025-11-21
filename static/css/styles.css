@@ -1379,3 +1379,90 @@ body {
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
+
+/* Gamified Progress Bar */
+.gamified-progress {
+    position: relative;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    margin-top: 16px;
+    /* visible to allow thumb to potentially stick out */
+    display: flex;
+    align-items: center;
+}
+
+.theme-dark .gamified-progress {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.gamified-progress.hidden {
+    display: none;
+}
+
+.gamified-track {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.3s linear;
+
+    /* Minecraft Grass Block Side Texture */
+    background-color: #795548; /* Dirt Base */
+    background-image: 
+        /* 1. Top Green Layer */
+        linear-gradient(to bottom, #5C9E43 35%, transparent 35%),
+        
+        /* 2. Hanging Grass (Jagged) */
+        linear-gradient(90deg, #5C9E43 50%, transparent 50%),
+        
+        /* 3. Noise Texture (Simple dots) */
+        linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)),
+        linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05));
+
+    background-size: 
+        100% 100%,      /* Top Layer */
+        10px 6px,       /* Hanging Grass: 10px wide (5px pixel), 6px high */
+        20px 20px,      /* Noise 1 */
+        10px 10px;      /* Noise 2 */
+        
+    background-position:
+        0 0,
+        0 35%,          /* Positioned right below the top layer */
+        0 0,
+        5px 5px;
+        
+    background-repeat:
+        no-repeat,
+        repeat-x,
+        repeat,
+        repeat;
+        
+    image-rendering: pixelated; /* Crisp edges */
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2); /* Slight depth */
+}
+
+.gamified-thumb {
+    position: absolute;
+    left: 0%;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    height: 100%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.3s linear;
+    z-index: 5;
+}
+
+.gamified-thumb img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    image-rendering: pixelated;
+}

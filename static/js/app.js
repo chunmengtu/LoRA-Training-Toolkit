@@ -533,6 +533,24 @@ async function fetchStatus() {
   }
 }
 
+function updateGamifiedProgress(pageId, percent, isActive) {
+  const container = document.getElementById(`gamifiedProgress_${pageId}`);
+  const track = document.getElementById(`gamifiedTrack_${pageId}`);
+  const thumb = document.getElementById(`gamifiedThumb_${pageId}`);
+
+  if (!container || !track || !thumb) return;
+
+  if (!isActive) {
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  const clamped = Math.min(100, Math.max(0, percent));
+  track.style.width = `${clamped}%`;
+  thumb.style.left = `${clamped}%`;
+}
+
 function applySectionState(section, data) {
   if (!data) return;
   const prefixMap = {
@@ -542,6 +560,18 @@ function applySectionState(section, data) {
   };
   const prefix = prefixMap[section];
   if (!prefix) return;
+
+  // Gamified Progress Logic
+  let pageId = null;
+  if (section === "setup") pageId = "setup";
+  if (section === "download") pageId = "download";
+  if (section === "generation") pageId = "ai";
+
+  if (pageId) {
+      const isActive = data.status === "running";
+      const percent = typeof data.progress === "number" ? data.progress : 0;
+      updateGamifiedProgress(pageId, percent, isActive);
+  }
   
   const progressEl = dom[`${prefix}Progress`];
   const statusEl = dom[`${prefix}Status`];
@@ -1283,10 +1313,15 @@ async function handleUploadSubmit(event, droppedFiles = null) {
     return;
   }
   isUploading = true;
+  updateGamifiedProgress("images", 0, true);
   const trackers = initUploadProgress(files);
   const stats = { added: 0, skipped: 0, failed: 0 };
   try {
     for (let idx = 0; idx < files.length; idx += 1) {
+      // Update gamified progress based on count
+      const percent = Math.round((idx / files.length) * 100);
+      updateGamifiedProgress("images", percent, true);
+
       const file = files[idx];
       const tracker = trackers[idx];
       try {
@@ -1331,12 +1366,16 @@ async function handleUploadSubmit(event, droppedFiles = null) {
     const headKey = stats.failed ? "images.uploadProgressError" : "images.uploadProgressDone";
     const body = fragments.length ? `${getText(headKey)}：${fragments.join("，")}` : getText(headKey);
     showModal(getText("modal.title"), body);
+    updateGamifiedProgress("images", 100, true);
   } catch (err) {
     console.error("upload pipeline error", err);
     showModal(getText("modal.title"), err.message || getText("images.uploadProgressFailed"));
   } finally {
     finalizeUploadProgress();
     isUploading = false;
+    setTimeout(() => {
+        updateGamifiedProgress("images", 0, false);
+    }, 2000);
   }
 }
 
@@ -1447,11 +1486,11 @@ async function handleTagSubmit(event) {
     tags: dom.tagInput?.value.trim() || "",
   };
   
-  if (!payload.targets.length) {
-    showToast(getText("images.deleteEmpty")); // Reuse "Please select images"
-    if (submitBtn) submitBtn.disabled = false;
-    return;
-  }
+  // if (!payload.targets.length) {
+  //   showToast(getText("images.deleteEmpty")); // Reuse "Please select images"
+  //   if (submitBtn) submitBtn.disabled = false;
+  //   return;
+  // }
   
   try {
     const res = await postJSON("/api/images/tag", payload);

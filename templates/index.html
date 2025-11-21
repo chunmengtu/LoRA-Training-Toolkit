@@ -164,6 +164,12 @@
                     <p class="page-subtitle" data-i18n="environment.desc">
                         自动执行依赖安装脚本。Linux 将串行安装所有依赖，Windows 会调用 Easy Install 脚本。
                     </p>
+                    <div class="gamified-progress hidden" id="gamifiedProgress_setup">
+                        <div class="gamified-track" id="gamifiedTrack_setup"></div>
+                        <div class="gamified-thumb" id="gamifiedThumb_setup">
+                            <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="page-body">
@@ -247,6 +253,12 @@
                     <p class="page-subtitle" data-i18n="download.desc">
                         根据用途选择模型，并在两个下载渠道之间切换。系统会自动创建存储目录。
                     </p>
+                    <div class="gamified-progress hidden" id="gamifiedProgress_download">
+                        <div class="gamified-track" id="gamifiedTrack_download"></div>
+                        <div class="gamified-thumb" id="gamifiedThumb_download">
+                            <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="page-body">
@@ -320,6 +332,12 @@
                     <p class="page-subtitle" data-i18n="images.desc">
                         上传单图 / 文件夹 / 压缩包，快速整理命名。
                     </p>
+                    <div class="gamified-progress hidden" id="gamifiedProgress_images">
+                        <div class="gamified-track" id="gamifiedTrack_images"></div>
+                        <div class="gamified-thumb" id="gamifiedThumb_images">
+                            <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="page-body page-body-scroll">
@@ -408,6 +426,12 @@
                     <p class="page-subtitle" data-i18n="ai.desc">
                         使用 Gemini 批量生成 AI 图像，打标并导出。
                     </p>
+                    <div class="gamified-progress hidden" id="gamifiedProgress_ai">
+                        <div class="gamified-track" id="gamifiedTrack_ai"></div>
+                        <div class="gamified-thumb" id="gamifiedThumb_ai">
+                            <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="page-body page-body-scroll">
