@@ -1,5 +1,5 @@
-@Echo off
-set "version_title=AI-Toolkit-Easy-Install v0.3.21 by ivo"
+@echo off&&cd /d %~dp0
+set "version_title=AI-Toolkit-Easy-Install v0.3.26 by ivo"
 Title %version_title%
 
 :: Set colors ::
@@ -10,11 +10,28 @@ set "PIPargs=--no-cache-dir --no-warn-script-location --timeout=1000 --retries 2
 set "CURLargs=--retry 200 --retry-all-errors"
 set "UVargs=--no-cache --link-mode=copy"
 
+:: CRITICAL: Clear all Python-related environment variables ::
+set PYTHONPATH=
+set PYTHONHOME=
+set PYTHON=
+set PYTHONSTARTUP=
+set PYTHONUSERBASE=
+set PIP_CONFIG_FILE=
+set PIP_REQUIRE_VIRTUALENV=
+set VIRTUAL_ENV=
+set CONDA_PREFIX=
+set CONDA_DEFAULT_ENV=
+set PYENV_ROOT=
+set PYENV_VERSION=
+
 :: Set local path only (temporarily) ::
 for /f "delims=" %%G in ('cmd /c "where git.exe 2>nul"') do (set "GIT_PATH=%%~dpG")
 for /f "delims=" %%G in ('cmd /c "where node.exe 2>nul"') do (set "NODE_PATH=%%~dpG")
-set "path=%GIT_PATH%;%NODE_PATH%"
 
+:: Build minimal PATH without system Python ::
+set "path="
+if defined GIT_PATH set "path=%GIT_PATH%"
+if defined NODE_PATH set "path=%path%;%NODE_PATH%"
 if exist %windir%\system32 set "path=%PATH%;%windir%\System32"
 if exist %windir%\system32\WindowsPowerShell\v1.0 set "path=%PATH%;%windir%\system32\WindowsPowerShell\v1.0"
 if exist %localappdata%\Microsoft\WindowsApps set "path=%PATH%;%localappdata%\Microsoft\WindowsApps"
@@ -43,8 +60,8 @@ call :install_git
 :: Check if git is installed
 git.exe --version>nul 2>&1
 if errorlevel 1 (
-    Echo %warning%WARNING:%reset% %bold%'git'%reset% is NOT installed
-	Echo Please install %bold%'git'%reset% manually from %yellow%https://git-scm.com/%reset% and run this installer again
+    echo %warning%WARNING:%reset% %bold%'git'%reset% is NOT installed
+	echo Please install %bold%'git'%reset% manually from %yellow%https://git-scm.com/%reset% and run this installer again
     echo Press any key to Exit...&pause>nul
     exit /b
 )
@@ -82,9 +99,9 @@ for /f %%i in ('powershell -command "(New-TimeSpan -Start (Get-Date '%start%') -
 
 :: Final Messages ::
 echo.
-echo %green%::::::::::::::: 安装完成 :::::::::::::::%reset%
-echo %green%::::::::::::::: 耗时:%red% %diff% %green%seconds%reset%
-echo %yellow%::::::::::::::: 按任意键退出 :::::::::::::::%reset%&Pause>nul
+echo %green%::::::::::::::: Installation Complete :::::::::::::::%reset%
+echo %green%::::::::::::::: Total Running Time:%red% %diff% %green%seconds%reset%
+echo %yellow%::::::::::::::: Press any key to exit :::::::::::::::%reset%&Pause>nul
 goto :eof
 
 ::::::::::::::::::::::::::::::::: END :::::::::::::::::::::::::::::::::
@@ -101,13 +118,14 @@ goto :eof
 :clear_pip_uv_cache
 if exist "%localappdata%\pip\cache" rd /s /q "%localappdata%\pip\cache"&&md "%localappdata%\pip\cache"
 if exist "%localappdata%\uv\cache" rd /s /q "%localappdata%\uv\cache"&&md "%localappdata%\uv\cache"
-echo %green%::::::::::::::: Clearing Pip and uv Cache %yellow%Done%green% :::::::::::::::%reset%
+echo.
+echo %green%:::::::::: Clearing Pip and uv Cache %yellow%Done%green% :::::::::::%reset%
 echo.
 goto :eof
 
 :install_git
 :: https://git-scm.com/
-echo %green%::::::::::::::: Installing/Updating%yellow% Git %green%:::::::::::::::%reset%
+echo %green%:::::::::::::: Installing/Updating%yellow% Git %green%::::::::::::::%reset%
 echo.
 
 winget.exe install --id Git.Git -e --source winget
@@ -117,7 +135,7 @@ goto :eof
 
 :nodejs_install
 :: https://nodejs.org/en
-echo %green%::::::::::::::: Installing/Updating%yellow% Node.js %green%:::::::::::::::%reset%
+echo %green%:::::::::::: Installing/Updating%yellow% Node.js %green%::::::::::::%reset%
 echo.
 winget.exe install --id=OpenJS.NodeJS -e
 set path=%PATH%;%ProgramFiles%\nodejs
@@ -127,29 +145,29 @@ goto :eof
 
 :python_embedded_install
 :: https://www.python.org/downloads/release/python-31210/
-echo %green%::::::::::::::: Installing%yellow% Python embedded %green%:::::::::::::::%reset%
+echo %green%::::::::::::: Installing%yellow% Python embedded %green%::::::::::::%reset%
 echo.
 curl.exe -OL https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip --ssl-no-revoke %CURLargs%
 md python_embeded&&cd python_embeded
 tar.exe -xf ..\python-3.12.10-embed-amd64.zip
 erase ..\python-3.12.10-embed-amd64.zip
 echo.
-echo %green%::::::::::::::: Installing%yellow% pip %green%:::::::::::::::%reset%
+echo %green%::::::::::::::::::: Installing%yellow% pip %green%::::::::::::::::::%reset%
 echo.
 curl.exe -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py --ssl-no-revoke %CURLargs%
 
-Echo ../AI-Toolkit> python312._pth
-Echo Lib/site-packages> python312._pth
-Echo Lib>> python312._pth
-Echo Scripts>> python312._pth
-Echo python312.zip>> python312._pth
-Echo .>> python312._pth
-Echo # import site>> python312._pth
+echo ../AI-Toolkit> python312._pth
+echo Lib/site-packages>> python312._pth
+echo Lib>> python312._pth
+echo Scripts>> python312._pth
+echo python312.zip>> python312._pth
+echo .>> python312._pth
+echo # import site>> python312._pth
 
-.\python.exe -I get-pip.py %PIPargs%
-.\python.exe -I -m pip install uv==0.9.7 %PIPargs%
-.\python.exe -I -m uv pip install --upgrade pip %UVargs%
-.\python.exe -I -m uv pip install virtualenv %UVargs%
+"%CD%\python.exe" -I get-pip.py %PIPargs%
+"%CD%\python.exe" -I -m pip install uv==0.9.7 %PIPargs%
+"%CD%\python.exe" -I -m pip install --upgrade pip %PIPargs%
+"%CD%\python.exe" -I -m pip install virtualenv %PIPargs%
 
 curl.exe -OL https://github.com/woct0rdho/triton-windows/releases/download/v3.0.0-windows.post1/python_3.12.7_include_libs.zip --ssl-no-revoke %CURLargs%
 
@@ -165,119 +183,165 @@ echo.
 cd ..\
 git.exe clone https://github.com/ostris/ai-toolkit.git
 cd ai-toolkit
-..\python_embeded\python.exe -I -m virtualenv venv
+"..\python_embeded\python.exe" -I -m virtualenv --clear --no-download venv
 CALL venv\Scripts\activate.bat
-pip install uv==0.9.7 %PIPargs%
-uv pip install torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 %UVargs%
-uv pip install -r requirements.txt %UVargs%
-uv pip install poetry-core %UVargs%
-uv pip install triton-windows==3.4.0.post20 %UVargs%
-uv pip install hf_xet %UVargs%
+
+:: Clear environment again inside venv for safety ::
+set PYTHONPATH=
+set PYTHONHOME=
+set PIP_CONFIG_FILE=
+
+:: Check if uv.exe exists in python_embeded ::
+if exist "..\python_embeded\Scripts\uv.exe" pip install uv==0.9.7 %PIPargs%
+
+if exist "venv\Scripts\uv.exe" (
+    echo %green%Using UV for package installation%reset%
+    uv pip install torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 %UVargs%
+    uv pip install -r requirements.txt %UVargs%
+    uv pip install poetry-core %UVargs%
+    uv pip install triton-windows==3.4.0.post20 %UVargs%
+) else (
+    echo %warning%UV not available - using standard pip%reset%
+    pip install torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 %PIPargs%
+    pip install -r requirements.txt %PIPargs%
+    pip install poetry-core %PIPargs%
+    pip install triton-windows==3.4.0.post20 %PIPargs%
+)
+
 echo.
 goto :eof
 
 :create_bat_files
-echo %green%::::::::::::::: Creating%yellow%  Start-AI-Toolkit.bat %green%:::::::::::::::%reset%
+:: Create Start-AI-Toolkit.bat ::
+echo %green%:::::::::: Creating%yellow%  Start-AI-Toolkit.bat %green%:::::::::::%reset%
 cd..\
 set "start_bat_name=Start-AI-Toolkit.bat"
-Echo @echo off^&^&cd /d %%~dp0>%start_bat_name%
-Echo Title %version_title%>>%start_bat_name%
-Echo setlocal enabledelayedexpansion>>%start_bat_name%
-Echo set GIT_LFS_SKIP_SMUDGE=^1>>%start_bat_name%
-Echo set "local_serv=http://localhost:8675">>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo cd ./ai-toolkit>>%start_bat_name%
-Echo.>>%start_bat_name%
+echo @echo off^&^&cd /d %%~dp0>%start_bat_name%
+echo Title %version_title%>>%start_bat_name%
+echo setlocal enabledelayedexpansion>>%start_bat_name%
+echo.>>%start_bat_name%
 
-Echo echo ^[92m:::::::::::::: Checking for updates... ::::::::::::::^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo git fetch>>%start_bat_name%
-Echo git status -uno ^| findstr /C:"Your branch is behind" ^>nul>>%start_bat_name%
-Echo if !errorlevel!==0 ^(>>%start_bat_name%
-Echo     echo.>>%start_bat_name%
-Echo     echo ^[92m::::::::::::::: Installing updates... :::::::::::::::^[0m>>%start_bat_name%
-Echo     echo.>>%start_bat_name%
-Echo     git pull>>%start_bat_name%
-Echo     echo.>>%start_bat_name%
-Echo     echo ^[92m::::::::::::: Installing requirements... ::::::::::::^[0m>>%start_bat_name%
-Echo     echo.>>%start_bat_name%
-Echo     CALL venv\Scripts\activate.bat>>%start_bat_name%
-Echo     pip install -r requirements.txt --no-cache>>%start_bat_name%
-Echo     CALL venv\Scripts\deactivate.bat>>%start_bat_name%
-Echo ^) else ^(>>%start_bat_name%
-Echo     echo ^[92m::::::::::::::::: Already up to date ::::::::::::::::^[0m>>%start_bat_name%
-Echo     echo.>>%start_bat_name%
-Echo ^)>>%start_bat_name%
-Echo.>>%start_bat_name%
+:: Isolate from system Python ::
+echo set PYTHONPATH=>>%start_bat_name%
+echo set PYTHONHOME=>>%start_bat_name%
+echo set PYTHON=>>%start_bat_name%
+echo set PYTHONSTARTUP=>>%start_bat_name%
+echo set PYTHONUSERBASE=>>%start_bat_name%
+echo set PIP_CONFIG_FILE=>>%start_bat_name%
+echo set PIP_REQUIRE_VIRTUALENV=>>%start_bat_name%
+echo set VIRTUAL_ENV=>>%start_bat_name%
+echo set CONDA_PREFIX=>>%start_bat_name%
+echo set CONDA_DEFAULT_ENV=>>%start_bat_name%
+echo set PYENV_ROOT=>>%start_bat_name%
+echo set PYENV_VERSION=>>%start_bat_name%
+echo.>>%start_bat_name%
 
-Echo echo ^[1;93mTips for beginners:^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[1;93mGeneral:^[0m>>%start_bat_name%
-Echo echo  ^[1;32m1.^[0m Set your ^[1;92mHugging Face Token^[0m in Settings>>%start_bat_name%
-Echo echo  ^[1;32m2.^[0m Close server with ^[1;92mCtrl+C twice^[0m, not the ^[1;91mX^[0m button>>%start_bat_name%
-Echo echo  ^[1;32m3.^[0m To activate the ^[1;92mvirtual environment^[0m (if needed):>>%start_bat_name%
-Echo echo     - Open ^[1;92mCMD^[0m where ^[1;92mStart-AI-Toolkit.bat^[0m is located>>%start_bat_name%
-Echo echo     - Run ^[1;92mAI-Toolkit\venv\Scripts\activate.bat^[0m>>%start_bat_name%
-Echo echo     OR Just start ^[1;92mvenv-AI-Toolkit.bat^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[1;93mBranches (run CMD in AI-Toolkit folder):^[0m>>%start_bat_name%
-Echo echo  ^[1;32m1.^[0m Show current branch: ^[1;92mgit branch^[0m>>%start_bat_name%
-Echo echo  ^[1;32m2.^[0m List all branches:   ^[1;92mgit branch -a^[0m>>%start_bat_name%
-Echo echo  ^[1;32m3.^[0m Switch branch:       ^[1;92mgit checkout^[0m ^[1;33mbranch_name^[0m>>%start_bat_name%
-Echo echo  ^[1;32m4.^[0m Back to ^[1;33mmain^[0m branch: ^[1;92mgit checkout^[0m ^[1;33mmain^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[92m:::::::: Waiting for the server to start... :::::::::^[0m>>%start_bat_name%
-Echo.>>%start_bat_name%
+echo set GIT_LFS_SKIP_SMUDGE=^1>>%start_bat_name%
+echo set "local_serv=http://localhost:8675">>%start_bat_name%
+echo echo.>>%start_bat_name%
+echo cd ./ai-toolkit>>%start_bat_name%
 
-Echo cd ./ui>>%start_bat_name%
-Echo start cmd.exe /k npm run build_and_start>>%start_bat_name%
-Echo :loop>> %start_bat_name%
-Echo powershell -Command "try { $response = Invoke-WebRequest -Uri '!local_serv!' -TimeoutSec 2 -UseBasicParsing; exit 0 } catch { exit 1 }" ^>nul 2^>^&^1>> %start_bat_name%
-Echo if !errorlevel! neq 0 ^(timeout /t 2 /nobreak ^>nul^&^&goto :loop^)>> %start_bat_name%
-Echo start !local_serv!>> %start_bat_name%
+echo     echo ^[92m::::::::::::  Starting AI-Toolkit ...  ::::::::::::::^[0m>>%start_bat_name%
+echo     echo.>>%start_bat_name%
 
-::------------------------------------------------
+echo git.exe fetch>>%start_bat_name%
+echo git.exe status -uno ^| findstr /C:"Your branch is behind" ^>nul>>%start_bat_name%
+echo if !errorlevel!==0 ^(>>%start_bat_name%
+echo     echo ^[93m:::::::::::: ^[91mNew updates^[93m are available ::::::::::::::^[0m>>%start_bat_name%
+echo     echo ^[92m:::::::::::: Run Update-AI-Toolkit.bat ::::::::::::::^[0m>>%start_bat_name%
+echo     echo.>>%start_bat_name%
+echo ^)>>%start_bat_name%
+echo.>>%start_bat_name%
 
-set "start_bat_name=Start-AI-Toolkit-NoUpdate.bat"
-Echo @echo off^&^&cd /d %%~dp0>%start_bat_name%
-Echo Title %version_title%>>%start_bat_name%
-Echo setlocal enabledelayedexpansion>>%start_bat_name%
-Echo set GIT_LFS_SKIP_SMUDGE=^1>>%start_bat_name%
-Echo set "local_serv=http://localhost:8675">>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo cd ./ai-toolkit>>%start_bat_name%
-Echo.>>%start_bat_name%
+echo echo ^[1;93mTips for beginners:^[0m>>%start_bat_name%
+echo echo.>>%start_bat_name%
+echo echo ^[1;93mGeneral:^[0m>>%start_bat_name%
+echo echo  ^[1;32m1.^[0m Set your ^[1;92mHugging Face Token^[0m in Settings>>%start_bat_name%
+echo echo  ^[1;32m2.^[0m Close server with ^[1;92mCtrl+C twice^[0m, not the ^[1;91mX^[0m button>>%start_bat_name%
+echo echo  ^[1;32m3.^[0m To activate the ^[1;92mvirtual environment^[0m (if needed):>>%start_bat_name%
+echo echo     - Open ^[1;92mCMD^[0m where ^[1;92mStart-AI-Toolkit.bat^[0m is located>>%start_bat_name%
+echo echo       and Run ^[1;92mAI-Toolkit\venv\Scripts\activate.bat^[0m>>%start_bat_name%
+echo echo     ^[1;93mOR^[0m just start ^[1;92mvenv-AI-Toolkit.bat^[0m>>%start_bat_name%
+echo echo.>>%start_bat_name%
+echo echo ^[92m:::::::: ^[93mWaiting for the server to start...^[92m :::::::::^[0m>>%start_bat_name%
+echo.>>%start_bat_name%
 
-Echo echo ^[1;93mTips for beginners:^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[1;93mGeneral:^[0m>>%start_bat_name%
-Echo echo  ^[1;32m1.^[0m Set your ^[1;92mHugging Face Token^[0m in Settings>>%start_bat_name%
-Echo echo  ^[1;32m2.^[0m Close server with ^[1;92mCtrl+C twice^[0m, not the ^[1;91mX^[0m button>>%start_bat_name%
-Echo echo  ^[1;32m3.^[0m To activate the ^[1;92mvirtual environment^[0m (if needed):>>%start_bat_name%
-Echo echo     - Open ^[1;92mCMD^[0m where ^[1;92mStart-AI-Toolkit.bat^[0m is located>>%start_bat_name%
-Echo echo     - Run ^[1;92mAI-Toolkit\venv\Scripts\activate.bat^[0m>>%start_bat_name%
-Echo echo     OR Just start ^[1;92mvenv-AI-Toolkit.bat^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[1;93mBranches (run CMD in AI-Toolkit folder):^[0m>>%start_bat_name%
-Echo echo  ^[1;32m1.^[0m Show current branch: ^[1;92mgit branch^[0m>>%start_bat_name%
-Echo echo  ^[1;32m2.^[0m List all branches:   ^[1;92mgit branch -a^[0m>>%start_bat_name%
-Echo echo  ^[1;32m3.^[0m Switch branch:       ^[1;92mgit checkout^[0m ^[1;33mbranch_name^[0m>>%start_bat_name%
-Echo echo  ^[1;32m4.^[0m Back to ^[1;33mmain^[0m branch: ^[1;92mgit checkout^[0m ^[1;33mmain^[0m>>%start_bat_name%
-Echo echo.>>%start_bat_name%
-Echo echo ^[92m:::::::: Waiting for the server to start... :::::::::^[0m>>%start_bat_name%
-Echo.>>%start_bat_name%
-
-Echo cd ./ui>>%start_bat_name%
-Echo start cmd.exe /k npm run build_and_start>>%start_bat_name%
-Echo :loop>> %start_bat_name%
-Echo powershell -Command "try { $response = Invoke-WebRequest -Uri '!local_serv!' -TimeoutSec 2 -UseBasicParsing; exit 0 } catch { exit 1 }" ^>nul 2^>^&^1>> %start_bat_name%
-Echo if !errorlevel! neq 0 ^(timeout /t 2 /nobreak ^>nul^&^&goto :loop^)>> %start_bat_name%
-Echo start !local_serv!>> %start_bat_name%
+echo cd ./ui>>%start_bat_name%
+echo start cmd.exe /k npm run build_and_start>>%start_bat_name%
+echo :loop>>%start_bat_name%
+echo if exist "%%windir%%\System32\WindowsPowerShell\v1.0" set "PATH=%%PATH%%;%%windir%%\System32\WindowsPowerShell\v1.0">>"%start_bat_name%"
+echo powershell -Command "try { $response = Invoke-WebRequest -Uri '!local_serv!' -TimeoutSec 2 -UseBasicParsing; exit 0 } catch { exit 1 }" ^>nul 2^>^&^1>>%start_bat_name%
+echo if !errorlevel! neq 0 ^(timeout /t 2 /nobreak ^>nul^&^&goto :loop^)>>%start_bat_name%
+echo start !local_serv!>>%start_bat_name%
 
 :: Create venv-AI-Toolkit.bat ::
+echo %green%:::::::::: Creating%yellow%   venv-AI-Toolkit.bat %green%:::::::::::%reset%
 
-Echo @echo off^&^&cd /d %%~dp0>venv-AI-Toolkit.bat
-Echo call AI-Toolkit\venv\Scripts\activate.bat>>venv-AI-Toolkit.bat
-Echo cmd /k>>venv-AI-Toolkit.bat
+echo @echo off^&^&cd /d %%~dp0>venv-AI-Toolkit.bat
+echo.>>venv-AI-Toolkit.bat
+
+:: Isolate from system Python ::
+echo set PYTHONPATH=>>venv-AI-Toolkit.bat
+echo set PYTHONHOME=>>venv-AI-Toolkit.bat
+echo set PYTHON=>>venv-AI-Toolkit.bat
+echo set PYTHONSTARTUP=>>venv-AI-Toolkit.bat
+echo set PYTHONUSERBASE=>>venv-AI-Toolkit.bat
+echo set PIP_CONFIG_FILE=>>venv-AI-Toolkit.bat
+echo set PIP_REQUIRE_VIRTUALENV=>>venv-AI-Toolkit.bat
+echo set VIRTUAL_ENV=>>venv-AI-Toolkit.bat
+echo set CONDA_PREFIX=>>venv-AI-Toolkit.bat
+echo set CONDA_DEFAULT_ENV=>>venv-AI-Toolkit.bat
+echo set PYENV_ROOT=>>venv-AI-Toolkit.bat
+echo set PYENV_VERSION=>>venv-AI-Toolkit.bat
+echo.>>venv-AI-Toolkit.bat
+
+echo call AI-Toolkit\venv\Scripts\activate.bat>>venv-AI-Toolkit.bat
+echo cmd /k>>venv-AI-Toolkit.bat
+
+:: Create Update-AI-Toolkit.bat ::
+echo %green%:::::::::: Creating%yellow% Update-AI-Toolkit.bat %green%:::::::::::%reset%
+
+echo @echo off^&^&cd /d %%~dp0>Update-AI-Toolkit.bat
+echo Title AI-Toolkit Update by ivo>>Update-AI-Toolkit.bat
+echo.>>Update-AI-Toolkit.bat
+
+:: Isolate from system Python ::
+echo set PYTHONPATH=>>Update-AI-Toolkit.bat
+echo set PYTHONHOME=>>Update-AI-Toolkit.bat
+echo set PYTHON=>>Update-AI-Toolkit.bat
+echo set PYTHONSTARTUP=>>Update-AI-Toolkit.bat
+echo set PYTHONUSERBASE=>>Update-AI-Toolkit.bat
+echo set PIP_CONFIG_FILE=>>Update-AI-Toolkit.bat
+echo set PIP_REQUIRE_VIRTUALENV=>>Update-AI-Toolkit.bat
+echo set VIRTUAL_ENV=>>Update-AI-Toolkit.bat
+echo set CONDA_PREFIX=>>Update-AI-Toolkit.bat
+echo set CONDA_DEFAULT_ENV=>>Update-AI-Toolkit.bat
+echo set PYENV_ROOT=>>Update-AI-Toolkit.bat
+echo set PYENV_VERSION=>>Update-AI-Toolkit.bat
+echo.>>Update-AI-Toolkit.bat
+
+echo set GIT_LFS_SKIP_SMUDGE=^1>>Update-AI-Toolkit.bat
+echo cd ./ai-toolkit>>Update-AI-Toolkit.bat
+echo.>>Update-AI-Toolkit.bat
+
+echo echo.>>Update-AI-Toolkit.bat
+echo echo ^[92m::::::::::::::: Installing ^[93mAI-Toolkit^[92m updates... :::::::::::::::^[0m>>Update-AI-Toolkit.bat
+echo echo.>>Update-AI-Toolkit.bat
+echo git.exe pull>>Update-AI-Toolkit.bat
+echo echo.>>Update-AI-Toolkit.bat
+echo echo ^[92m::::::: Installing ^[93mrequirements ^[92mand updating ^[93mdiffusers^[92m :::::::::^[0m>>Update-AI-Toolkit.bat
+echo echo.>>Update-AI-Toolkit.bat
+echo CALL venv\Scripts\activate.bat>>Update-AI-Toolkit.bat
+echo pip uninstall diffusers -y>>Update-AI-Toolkit.bat
+echo pip install -r requirements.txt --no-cache>>Update-AI-Toolkit.bat
+echo CALL venv\Scripts\deactivate.bat>>Update-AI-Toolkit.bat
+
+echo.>>Update-AI-Toolkit.bat
+echo echo.>>Update-AI-Toolkit.bat
+echo echo ^[92m:::::::::::::::   Update completed    :::::::::::::::^[0m>>Update-AI-Toolkit.bat
+echo if "%%~1"=="" ^(>>Update-AI-Toolkit.bat
+echo     echo ^[93m::::::::::::::: Press any key to exit :::::::::::::::^[0m^&Pause^>nul>>Update-AI-Toolkit.bat
+echo     exit>>Update-AI-Toolkit.bat
+echo ^)>>Update-AI-Toolkit.bat
 
 goto :eof
