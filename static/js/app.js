@@ -4,7 +4,7 @@ const storageKeys = {
   lang: "aitoolkit-lang",
 };
 
-const STEPS = ["overview", "environment", "download", "images", "ai", "console"];
+const STEPS = ["overview", "environment", "download", "images", "ai", "ai-clean", "console"];
 let currentStepIndex = 0;
 
 const dictionary = {
@@ -16,6 +16,7 @@ const dictionary = {
     "nav.download": "模型下载",
     "nav.images": "图像处理",
     "nav.ai": "AI 处理",
+    "nav.aiClean": "AI 图片清洗",
     "nav.console": "控制台",
     "nav.system": "系统",
     "nav.linux": "状态",
@@ -121,6 +122,32 @@ const dictionary = {
     "ai.galleryTitle": "AI 生成预览",
     "ai.tagSuccess": "标签已更新",
     "ai.tagHint": "请用简洁的语言描述你希望将原图转换成的目标图风格或效果（优先使用英文）<br>例如：<br>- 转换为吉卜力动画风格 (Transform into Ghibli anime style)<br>- 转换为水墨画风格 (Transform into inkwash painting style)<br>- 给角色戴上眼镜 (Add glasses to the character)",
+    "ai.platformTitle": "AI 平台配置",
+    "ai.platformProvider": "平台",
+    "ai.platformModelPreset": "模型预设",
+    "ai.platformCustomModel": "自定义模型",
+    "ai.platformCustomModelPlaceholder": "自定义模型名称...",
+    "ai.platformApiKey": "API Key",
+    "ai.platformBaseUrl": "Base URL（选填，自定义/代理时使用）",
+    "ai.platformTestBtn": "测试连接",
+    "ai.platformTestOk": "连接测试成功",
+    "ai.platformTestFail": "连接测试失败",
+    "ai.platformErrorModelMissing": "请先选择或输入要使用的大模型名称。",
+    "ai.platformErrorApiKeyMissing": "请填写对应平台的 API Key，用于调用大模型。",
+    "ai.platformErrorBaseUrlMissing": "使用自定义平台时，请填写对应的 Base URL 地址。",
+    "ai.cleanTitle": "AI 图片清洗",
+    "ai.cleanPromptPlaceholder": "输入提示词...",
+    "ai.cleanPromptHint": "提示词默认模版，可根据需要修改。",
+    "ai.cleanSelectionHint": "未选择图片时默认处理全部",
+    "ai.cleanRunBtn": "开始清洗",
+    "ai.cleanResetBtn": "重置筛选",
+    "ai.cleanResultTitle": "AI 图片清洗结果",
+    "ai.cleanNoTags": "尚未生成标签，请先运行 AI 图片清洗。",
+    "ai.cleanDimension.main_subject": "核心主体",
+    "ai.cleanDimension.appearance": "外观特征",
+    "ai.cleanDimension.action_state": "动作状态",
+    "ai.cleanDimension.environment": "环境物品",
+    "ai.cleanDimension.visual_style": "视觉风格",
     "step.next": "下一步",
     "step.prev": "上一步",
     "step.finish": "完成",
@@ -155,6 +182,7 @@ const dictionary = {
     "nav.download": "Model Download",
     "nav.images": "Image Processing",
     "nav.ai": "AI Processing",
+    "nav.aiClean": "AI Image Cleaning",
     "nav.console": "Console",
     "nav.system": "System",
     "nav.linux": "Status",
@@ -260,6 +288,32 @@ const dictionary = {
     "ai.galleryTitle": "AI Generation Preview",
     "ai.tagSuccess": "Tags updated",
     "ai.tagHint": "Please describe the target style or effect you want to transform the original image into (English preferred)<br>Example:<br>- Transform into Ghibli anime style<br>- Transform into inkwash painting style<br>- Add glasses to the character",
+    "ai.platformTitle": "AI Platform Config",
+    "ai.platformProvider": "Provider",
+    "ai.platformModelPreset": "Model Preset",
+    "ai.platformCustomModel": "Custom Model",
+    "ai.platformCustomModelPlaceholder": "Custom model name...",
+    "ai.platformApiKey": "API Key",
+    "ai.platformBaseUrl": "Base URL (optional, for custom/proxy)",
+    "ai.platformTestBtn": "Test Connection",
+    "ai.platformTestOk": "Connection succeeded",
+    "ai.platformTestFail": "Connection failed",
+    "ai.platformErrorModelMissing": "Please choose or enter the model name to use.",
+    "ai.platformErrorApiKeyMissing": "Please provide the API Key for the selected provider.",
+    "ai.platformErrorBaseUrlMissing": "When using a custom provider, please specify the Base URL.",
+    "ai.cleanTitle": "AI Image Cleaning",
+    "ai.cleanPromptPlaceholder": "Enter prompt...",
+    "ai.cleanPromptHint": "Default prompt template, you can customize it.",
+    "ai.cleanSelectionHint": "Process all images when none are selected",
+    "ai.cleanRunBtn": "Start Cleaning",
+    "ai.cleanResetBtn": "Reset Filters",
+    "ai.cleanResultTitle": "AI Cleaning Results",
+    "ai.cleanNoTags": "No tags generated yet. Please run AI image cleaning first.",
+    "ai.cleanDimension.main_subject": "Main Subject",
+    "ai.cleanDimension.appearance": "Appearance",
+    "ai.cleanDimension.action_state": "Action/State",
+    "ai.cleanDimension.environment": "Environment",
+    "ai.cleanDimension.visual_style": "Visual Style",
     "step.next": "Next",
     "step.prev": "Previous",
     "step.finish": "Finish",
@@ -365,11 +419,67 @@ const dom = {
   tagInput: document.getElementById("tagInput"),
   autodlSwitch: document.getElementById("autodlSwitch"),
   githubSwitch: document.getElementById("githubSwitch"),
+  aiConfigForm: document.getElementById("aiConfigForm"),
+  aiProviderSelect: document.getElementById("aiProviderSelect"),
+  aiModelPresetSelect: document.getElementById("aiModelPresetSelect"),
+  aiApiKeyInput: document.getElementById("aiApiKeyInput"),
+  aiBaseUrlInput: document.getElementById("aiBaseUrlInput"),
+  aiTestConfigBtn: document.getElementById("aiTestConfigBtn"),
+  aiCleanForm: document.getElementById("aiCleanForm"),
+  aiCleanPromptInput: document.getElementById("aiCleanPromptInput"),
+  aiCleanRunBtn: document.getElementById("aiCleanRunBtn"),
+  aiCleanResetBtn: document.getElementById("aiCleanResetBtn"),
+  aiCleanSelectionHint: document.getElementById("aiCleanSelectionHint"),
+  aiCleanFilters: document.getElementById("aiCleanFilters"),
+  aiCleanGrid: document.getElementById("aiCleanGrid"),
+  aiCleanProgress: document.getElementById("aiCleanProgress"),
+  aiCleanStatus: document.getElementById("aiCleanStatus"),
+  aiCleanPercent: document.getElementById("aiCleanPercent"),
+  aiCleanMessage: document.getElementById("aiCleanMessage"),
+  aiCleanLog: document.getElementById("aiCleanLog"),
+  copyAiCleanLog: document.getElementById("copyAiCleanLog"),
 };
 
 let pollingHandle = null;
 let currentTheme = "dark";
 let currentLang = "zh";
+let aiProviderConfig = null;
+
+const DEFAULT_AI_CLEAN_PROMPT = `# Role
+你是一个计算机视觉辅助的大模型，专门负责将图像内容转化为结构化的 JSON 数据。
+
+# Objective
+分析用户上传的图片，提取关键视觉信息，并将其分类为 5 个核心维度。请忽略所有修饰性长句，仅输出精准的中文关键词标签。
+
+# Response Format
+**必须** 仅输出一段合法的 JSON 代码，不要包含 Markdown 标记（如 json 代码块）或任何其他解释性文字。
+
+JSON 结构如下：
+{
+  "main_subject": ["关键词1", "关键词2"],      // 核心主体：画面焦点（人/物/景）
+  "appearance": ["关键词1", "关键词2"],        // 外观特征：颜色、材质、服饰、外貌
+  "action_state": ["关键词1", "关键词2"],      // 动作状态：姿态、动态、表情、静止
+  "environment": ["关键词1", "关键词2"],       // 环境物品：背景、地点、道具、天气
+  "visual_style": ["关键词1", "关键词2"]       // 视觉风格：色调、构图、光影、氛围
+}
+
+# Rules
+1. **关键词提取**：值必须是字符串数组，使用**简体中文**。
+2. **简洁性**：每个关键词控制在 2-6 个字以内，不要写句子。
+3. **通用性**：适用于人物、宠物、风景、物品等任何类型的图片。
+4. **空值处理**：如果某个维度不适用（例如风景照没有动作），请返回空数组 [] 或描述其静态属性（如“静止”）。
+
+# Example (Few-Shot)
+Input: [一张带露珠的红玫瑰特写]
+Output:
+{
+  "main_subject": ["红玫瑰", "花朵"],
+  "appearance": ["鲜红色", "丝绒质感", "水珠", "花瓣层叠"],
+  "action_state": ["静止", "盛开"],
+  "environment": ["模糊绿叶", "自然光", "花园"],
+  "visual_style": ["微距摄影", "高饱和度", "清新", "唯美"]
+}`;
+
 const galleryState = {
   items: [],
   selected: new Set(),
@@ -380,6 +490,34 @@ const aiGalleryState = {
   selected: new Set(),
   filterKeyword: "",
 };
+
+const aiCleaningState = {
+  baseItems: [],
+  itemsByPath: new Map(),
+  processing: new Set(),
+  selectedTags: {
+    main_subject: new Set(),
+    appearance: new Set(),
+    action_state: new Set(),
+    environment: new Set(),
+    visual_style: new Set(),
+  },
+  dimensionTags: {
+    main_subject: new Set(),
+    appearance: new Set(),
+    action_state: new Set(),
+    environment: new Set(),
+    visual_style: new Set(),
+  },
+};
+
+const AI_CLEAN_DIMENSIONS = [
+  { key: "main_subject", labelKey: "ai.cleanDimension.main_subject" },
+  { key: "appearance", labelKey: "ai.cleanDimension.appearance" },
+  { key: "action_state", labelKey: "ai.cleanDimension.action_state" },
+  { key: "environment", labelKey: "ai.cleanDimension.environment" },
+  { key: "visual_style", labelKey: "ai.cleanDimension.visual_style" },
+];
 
 const generatingState = {
     active: false,
@@ -405,8 +543,19 @@ function getText(key, lang = currentLang) {
   return dictionary[lang]?.[key] ?? dictionary.zh?.[key] ?? key;
 }
 
+function getLocalizedLabelFromConfig(item) {
+  if (!item) return "";
+  if (currentLang === "en") {
+    return item.label_en || item.label || item.id || item.model || "";
+  }
+  return item.label_zh || item.label || item.id || item.model || "";
+}
+
 function applyTranslations() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
+    if (el === dom.imageGrid || el === dom.aiGrid || el === dom.aiCleanGrid) {
+      return;
+    }
     el.textContent = getText(el.dataset.i18n);
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
@@ -421,8 +570,24 @@ function applyTranslations() {
       tagHint.innerHTML = getText("ai.tagHint");
   }
   
+  // 重建 AI 平台配置下拉的文案（多语言）
+  if (aiProviderConfig && dom.aiProviderSelect && dom.aiModelPresetSelect) {
+    const prevProvider = dom.aiProviderSelect.value;
+    const prevModel = dom.aiModelPresetSelect.value;
+    populateAiProviderOptions(prevProvider);
+    syncModelPresetWithProvider();
+    if (prevProvider && dom.aiProviderSelect.value !== prevProvider) {
+      dom.aiProviderSelect.value = prevProvider;
+    }
+    if (prevModel && dom.aiModelPresetSelect.value !== prevModel) {
+      dom.aiModelPresetSelect.value = prevModel;
+      handleAiModelPresetVisibility();
+    }
+  }
+  
   updateSelectionHint();
   updateAiSelectionHint();
+  updateAiCleanSelectionHint();
   updateUploadProgressHint();
   updateSwitchState(dom.autodlSwitch, featureStates.autodlAccelerator);
   updateSwitchState(dom.githubSwitch, featureStates.githubAccelerator);
@@ -451,6 +616,65 @@ function applyLanguage(lang) {
 
 function toggleLanguage() {
   applyLanguage(currentLang === "zh" ? "en" : "zh");
+}
+
+async function loadAiProviderConfig() {
+  if (!dom.aiProviderSelect || !dom.aiModelPresetSelect) return;
+  try {
+    const res = await fetch("/static/ai_providers.json?_=" + Date.now());
+    aiProviderConfig = await res.json();
+    populateAiProviderOptions();
+    syncModelPresetWithProvider();
+  } catch (err) {
+    console.error("load ai provider config failed", err);
+  }
+}
+
+function populateAiProviderOptions(selectedId) {
+  if (!aiProviderConfig || !dom.aiProviderSelect) return;
+  const select = dom.aiProviderSelect;
+  const providers = aiProviderConfig.providers || [];
+  const current = selectedId || select.value;
+  select.innerHTML = "";
+  providers.forEach((p) => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = getLocalizedLabelFromConfig(p);
+    select.appendChild(opt);
+  });
+  if (current) {
+    select.value = current;
+  }
+}
+
+function syncModelPresetWithProvider() {
+  if (!dom.aiProviderSelect || !dom.aiModelPresetSelect || !aiProviderConfig) return;
+  const providerId = dom.aiProviderSelect.value;
+  const providers = aiProviderConfig.providers || [];
+  const providerCfg = providers.find((p) => p.id === providerId) || providers[0];
+  const select = dom.aiModelPresetSelect;
+  const prevModel = select.value;
+  select.innerHTML = "";
+
+  if (providerCfg && Array.isArray(providerCfg.models)) {
+    providerCfg.models.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.model;
+      opt.textContent = getLocalizedLabelFromConfig(m);
+      select.appendChild(opt);
+    });
+  }
+
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
+  customOpt.textContent = getText("ai.platformCustomModel");
+  select.appendChild(customOpt);
+
+  if (prevModel) {
+    select.value = prevModel;
+  }
+
+  handleAiModelPresetVisibility();
 }
 
 function goToStep(stepIndex) {
@@ -485,6 +709,15 @@ function goToStep(stepIndex) {
   if (stepName === "ai") {
     loadAiGallery(aiGalleryState.filterKeyword);
   }
+  if (stepName === "ai-clean") {
+    if (!aiCleaningState.baseItems || !aiCleaningState.baseItems.length) {
+      loadGallery(galleryState.filterKeyword || "");
+    } else {
+      renderAiCleanFilters();
+      renderAiCleanGallery();
+      updateAiCleanSelectionHint();
+    }
+  }
 }
 
 function initNavigation() {
@@ -517,6 +750,7 @@ async function fetchStatus() {
     applySectionState("setup", data.setup);
     applySectionState("download", data.download);
     applySectionState("generation", data.image_generation);
+    applySectionState("ai_clean", data.ai_clean);
     
     // 如果正在生成图片，且当前在 AI 页面，刷新 AI 画廊
     if (data.image_generation.status === "running" && STEPS[currentStepIndex] === "ai") {
@@ -557,6 +791,7 @@ function applySectionState(section, data) {
     setup: "setup",
     download: "download",
     generation: "generation",
+    ai_clean: "aiClean",
   };
   const prefix = prefixMap[section];
   if (!prefix) return;
@@ -566,6 +801,7 @@ function applySectionState(section, data) {
   if (section === "setup") pageId = "setup";
   if (section === "download") pageId = "download";
   if (section === "generation") pageId = "ai";
+  if (section === "ai_clean") pageId = "ai-clean";
 
   if (pageId) {
       const isActive = data.status === "running";
@@ -582,10 +818,12 @@ function applySectionState(section, data) {
   if (progressEl) {
     const progress = typeof data.progress === "number" ? data.progress : 0;
     progressEl.style.width = `${progress}%`;
+    progressEl.style.transition = "width 0.4s ease"; // 确保有过渡效果
   }
   
   if (percentEl) {
-    percentEl.textContent = `${data.progress || 0}%`;
+    const percent = typeof data.progress === "number" ? data.progress : 0;
+    percentEl.textContent = `${percent}%`;
   }
   
   if (statusEl) {
@@ -710,8 +948,12 @@ function showModal(title, body, actions = [], options = {}) {
         });
         dom.modalActions.appendChild(btn);
       });
+      // 当有选择选项时,隐藏默认的"知道了"按钮
+      if (dom.modalClose) dom.modalClose.classList.add('hidden');
     } else {
       dom.modalActions.classList.add("hidden");
+      // 没有选择选项时,显示"知道了"按钮
+      if (dom.modalClose && !options.force) dom.modalClose.classList.remove('hidden');
     }
   }
   dom.modal.classList.remove("hidden");
@@ -1006,6 +1248,7 @@ async function loadGallery(keyword = "") {
     if (!response.ok) throw new Error(data.message);
     galleryState.items = data.images || [];
     renderGallery(galleryState.items);
+    refreshAiCleanBaseFromGallery();
   } catch (err) {
     console.error("load gallery failed", err);
     dom.imageGrid.textContent = getText("images.galleryEmpty");
@@ -1051,10 +1294,179 @@ function renderGallery(images) {
         card.classList.add("selected");
       }
       updateSelectionHint();
+      updateAiCleanSelectionHint();
     });
     dom.imageGrid.appendChild(card);
   });
   updateSelectionHint();
+  updateAiCleanSelectionHint();
+}
+
+function refreshAiCleanBaseFromGallery() {
+  aiCleaningState.baseItems = Array.isArray(galleryState.items) ? galleryState.items.slice() : [];
+  renderAiCleanGallery();
+}
+
+function computeAiCleanDimensionTags() {
+  const dimensionTags = {
+    main_subject: new Set(),
+    appearance: new Set(),
+    action_state: new Set(),
+    environment: new Set(),
+    visual_style: new Set(),
+  };
+
+  aiCleaningState.itemsByPath.forEach((payload) => {
+    const tags = payload?.tags || {};
+    AI_CLEAN_DIMENSIONS.forEach(({ key }) => {
+      const values = Array.isArray(tags[key]) ? tags[key] : [];
+      values.forEach((value) => {
+        if (value) dimensionTags[key].add(String(value));
+      });
+    });
+  });
+
+  aiCleaningState.dimensionTags = dimensionTags;
+}
+
+function renderAiCleanFilters() {
+  if (!dom.aiCleanFilters) return;
+  dom.aiCleanFilters.innerHTML = "";
+
+  if (!aiCleaningState.itemsByPath || aiCleaningState.itemsByPath.size === 0) {
+    const p = document.createElement("p");
+    p.className = "tool-hint";
+    p.textContent = getText("ai.cleanNoTags");
+    dom.aiCleanFilters.appendChild(p);
+    return;
+  }
+
+  AI_CLEAN_DIMENSIONS.forEach(({ key, labelKey }) => {
+    const values = Array.from(aiCleaningState.dimensionTags[key] || []);
+    if (!values.length) return;
+
+    const section = document.createElement("div");
+    section.className = "clean-filter-section";
+
+    const title = document.createElement("div");
+    title.className = "clean-filter-title";
+    title.textContent = getText(labelKey);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "clean-filter-tags";
+
+    values.forEach((tag) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "clean-tag-chip";
+      const selectedSet = aiCleaningState.selectedTags[key] || new Set();
+      const isActive = selectedSet.has(tag);
+      if (isActive) chip.classList.add("active");
+      chip.textContent = tag;
+      chip.addEventListener("click", () => {
+        const set = aiCleaningState.selectedTags[key] || new Set();
+        if (set.has(tag)) {
+          set.delete(tag);
+        } else {
+          set.add(tag);
+        }
+        aiCleaningState.selectedTags[key] = set;
+        renderAiCleanFilters();
+        renderAiCleanGallery();
+      });
+      wrapper.appendChild(chip);
+    });
+
+    section.append(title, wrapper);
+    dom.aiCleanFilters.appendChild(section);
+  });
+}
+
+function renderAiCleanGallery() {
+  if (!dom.aiCleanGrid) return;
+
+  const sourceItems = Array.isArray(aiCleaningState.baseItems)
+    ? aiCleaningState.baseItems
+    : [];
+
+  if (!sourceItems.length) {
+    dom.aiCleanGrid.textContent = getText("images.galleryEmpty");
+    return;
+  }
+
+  const hasAnyFilter = Object.values(aiCleaningState.selectedTags).some(
+    (set) => set && set.size > 0,
+  );
+
+  const filtered = sourceItems.filter((image) => {
+    if (!aiCleaningState.itemsByPath || aiCleaningState.itemsByPath.size === 0) {
+      // 尚未有标签时，直接展示全部图片瀑布流
+      return true;
+    }
+
+    const payload = aiCleaningState.itemsByPath.get(image.relative_path);
+    if (!payload || !payload.tags) return !hasAnyFilter;
+
+    const tags = payload.tags;
+
+    // 所有维度都满足当前选中的标签
+    return AI_CLEAN_DIMENSIONS.every(({ key }) => {
+      const selected = aiCleaningState.selectedTags[key];
+      if (!selected || selected.size === 0) return true;
+      const values = Array.isArray(tags[key]) ? tags[key] : [];
+      return values.some((v) => selected.has(String(v)));
+    });
+  });
+
+  dom.aiCleanGrid.innerHTML = "";
+
+  if (!filtered.length) {
+    dom.aiCleanGrid.textContent = getText("images.galleryEmpty");
+    return;
+  }
+
+  filtered.forEach((image) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "image-card";
+
+    const thumbUrl = `/api/thumbnail/source/${image.relative_path}?t=${image.modified}`;
+
+    card.innerHTML = `
+      <img src="${thumbUrl}" alt="${image.name}" loading="lazy">
+      <div class="image-meta">
+        <strong>${image.name}</strong>
+        <span>${formatBytes(image.size)}</span>
+      </div>
+    `;
+
+    if (aiCleaningState.processing.has(image.relative_path)) {
+      const overlay = document.createElement("div");
+      overlay.className = "ai-loading-overlay";
+      overlay.innerHTML = '<div class="spinner-md"></div>';
+      card.appendChild(overlay);
+    }
+
+    dom.aiCleanGrid.appendChild(card);
+  });
+}
+
+function applyCleaningResults(items) {
+  if (!Array.isArray(items)) return;
+  if (!aiCleaningState.itemsByPath) {
+    aiCleaningState.itemsByPath = new Map();
+  }
+
+  items.forEach((item) => {
+    if (!item || !item.relative_path) return;
+    aiCleaningState.itemsByPath.set(item.relative_path, {
+      tags: item.tags || {},
+    });
+  });
+
+  computeAiCleanDimensionTags();
+  renderAiCleanFilters();
+  renderAiCleanGallery();
 }
 
 async function loadAiGallery(keyword = "") {
@@ -1289,6 +1701,18 @@ function updateAiSelectionHint() {
   }
 }
 
+function updateAiCleanSelectionHint() {
+  if (!dom.aiCleanSelectionHint) return;
+  if (galleryState.selected.size > 0) {
+    dom.aiCleanSelectionHint.textContent = getText("images.selectionSelected").replace(
+      "{{count}}",
+      galleryState.selected.size
+    );
+  } else {
+    dom.aiCleanSelectionHint.textContent = getText("ai.cleanSelectionHint");
+  }
+}
+
 function clearSelection() {
   galleryState.selected.clear();
   document.querySelectorAll(".image-card").forEach((el) => el.classList.remove("selected"));
@@ -1380,18 +1804,33 @@ async function handleUploadSubmit(event, droppedFiles = null) {
 }
 
 async function handleClearAllClick() {
-  if (!window.confirm(getText("images.clearConfirm"))) return;
-  if (dom.clearAllBtn) dom.clearAllBtn.disabled = true;
-  try {
-    const res = await postJSON("/api/images/clear", {});
-    clearSelection();
-    await loadGallery(galleryState.filterKeyword);
-    showModal(getText("modal.title"), res.message || getText("images.clearSuccess"));
-  } catch (err) {
-    showModal(getText("modal.title"), err.message || getText("images.clearSuccess"));
-  } finally {
-    if (dom.clearAllBtn) dom.clearAllBtn.disabled = false;
-  }
+  const confirmActions = [
+    {
+      label: getText("images.clearAll"),
+      variant: "primary",
+      handler: async () => {
+        if (dom.clearAllBtn) dom.clearAllBtn.disabled = true;
+        hideModal();
+        try {
+          const res = await postJSON("/api/images/clear", {});
+          clearSelection();
+          await loadGallery(galleryState.filterKeyword);
+          showModal(getText("modal.title"), res.message || getText("images.clearSuccess"));
+        } catch (err) {
+          showModal(getText("modal.title"), err.message || getText("images.clearSuccess"));
+        } finally {
+          if (dom.clearAllBtn) dom.clearAllBtn.disabled = false;
+        }
+      },
+    },
+    {
+      label: getText("step.prev"),
+      variant: "secondary",
+      handler: () => hideModal(),
+    },
+  ];
+
+  showModal(getText("modal.title"), getText("images.clearConfirm"), confirmActions);
 }
 
 async function handleDeleteSelectedClick() {
@@ -1399,20 +1838,36 @@ async function handleDeleteSelectedClick() {
     showToast(getText("images.deleteEmpty"));
     return;
   }
-  if (!window.confirm(getText("images.deleteConfirm"))) return;
-  if (dom.deleteSelectedBtn) dom.deleteSelectedBtn.disabled = true;
-  try {
-    const res = await postJSON("/api/images/delete", {
-      targets: Array.from(galleryState.selected),
-    });
-    clearSelection();
-    await loadGallery(galleryState.filterKeyword);
-    showModal(getText("modal.title"), res.message || getText("images.deleteSuccess"));
-  } catch (err) {
-    showModal(getText("modal.title"), err.message || getText("images.deleteSuccess"));
-  } finally {
-    if (dom.deleteSelectedBtn) dom.deleteSelectedBtn.disabled = false;
-  }
+
+  const confirmActions = [
+    {
+      label: getText("images.deleteSelected"),
+      variant: "primary",
+      handler: async () => {
+        if (dom.deleteSelectedBtn) dom.deleteSelectedBtn.disabled = true;
+        hideModal();
+        try {
+          const res = await postJSON("/api/images/delete", {
+            targets: Array.from(galleryState.selected),
+          });
+          clearSelection();
+          await loadGallery(galleryState.filterKeyword);
+          showModal(getText("modal.title"), res.message || getText("images.deleteSuccess"));
+        } catch (err) {
+          showModal(getText("modal.title"), err.message || getText("images.deleteSuccess"));
+        } finally {
+          if (dom.deleteSelectedBtn) dom.deleteSelectedBtn.disabled = false;
+        }
+      },
+    },
+    {
+      label: getText("step.prev"),
+      variant: "secondary",
+      handler: () => hideModal(),
+    },
+  ];
+
+  showModal(getText("modal.title"), getText("images.deleteConfirm"), confirmActions);
 }
 
 async function handleOrganizeSubmit(event) {
@@ -1436,6 +1891,189 @@ async function handleOrganizeSubmit(event) {
     showModal(getText("modal.title"), err.message);
   } finally {
     if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+function getAiPlatformConfig() {
+  const provider = dom.aiProviderSelect?.value || "gemini";
+  let model = "";
+  
+  // 判断当前是select还是input
+  if (dom.aiModelPresetSelect) {
+    if (dom.aiModelPresetSelect.tagName === "INPUT") {
+      // 自定义模型输入框
+      model = dom.aiModelPresetSelect.value.trim();
+    } else {
+      // 预设模型下拉框
+      const selectedValue = dom.aiModelPresetSelect.value;
+      if (selectedValue && selectedValue !== "custom") {
+        model = selectedValue;
+      }
+    }
+  }
+  
+  const apiKey = dom.aiApiKeyInput?.value.trim() || "";
+  const baseUrl = dom.aiBaseUrlInput?.value.trim() || "";
+  return { provider, model, apiKey, baseUrl };
+}
+
+function validateAiPlatformConfig(config) {
+  if (!config.model) {
+    return getText("ai.platformErrorModelMissing");
+  }
+  if (!config.apiKey) {
+    return getText("ai.platformErrorApiKeyMissing");
+  }
+  if (config.provider === "custom" && !config.baseUrl) {
+    return getText("ai.platformErrorBaseUrlMissing");
+  }
+  return null;
+}
+
+function syncModelPresetWithProvider() {
+  if (!dom.aiProviderSelect || !dom.aiModelPresetSelect || !aiProviderConfig) return;
+  const providerId = dom.aiProviderSelect.value;
+  const providers = aiProviderConfig.providers || [];
+  const providerCfg = providers.find((p) => p.id === providerId) || providers[0];
+  const select = dom.aiModelPresetSelect;
+  const prevModel = select.value;
+  select.innerHTML = "";
+
+  if (providerCfg && Array.isArray(providerCfg.models)) {
+    providerCfg.models.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.model;
+      opt.textContent = getLocalizedLabelFromConfig(m);
+      select.appendChild(opt);
+    });
+  }
+
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
+  customOpt.textContent = getText("ai.platformCustomModel");
+  select.appendChild(customOpt);
+
+  // 如果之前有选择过,且仍然存在,则保留;否则使用默认模型
+  if (prevModel && Array.from(select.options).some(opt => opt.value === prevModel)) {
+    select.value = prevModel;
+  } else if (providerCfg && providerCfg.default_model) {
+    select.value = providerCfg.default_model;
+  }
+
+  handleAiModelPresetVisibility();
+}
+
+function handleAiModelPresetVisibility() {
+  if (!dom.aiModelPresetSelect) return;
+  const isCustom = dom.aiModelPresetSelect.value === "custom";
+  
+  // 当选择自定义模型时,将select变为input
+  if (isCustom) {
+    const input = document.createElement("input");
+    input.id = "aiModelPresetSelect";
+    input.type = "text";
+    input.placeholder = getText("ai.platformCustomModelPlaceholder");
+    input.className = dom.aiModelPresetSelect.className;
+    
+    // 保存之前可能输入的自定义值
+    const prevValue = dom.aiModelPresetSelect.dataset.customValue || "";
+    input.value = prevValue;
+    
+    // 添加输入事件保存自定义值
+    input.addEventListener("input", (e) => {
+      input.dataset.customValue = e.target.value;
+    });
+    
+    // 替换select为input
+    dom.aiModelPresetSelect.parentNode.replaceChild(input, dom.aiModelPresetSelect);
+    dom.aiModelPresetSelect = input;
+  } else {
+    // 如果当前是input,恢复为select
+    if (dom.aiModelPresetSelect.tagName === "INPUT") {
+      const select = document.createElement("select");
+      select.id = "aiModelPresetSelect";
+      select.className = dom.aiModelPresetSelect.className;
+      
+      // 保存自定义值以便后续使用
+      const customValue = dom.aiModelPresetSelect.value;
+      select.dataset.customValue = customValue;
+      
+      dom.aiModelPresetSelect.parentNode.replaceChild(select, dom.aiModelPresetSelect);
+      dom.aiModelPresetSelect = select;
+      
+      // 重新同步选项
+      syncModelPresetWithProvider();
+    }
+  }
+}
+
+async function handleAiConfigTestClick() {
+  if (!dom.aiTestConfigBtn) return;
+  const config = getAiPlatformConfig();
+  const errorMsg = validateAiPlatformConfig(config);
+  if (errorMsg) {
+    showModal(getText("modal.title"), errorMsg);
+    return;
+  }
+  dom.aiTestConfigBtn.disabled = true;
+  try {
+    const res = await postJSON("/api/ai/config/test", {
+      provider: config.provider,
+      model: config.model,
+      api_key: config.apiKey,
+      base_url: config.baseUrl,
+    });
+    showModal(getText("modal.title"), res.message || getText("ai.platformTestOk"));
+  } catch (err) {
+    showModal(getText("modal.title"), err.message || getText("ai.platformTestFail"));
+  } finally {
+    dom.aiTestConfigBtn.disabled = false;
+  }
+}
+
+async function handleAiCleanSubmit(event) {
+  event.preventDefault();
+  if (!dom.aiCleanRunBtn) return;
+  const config = getAiPlatformConfig();
+  const errorMsg = validateAiPlatformConfig(config);
+  if (errorMsg) {
+    showModal(getText("modal.title"), errorMsg);
+    return;
+  }
+
+  const targets = Array.from(galleryState.selected);
+  const promptValue = dom.aiCleanPromptInput?.value.trim() || DEFAULT_AI_CLEAN_PROMPT;
+  const payload = {
+    prompt: promptValue,
+    provider: config.provider,
+    model: config.model,
+    api_key: config.apiKey,
+    base_url: config.baseUrl,
+    targets,
+  };
+
+  dom.aiCleanRunBtn.disabled = true;
+
+  const baseItems = Array.isArray(aiCleaningState.baseItems) && aiCleaningState.baseItems.length
+    ? aiCleaningState.baseItems
+    : Array.isArray(galleryState.items)
+    ? galleryState.items
+    : [];
+  aiCleaningState.processing = new Set(
+    payload.targets.length ? payload.targets : baseItems.map((i) => i.relative_path),
+  );
+  renderAiCleanGallery();
+
+  try {
+    const res = await postJSON("/api/ai/clean", payload);
+    applyCleaningResults(res.items || []);
+    showModal(getText("modal.title"), res.message || getText("ai.cleanResultTitle"));
+  } catch (err) {
+    showModal(getText("modal.title"), err.message || getText("ai.platformTestFail"));
+  } finally {
+    dom.aiCleanRunBtn.disabled = false;
+    aiCleaningState.processing = new Set();
+    renderAiCleanGallery();
   }
 }
 
@@ -1566,6 +2204,7 @@ function initActions() {
   bindCopy(dom.copySetupLog, dom.setupLog);
   bindCopy(dom.copyDownloadLog, dom.downloadLog);
   bindCopy(dom.copyGenerationLog, dom.generationLog);
+  bindCopy(dom.copyAiCleanLog, dom.aiCleanLog);
 
   dom.themeToggle?.addEventListener("click", toggleTheme);
   dom.langToggle?.addEventListener("click", toggleLanguage);
@@ -1621,6 +2260,42 @@ function initActions() {
   dom.clearAllBtn?.addEventListener("click", handleClearAllClick);
   dom.deleteSelectedBtn?.addEventListener("click", handleDeleteSelectedClick);
   dom.renameForm?.addEventListener("submit", handleOrganizeSubmit);
+
+  if (dom.aiProviderSelect) {
+    dom.aiProviderSelect.addEventListener("change", () => {
+      syncModelPresetWithProvider();
+    });
+  }
+  if (dom.aiModelPresetSelect) {
+    dom.aiModelPresetSelect.addEventListener("change", () => {
+      handleAiModelPresetVisibility();
+    });
+  }
+  // 初始化预设模型与自定义模型输入框显隐由配置加载完成后处理
+  if (dom.aiTestConfigBtn) {
+    dom.aiTestConfigBtn.addEventListener("click", handleAiConfigTestClick);
+  }
+  if (dom.aiCleanForm) {
+    dom.aiCleanForm.addEventListener("submit", handleAiCleanSubmit);
+  }
+  if (dom.aiCleanResetBtn) {
+    dom.aiCleanResetBtn.addEventListener("click", () => {
+      aiCleaningState.selectedTags = {
+        main_subject: new Set(),
+        appearance: new Set(),
+        action_state: new Set(),
+        environment: new Set(),
+        visual_style: new Set(),
+      };
+      computeAiCleanDimensionTags();
+      renderAiCleanFilters();
+      renderAiCleanGallery();
+    });
+  }
+  if (dom.aiCleanPromptInput && !dom.aiCleanPromptInput.value) {
+    dom.aiCleanPromptInput.value = DEFAULT_AI_CLEAN_PROMPT;
+  }
+
   dom.applyFilterBtn?.addEventListener("click", () => {
     loadGallery(dom.galleryFilter?.value.trim() || "");
   });
@@ -1695,6 +2370,7 @@ function bootstrapPreferences() {
 
 document.addEventListener("DOMContentLoaded", () => {
   bootstrapPreferences();
+  loadAiProviderConfig();
   initNavigation();
   initActions();
   startPolling();

@@ -28,7 +28,7 @@
                 <div class="step-progress-bar">
                     <div class="step-progress-fill" id="progressFill"></div>
                 </div>
-                <p class="step-progress-text" id="progressText">第 1 / 6 步</p>
+                <p class="step-progress-text" id="progressText">第 1 / 7 步</p>
             </div>
             
             <!-- 步骤列表 -->
@@ -58,8 +58,13 @@
                     <span class="step-label" data-i18n="nav.ai">AI 处理</span>
                     <span class="step-check">✓</span>
                 </button>
-                <button class="step-nav-item" data-step="console" data-step-num="6">
+                <button class="step-nav-item" data-step="ai-clean" data-step-num="6">
                     <span class="step-badge">6</span>
+                    <span class="step-label" data-i18n="nav.aiClean">AI 图片清洗</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="console" data-step-num="7">
+                    <span class="step-badge">7</span>
                     <span class="step-label" data-i18n="nav.console">控制台</span>
                     <span class="step-check">✓</span>
                 </button>
@@ -107,7 +112,7 @@
             <!-- 第1步：概览 -->
             <div class="wizard-page active" data-page="overview">
                 <div class="page-header">
-                    <span class="page-badge">步骤 1 / 6</span>
+                    <span class="page-badge">步骤 1 / 7</span>
                     <h1 class="page-title" data-i18n="overview.title">一站式部署 & 下载文档</h1>
                     <p class="page-subtitle" data-i18n="overview.lead">
                         先阅读每个章节的说明，再依次触发命令。系统将自动记录所有日志与进度。
@@ -159,7 +164,7 @@
             <!-- 第2步：环境初始化 -->
             <div class="wizard-page" data-page="environment">
                 <div class="page-header">
-                    <span class="page-badge">步骤 2 / 6</span>
+                    <span class="page-badge">步骤 2 / 7</span>
                     <h1 class="page-title" data-i18n="environment.title">环境初始化向导</h1>
                     <p class="page-subtitle" data-i18n="environment.desc">
                         自动执行依赖安装脚本。Linux 将串行安装所有依赖，Windows 会调用 Easy Install 脚本。
@@ -248,7 +253,7 @@
             <!-- 第3步：模型下载 -->
             <div class="wizard-page" data-page="download">
                 <div class="page-header">
-                    <span class="page-badge">步骤 3 / 6</span>
+                    <span class="page-badge">步骤 3 / 7</span>
                     <h1 class="page-title" data-i18n="download.title">模型选择与下载渠道</h1>
                     <p class="page-subtitle" data-i18n="download.desc">
                         根据用途选择模型，并在两个下载渠道之间切换。系统会自动创建存储目录。
@@ -327,7 +332,7 @@
             <!-- 第4步：图像处理 -->
             <div class="wizard-page" data-page="images">
                 <div class="page-header">
-                    <span class="page-badge">步骤 4 / 6</span>
+                    <span class="page-badge">步骤 4 / 7</span>
                     <h1 class="page-title" data-i18n="images.title">图像处理 · 管理</h1>
                     <p class="page-subtitle" data-i18n="images.desc">
                         上传单图 / 文件夹 / 压缩包，快速整理命名。
@@ -421,7 +426,7 @@
             <!-- 第5步：AI 处理 -->
             <div class="wizard-page" data-page="ai">
                 <div class="page-header">
-                    <span class="page-badge">步骤 5 / 6</span>
+                    <span class="page-badge">步骤 5 / 7</span>
                     <h1 class="page-title" data-i18n="ai.title">AI 批量处理</h1>
                     <p class="page-subtitle" data-i18n="ai.desc">
                         使用 Gemini 批量生成 AI 图像，打标并导出。
@@ -484,8 +489,9 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- AI 瀑布流 -->
+
+
+                    <!-- AI 生成瀑布流 -->
                     <div class="gallery-section">
                         <div class="gallery-header">
                             <h3 data-i18n="ai.galleryTitle">AI 生成预览</h3>
@@ -496,6 +502,7 @@
                         </div>
                         <div id="aiGrid" class="ai-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
                     </div>
+
                 </div>
                 
                 <div class="page-footer">
@@ -510,10 +517,85 @@
                 </div>
             </div>
 
-            <!-- 第6步：控制台 -->
+            <!-- 第6步：AI 图片清洗 -->
+            <div class="wizard-page" data-page="ai-clean">
+                <div class="page-header">
+                    <span class="page-badge">步骤 6 / 7</span>
+                    <h1 class="page-title" data-i18n="ai.cleanTitle">AI 图片清洗</h1>
+                    <p class="page-subtitle" data-i18n="ai.cleanPromptHint">
+                        提示词默认模版，可根据需要修改，然后调用大模型为图片生成结构化标签。
+                    </p>
+                    <!-- Gamified Progress Bar -->
+                    <div id="gamifiedProgress_ai-clean" class="gamified-progress hidden">
+                        <div id="gamifiedTrack_ai-clean" class="gamified-track"></div>
+                        <div id="gamifiedThumb_ai-clean" class="gamified-thumb">
+                            <img src="{{ url_for('static', filename='images/minecraft-grass-block.gif') }}" alt="Progress">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page-body page-body-scroll">
+                    <div class="tools-grid">
+                        <!-- AI 平台配置 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="ai.platformTitle">⚙️ AI 平台配置</h3>
+                            <form id="aiConfigForm" class="tool-form">
+                                <label class="form-label" data-i18n="ai.platformProvider">平台</label>
+                                <select id="aiProviderSelect"></select>
+
+                                <label class="form-label" data-i18n="ai.platformModelPreset">模型预设</label>
+                                <select id="aiModelPresetSelect"></select>
+
+                                <input id="aiApiKeyInput" type="password" placeholder="API Key" data-i18n-placeholder="ai.platformApiKey">
+                                <input id="aiBaseUrlInput" type="text" placeholder="Base URL（选填，自定义/代理时使用）" data-i18n-placeholder="ai.platformBaseUrl">
+
+                                <div class="tool-actions">
+                                    <button id="aiTestConfigBtn" type="button" class="btn-tool secondary" data-i18n="ai.platformTestBtn">测试连接</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- AI 图片清洗 -->
+                        <div class="tool-panel">
+                            <h3 data-i18n="ai.cleanTitle">🧹 AI 图片清洗</h3>
+                            <form id="aiCleanForm" class="tool-form">
+                                <textarea id="aiCleanPromptInput" rows="12" placeholder="输入提示词..." data-i18n-placeholder="ai.cleanPromptPlaceholder"></textarea>
+                                <p class="tool-hint" data-i18n="ai.cleanPromptHint">提示词默认模版，可根据需要修改。</p>
+                                <p class="tool-hint" id="aiCleanSelectionHint" data-i18n="ai.cleanSelectionHint">未选择图片时默认处理全部</p>
+                                <div class="tool-actions">
+                                    <button id="aiCleanRunBtn" type="submit" class="btn-tool primary" data-i18n="ai.cleanRunBtn">开始清洗</button>
+                                    <button id="aiCleanResetBtn" type="button" class="btn-tool" data-i18n="ai.cleanResetBtn">重置筛选</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- AI 图片清洗结果瀑布流 -->
+                    <div class="gallery-section">
+                        <div class="gallery-header">
+                            <h3 data-i18n="ai.cleanResultTitle">AI 图片清洗结果</h3>
+                        </div>
+                        <div id="aiCleanFilters" class="clean-filter-panel"></div>
+                        <div id="aiCleanGrid" class="image-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <button class="btn-nav btn-prev" data-prev="ai">
+                        <span>←</span>
+                        <span data-i18n="step.prev">上一步</span>
+                    </button>
+                    <button class="btn-nav btn-next" data-next="console">
+                        <span data-i18n="step.next">下一步</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第7步：控制台 -->
             <div class="wizard-page" data-page="console">
                 <div class="page-header">
-                    <span class="page-badge">步骤 6 / 6</span>
+                    <span class="page-badge">步骤 7 / 7</span>
                     <h1 class="page-title" data-i18n="nav.console">控制台监控</h1>
                     <p class="page-subtitle">
                         在此汇总查看安装、下载与 AI 生成日志，可随时复制文本或重试任务。
@@ -571,6 +653,23 @@
                             </div>
                             <p id="generationMessage" class="console-message">尚未开始</p>
                             <pre id="generationLog" class="console-log">等待任务...</pre>
+                        </div>
+                        
+                        <!-- AI 图片清洗日志 -->
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h3 data-i18n="ai.cleanTitle">AI 图片清洗日志</h3>
+                                <button id="copyAiCleanLog" class="btn-copy" data-i18n="console.copy">复制</button>
+                            </div>
+                            <div class="console-status">
+                                <span id="aiCleanStatus">状态：待命</span>
+                                <span id="aiCleanPercent">0%</span>
+                            </div>
+                            <div class="console-progress">
+                                <div id="aiCleanProgress" class="progress-fill"></div>
+                            </div>
+                            <p id="aiCleanMessage" class="console-message">尚未开始</p>
+                            <pre id="aiCleanLog" class="console-log">等待任务...</pre>
                         </div>
                     </div>
                 </div>

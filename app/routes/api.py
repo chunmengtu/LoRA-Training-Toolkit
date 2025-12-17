@@ -18,7 +18,8 @@ from ..services import (
     run_network_accelerator, gather_media_items, asset_counts,
     extract_zip_file, save_file_storage, generate_images_worker,
     organize_images, delete_images_and_associations, clear_all_images,
-    tag_images, create_export_zip, create_ai_export_zip, get_ai_pairs
+    tag_images, create_export_zip, create_ai_export_zip, get_ai_pairs,
+    run_image_cleaning, test_ai_platform_connection,
 )
 
 bp = Blueprint("api", __name__, url_prefix="/api")
@@ -112,6 +113,22 @@ def api_ai_list():
         "pairs": pairs,
         "counts": asset_counts()
     })
+
+
+@bp.route("/ai/config/test", methods=["POST"])
+def api_ai_config_test():
+    data = request.get_json(force=True) or {}
+    provider = (data.get("provider") or "").strip()
+    model = (data.get("model") or "").strip()
+    api_key = (data.get("api_key") or "").strip()
+    base_url = (data.get("base_url") or "").strip() or None
+
+    if not model or not api_key:
+        return jsonify({"ok": False, "message": "请填写模型名称与 API Key"}), 400
+
+    ok, message = test_ai_platform_connection(provider, model, api_key, base_url)
+    status_code = 200 if ok else 400
+    return jsonify({"ok": ok, "message": message}), status_code
 
 @bp.route("/images/upload", methods=["POST"])
 def api_images_upload():
@@ -330,4 +347,46 @@ def api_images_generate():
         daemon=True,
     ).start()
     return jsonify({"ok": True, "message": "生成任务已启动，请在右侧控制台查看进度"})
+
+
+@bp.route("/ai/clean", methods=["POST"])
+def api_ai_clean():
+    data = request.get_json(force=True) or {}
+    prompt = (data.get("prompt") or "").strip()
+    provider = (data.get("provider") or "").strip()
+    model = (data.get("model") or "").strip()
+    api_key = (data.get("api_key") or "").strip()
+    base_url = (data.get("base_url") or "").strip() or None
+    targets = data.get("targets") or []
+    bucket = "source"
+
+    if not model or not api_key:
+        return jsonify({"ok": False, "message": "请先在 AI 平台配置中填写模型名称与 API Key"}), 400
+
+    filenames = []
+    if targets:
+        for relative in targets:
+            normalized = normalize_relative_path(relative)
+            try:
+                path = safe_bucket_path(bucket, normalized)
+            except ValueError:
+                continue
+            if path.exists() and allowed_image(path.name):
+                filenames.append(normalized)
+    else:
+        filenames = [item["relative_path"] for item in gather_media_items(bucket)]
+
+    if not filenames:
+        return jsonify({"ok": False, "message": "未找到可清洗的图片，请先上传"}), 400
+
+    try:
+        items = run_image_cleaning(filenames, provider, model, api_key, base_url, prompt)
+    except Exception as exc:
+        return jsonify({"ok": False, "message": str(exc)}), 500
+
+    return jsonify({
+        "ok": True,
+        "message": f"已为 {len(items)} 张图片生成标签",
+        "items": items,
+    })
 

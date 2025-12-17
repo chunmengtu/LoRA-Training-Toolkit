@@ -19,4 +19,4 @@ from .tasks import (
     run_start_command,
     run_network_accelerator
 )
-from .ai import generate_images_worker
+from .ai import generate_images_worker, run_image_cleaning, test_ai_platform_connection

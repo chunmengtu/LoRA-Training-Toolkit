@@ -972,6 +972,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     background: var(--panel-alt);
+    position: relative;
 }
 
 .image-card:hover {
@@ -985,8 +986,9 @@ body {
 
 .image-card img {
     width: 100%;
-    height: 140px;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    display: block;
 }
 
 .image-meta {
@@ -1160,6 +1162,11 @@ body {
 }
 
 .modal.modal-force #modalClose {
+    display: none;
+}
+
+/* 当有modal-actions时隐藏默认关闭按钮 */
+.modal-actions:not(.hidden) ~ #modalClose {
     display: none;
 }
 
@@ -1465,4 +1472,51 @@ body {
     width: auto;
     object-fit: contain;
     image-rendering: pixelated;
+}
+
+/* AI 图片清洗标签筛选 */
+.clean-filter-panel {
+    margin: 12px 0;
+    padding: 8px 0 4px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.clean-filter-section {
+    margin-bottom: 8px;
+}
+
+.clean-filter-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.clean-filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.clean-tag-chip {
+    border: 1px solid var(--border);
+    background: var(--panel-alt);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clean-tag-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.clean-tag-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
 }

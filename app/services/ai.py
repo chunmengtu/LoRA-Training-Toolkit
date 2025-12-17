@@ -1,5 +1,7 @@
 import time
-from typing import List, Tuple
+from typing import List, Tuple, Dict
+import base64
+import json
 from ..config import GEMINI_MODEL_NAME
 from ..state import append_log, update_state
 from ..utils import get_timestamp, safe_bucket_path
@@ -149,3 +151,179 @@ def generate_images_worker(
 
     update_state("image_generation", status="success", message="全部图片生成完成", progress=100)
 
+
+def _ensure_litellm():
+    try:
+        from litellm import completion
+    except Exception as exc:
+        raise RuntimeError(
+            "无法导入 litellm，请先安装依赖：pip install litellm"
+        ) from exc
+    return completion
+
+
+def _strip_code_fences(content: str) -> str:
+    text = content.strip()
+    if text.startswith("```"):
+        lines = text.splitlines()
+        if lines and lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip().startswith("```"):
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return text
+
+
+def _normalize_provider(provider: str | None) -> str:
+    value = (provider or "").strip().lower()
+    if not value or value == "custom":
+        return ""
+    return value
+
+
+def _resolve_model_name(provider: str | None, model: str) -> str:
+    base_model = (model or "").strip()
+    provider_id = _normalize_provider(provider)
+    # 已经是 provider/model 形式，或未指定 provider/custom，自定义保持原样
+    if "/" in base_model or not provider_id:
+        return base_model
+    # OpenAI / Anthropic 在 litellm 中通常直接使用裸模型名（例如 gpt-4o、claude-3-5-sonnet-20241022）
+    if provider_id in {"openai", "anthropic"}:
+        return base_model
+    # 其他厂商按 provider/model 规则补全前缀
+    return f"{provider_id}/{base_model}"
+
+
+def test_ai_platform_connection(provider: str, model: str, api_key: str, base_url: str | None = None) -> Tuple[bool, str]:
+    completion = _ensure_litellm()
+
+    if not model or not api_key:
+        return False, "模型名称或 API Key 不能为空"
+
+    messages = [
+        {"role": "system", "content": "你是一个连通性测试助手，请仅回复“OK”。"},
+        {"role": "user", "content": "请仅回复 OK"},
+    ]
+
+    resolved_model = _resolve_model_name(provider, model)
+    kwargs = {"model": resolved_model, "messages": messages, "api_key": api_key}
+    if base_url:
+        kwargs["base_url"] = base_url
+
+    try:
+        completion(**kwargs)
+    except Exception as exc:
+        return False, f"连接测试失败：{exc}"
+
+    return True, "连接测试成功"
+
+
+def run_image_cleaning(
+    filenames: List[str],
+    provider: str,
+    model: str,
+    api_key: str,
+    base_url: str | None,
+    prompt: str,
+    bucket: str = "source",
+) -> List[Dict]:
+    """调用大模型为多张图片生成结构化标签。"""
+    completion = _ensure_litellm()
+
+    if not prompt.strip():
+        raise ValueError("提示词不能为空")
+
+    resolved_model = _resolve_model_name(provider, model)
+
+    results: List[Dict] = []
+
+    for relative in filenames:
+        try:
+            source_path = safe_bucket_path(bucket, relative)
+        except ValueError:
+            continue
+        if not source_path.exists():
+            continue
+
+        suffix = source_path.suffix.lower()
+        mime = "image/png"
+        if suffix in {".jpg", ".jpeg"}:
+            mime = "image/jpeg"
+        elif suffix == ".webp":
+            mime = "image/webp"
+        elif suffix == ".bmp":
+            mime = "image/bmp"
+
+        raw = source_path.read_bytes()
+        b64 = base64.b64encode(raw).decode("ascii")
+        data_url = f"data:{mime};base64,{b64}"
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": data_url}},
+                ],
+            }
+        ]
+
+        kwargs = {"model": resolved_model, "messages": messages, "api_key": api_key}
+        if base_url:
+            kwargs["base_url"] = base_url
+
+        try:
+            response = completion(**kwargs)
+        except Exception as exc:
+            raise RuntimeError(f"调用大模型失败（{relative}）：{exc}") from exc
+
+        content = None
+        if isinstance(response, dict):
+            choices = response.get("choices") or []
+            if choices:
+                content = choices[0].get("message", {}).get("content", "")
+        else:
+            choices = getattr(response, "choices", None)
+            if choices:
+                message = choices[0].message
+                if isinstance(message, dict):
+                    content = message.get("content", "")
+                else:
+                    content = getattr(message, "content", "")
+
+        if isinstance(content, list):
+            text_parts = []
+            for part in content:
+                if isinstance(part, dict) and part.get("type") == "text":
+                    text_parts.append(part.get("text", ""))
+            content_text = "\n".join(text_parts).strip()
+        else:
+            content_text = str(content or "").strip()
+
+        if not content_text:
+            raise RuntimeError(f"模型未返回有效内容（{relative}）")
+
+        try:
+            parsed = json.loads(_strip_code_fences(content_text))
+        except Exception as exc:
+            raise RuntimeError(f"解析模型返回 JSON 失败（{relative}）：{exc}") from exc
+
+        tags: Dict[str, List[str]] = {}
+        for key in [
+            "main_subject",
+            "appearance",
+            "action_state",
+            "environment",
+            "visual_style",
+        ]:
+            value = parsed.get(key, [])
+            if isinstance(value, list):
+                tags[key] = [str(v) for v in value]
+            elif value:
+                tags[key] = [str(value)]
+            else:
+                tags[key] = []
+
+        results.append({"relative_path": relative, "tags": tags})
+
+    return results
