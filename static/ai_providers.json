@@ -1,0 +1,122 @@
+{
+  "providers": [
+    {
+      "id": "openai",
+      "label_zh": "OpenAI",
+      "label_en": "OpenAI",
+      "default_model": "gpt-4o",
+      "models": [
+        { "model": "gpt-5.2-pro", "label_zh": "GPT-5.2 Pro", "label_en": "GPT-5.2 Pro" },
+        { "model": "gpt-5.2", "label_zh": "GPT-5.2", "label_en": "GPT-5.2" },
+        { "model": "gpt-5-mini", "label_zh": "GPT-5 Mini", "label_en": "GPT-5 Mini" },
+        { "model": "gpt-5-nano", "label_zh": "GPT-5 Nano", "label_en": "GPT-5 Nano" },
+        { "model": "gpt-4o", "label_zh": "GPT-4o", "label_en": "GPT-4o" },
+        { "model": "gpt-4o-mini", "label_zh": "GPT-4o Mini", "label_en": "GPT-4o Mini" }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "label_zh": "Anthropic",
+      "label_en": "Anthropic",
+      "default_model": "claude-sonnet-4-5",
+      "models": [
+        { "model": "claude-sonnet-4-5", "label_zh": "Claude Sonnet 4.5", "label_en": "Claude Sonnet 4.5" },
+        { "model": "claude-haiku-4-5", "label_zh": "Claude Haiku 4.5", "label_en": "Claude Haiku 4.5" },
+        { "model": "claude-opus-4-5", "label_zh": "Claude Opus 4.5", "label_en": "Claude Opus 4.5" }
+      ]
+    },
+    {
+      "id": "gemini",
+      "label_zh": "Gemini",
+      "label_en": "Gemini",
+      "default_model": "gemini/gemini-2.5-flash",
+      "models": [
+        { "model": "gemini/gemini-3-pro-preview", "label_zh": "Gemini 3.0 Pro Preview", "label_en": "Gemini 3.0 Pro Preview" },
+        { "model": "gemini/gemini-2.5-pro", "label_zh": "Gemini 2.5 Pro", "label_en": "Gemini 2.5 Pro" },
+        { "model": "gemini/gemini-2.5-flash", "label_zh": "Gemini 2.5 Flash", "label_en": "Gemini 2.5 Flash" },
+        { "model": "gemini/gemini-2.5-flash-lite", "label_zh": "Gemini 2.5 Flash Lite", "label_en": "Gemini 2.5 Flash Lite" }
+      ]
+    },
+    {
+      "id": "dashscope",
+      "label_zh": "通义千问",
+      "label_en": "Qwen",
+      "default_model": "dashscope/qwen3-vl-flash",
+      "models": [
+        { "model": "dashscope/qwen3-vl-plus", "label_zh": "Qwen3 VL Plus", "label_en": "Qwen3 VL Plus" },
+        { "model": "dashscope/qwen3-vl-flash", "label_zh": "Qwen3 VL Flash", "label_en": "Qwen3 VL Flash" }
+      ]
+    },
+    {
+      "id": "deepseek",
+      "label_zh": "DeepSeek",
+      "label_en": "DeepSeek",
+      "default_model": "deepseek/deepseek-chat",
+      "models": [
+        { "model": "deepseek/deepseek-reasoner", "label_zh": "DeepSeek Reasoner", "label_en": "DeepSeek Reasoner" },
+        { "model": "deepseek/deepseek-chat", "label_zh": "DeepSeek Chat", "label_en": "DeepSeek Chat" }
+      ]
+    },
+    {
+      "id": "zhipu",
+      "label_zh": "智谱",
+      "label_en": "GLM",
+      "default_model": "zai/glm-4.6v-flash",
+      "models": [
+        { "model": "zai/glm-4.6v-flash", "label_zh": "GLM-4.6v Flash", "label_en": "GLM-4.6v Flash" },
+        { "model": "zai/glm-4.6v", "label_zh": "GLM-4.6v", "label_en": "GLM-4.6v" }
+      ]
+    },
+    {
+      "id": "moonshot",
+      "label_zh": "月之暗面",
+      "label_en": "Kimi",
+      "default_model": "moonshot/kimi-k2-turbo-preview",
+      "models": [
+        { "model": "moonshot/kimi-k2-turbo-preview", "label_zh": "Kimi k2 Turbo Preview", "label_en": "Kimi k2 Turbo Preview" },
+        { "model": "moonshot/kimi-k2-thinking", "label_zh": "Kimi k2 Thinking", "label_en": "Kimi k2 Thinking" },
+        { "model": "moonshot/kimi-k2-thinking-turbo", "label_zh": "Kimi k2 Thinking Turbo", "label_en": "Kimi k2 Thinking Turbo" }
+      ]
+    },
+    {
+      "id": "yi",
+      "label_zh": "零一万物",
+      "label_en": "Yi",
+      "default_model": "yi/yi-vision-v2",
+      "models": [
+        { "model": "yi/yi-vision-v2", "label_zh": "Yi Vision v2", "label_en": "Yi Vision v2" }
+      ]
+    },
+    {
+      "id": "volcengine",
+      "label_zh": "火山引擎",
+      "label_en": "Doubao",
+      "default_model": "volcengine/doubao-seed-1.6-vision",
+      "models": [
+        { "model": "volcengine/doubao-seed-1.6-thinking", "label_zh": "Doubao Seed 1.6 Thinking", "label_en": "Doubao Seed 1.6 Thinking" },
+        { "model": "volcengine/doubao-seed-1.6", "label_zh": "Doubao Seed 1.6", "label_en": "Doubao Seed 1.6" },
+        { "model": "volcengine/doubao-seed-1.6-vision", "label_zh": "Doubao Seed 1.6 Vision", "label_en": "Doubao Seed 1.6 Vision" },
+        { "model": "volcengine/doubao-seed-1.6-lite", "label_zh": "Doubao Seed 1.6 Lite", "label_en": "Doubao Seed 1.6 Lite" },
+        { "model": "volcengine/doubao-seed-1.6-flash", "label_zh": "Doubao Seed 1.6 Flash", "label_en": "Doubao Seed 1.6 Flash" }
+      ]
+    },
+    {
+      "id": "ollama",
+      "label_zh": "Ollama 本地模型",
+      "label_en": "Ollama",
+      "default_model": "ollama/llava:7b",
+      "models": [
+        { "model": "ollama/llava:7b", "label_zh": "LLaVA 7b", "label_en": "LLaVA 7b" },
+        { "model": "ollama/devstral-small-2:24b", "label_zh": "Devstral Small 2 24b", "label_en": "Devstral Small 2 24b" },
+        { "model": "ollama/ministral-3:8b", "label_zh": "Ministral 3 8b", "label_en": "Ministral 3 8b" },
+        { "model": "ollama/qwen3-vl:8b", "label_zh": "Qwen3 VL 8b", "label_en": "Qwen3 VL 8b" }
+      ]
+    },
+    {
+      "id": "custom",
+      "label_zh": "自定义平台",
+      "label_en": "Custom Provider",
+      "models": []
+    }
+  ]
+}
