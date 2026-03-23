@@ -1,8 +1,21 @@
 from pathlib import Path
 from PIL import Image
-from flask import Blueprint, render_template, send_from_directory, current_app
+from flask import Blueprint, render_template, send_from_directory
 from ..config import (
-    BASE_MODEL_DIR, SYSTEM_NAME, IS_LINUX, THUMBNAIL_DIR
+    BASE_MODEL_DIR,
+    IS_LINUX,
+    RUNNINGHUB_DEFAULT_ASPECT_RATIO,
+    RUNNINGHUB_IMAGE_EDIT_URL,
+    RUNNINGHUB_QUERY_URL,
+    RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_DATA,
+    RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_NAME,
+    RUNNINGHUB_WORKFLOW_ASPECT_RATIO_NODE_ID,
+    RUNNINGHUB_WORKFLOW_IMAGE_FIELD_NAME,
+    RUNNINGHUB_WORKFLOW_IMAGE_NODE_ID,
+    RUNNINGHUB_WORKFLOW_PROMPT_FIELD_NAME,
+    RUNNINGHUB_WORKFLOW_PROMPT_NODE_ID,
+    SYSTEM_NAME,
+    THUMBNAIL_DIR,
 )
 from ..utils import safe_bucket_path, allowed_image
 
@@ -15,6 +28,16 @@ def index():
         system=SYSTEM_NAME,
         is_linux=IS_LINUX,
         base_dir=BASE_MODEL_DIR,
+        runninghub_image_edit_url=RUNNINGHUB_IMAGE_EDIT_URL,
+        runninghub_query_url=RUNNINGHUB_QUERY_URL,
+        runninghub_default_aspect_ratio=RUNNINGHUB_DEFAULT_ASPECT_RATIO,
+        runninghub_workflow_image_node_id=RUNNINGHUB_WORKFLOW_IMAGE_NODE_ID,
+        runninghub_workflow_image_field_name=RUNNINGHUB_WORKFLOW_IMAGE_FIELD_NAME,
+        runninghub_workflow_prompt_node_id=RUNNINGHUB_WORKFLOW_PROMPT_NODE_ID,
+        runninghub_workflow_prompt_field_name=RUNNINGHUB_WORKFLOW_PROMPT_FIELD_NAME,
+        runninghub_workflow_aspect_ratio_node_id=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_NODE_ID,
+        runninghub_workflow_aspect_ratio_field_name=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_NAME,
+        runninghub_workflow_aspect_ratio_field_data=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_DATA,
     )
 
 @bp.route("/uploads/<path:filename>")

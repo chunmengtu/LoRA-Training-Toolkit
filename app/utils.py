@@ -1,13 +1,10 @@
 import os
-import subprocess
 import uuid
 import datetime
-import platform
 import json
 import re
 from pathlib import Path
 from urllib import request as urllib_request
-from urllib.error import URLError
 from typing import Dict
 from werkzeug.utils import secure_filename
 
@@ -21,7 +18,6 @@ from .config import (
     THUMBNAIL_DIR,
     MEDIA_BUCKETS,
     SUPPORTED_IMAGE_EXTENSIONS,
-    IS_LINUX,
 )
 
 def get_timestamp() -> str:
@@ -79,51 +75,6 @@ def sanitize_relative_path(raw: str) -> Path:
         parts = [secure_filename(Path(raw or f"image_{uuid.uuid4().hex}").name)]
     sanitized = Path(*parts)
     return sanitized
-
-def windows_curl_probe(url: str) -> bool:
-    """Use curl with optional SOCKS5 proxy to verify connectivity on Windows."""
-    socks_proxy = os.environ.get("SOCKS5_PROXY")
-    command = [
-        "curl",
-        "--max-time",
-        "8",
-        "--silent",
-        "--output",
-        os.devnull,
-        "--write-out",
-        "%{http_code}",
-    ]
-    if socks_proxy:
-        command.extend(["--socks5", socks_proxy])
-    command.append(url)
-    try:
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        status_line = (result.stdout or "").strip()
-        return status_line.startswith("2") or status_line.startswith("3")
-    except FileNotFoundError:
-        return False
-
-def linux_http_probe(url: str) -> bool:
-    """Use urllib to perform a lightweight HTTPS request on Linux."""
-    try:
-        with urllib_request.urlopen(url, timeout=8) as response:
-            status = getattr(response, "status", None)
-            return bool(status and 200 <= status < 400)
-    except URLError:
-        return False
-    except Exception:
-        return False
-
-def can_access_google() -> bool:
-    probe_url = "https://www.google.com/generate_204"
-    if IS_LINUX:
-        return linux_http_probe(probe_url)
-    return windows_curl_probe(probe_url)
 
 def check_update(repo: str, current_version: str) -> Dict:
     try:

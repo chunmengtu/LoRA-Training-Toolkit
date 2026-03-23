@@ -10,7 +10,7 @@ let currentStepIndex = 0;
 const dictionary = {
   zh: {
     "brand.eyebrow": "AI Toolkit",
-    "brand.title": "Lora 训练工具箱",
+    "brand.title": "LoRA 训练工具箱",
     "nav.overview": "概览",
     "nav.environment": "环境初始化",
     "nav.download": "模型下载",
@@ -20,60 +20,68 @@ const dictionary = {
     "nav.console": "控制台",
     "nav.system": "系统",
     "nav.linux": "状态",
-    "overview.title": "一站式部署 & 下载文档",
-    "overview.lead": "先阅读每个章节的说明，再依次触发命令。系统将自动记录所有日志与进度。",
+    "overview.title": "一站式部署与训练流程面板",
+    "overview.lead": "先阅读每个阶段的说明，再按顺序执行命令。系统会自动记录日志、状态和处理进度。",
     "overview.step1": "步骤 1 · 初始化",
-    "overview.step1Desc": "安装依赖、准备 Node 与工具链。",
+    "overview.step1Desc": "安装依赖，准备 Python、Node.js 与工具链。",
     "overview.step2": "步骤 2 · 选择模型",
-    "overview.step2Desc": "挑选模型并选择 ModelScope 或 HuggingFace。",
+    "overview.step2Desc": "选择训练或编辑模型，并切换下载来源。",
     "overview.step3": "步骤 3 · 图像处理",
-    "overview.step3Desc": "上传、管理图片，使用 AI 批量生成。",
+    "overview.step3Desc": "上传、筛选、重命名和导出素材图片。",
     "overview.step5": "步骤 5 · AI 处理",
-    "overview.step5Desc": "Gemini 批量生成、打标与导出。",
+    "overview.step5Desc": "AI 批量生成、打标与结果导出。",
     "overview.step4": "步骤 6 · 监控",
-    "overview.step4Desc": "在控制台查看进度、复制日志、接收弹窗提醒。",
+    "overview.step4Desc": "在控制台查看进度、复制日志并处理异常提示。",
     "environment.title": "环境初始化向导",
-    "environment.desc": "自动执行依赖安装脚本。Linux 将串行安装所有依赖，Windows 会调用 Easy Install 脚本。",
+    "environment.desc": "自动执行依赖安装与工具准备。Linux 会顺序安装相关组件，Windows 会调用 Easy Install 脚本。",
     "environment.button": "开始执行",
-    "environment.startBtn": "启动训练脚本",
+    "environment.startBtn": "启动训练界面",
+    "environment.executionTitle": "执行内容",
     "environment.item1": "安装 huggingface_hub 与 modelscope",
     "environment.item2": "配置 Node.js 20 源并安装 nodejs",
     "environment.item3": "克隆或更新 ai-toolkit，安装 requirements",
-    "environment.item4": "启动ai-toolkit，Linux默认为6006端口，Windows默认为7867端口",
+    "environment.item4": "启动 ai-toolkit，Linux 默认端口 6006，Windows 默认端口 7867",
     "environment.alertTitle": "温馨提醒：",
-    "environment.alertDesc": "当前界面会维护一份完整的命令日志，执行期间请勿重复点击。",
-    "environment.acceleratorTitle": "Autodl学术镜像加速功能",
-    "environment.acceleratorBody": "仅限 Autodl 场景，解决 github/huggingface 网络慢的问题，若不需要请关闭以免影响正常网络。",
-    "environment.githubTitle": "GitHub 学术加速",
-    "environment.githubBody": "GitHub学术加速，第三方提供，不保证可用。开启后将使用 GitHub Proxy 代理。",
+    "environment.alertDesc": "当前界面会持续记录完整的命令日志，执行期间请勿重复点击同一操作。",
+    "environment.acceleratorTitle": "Autodl 学术镜像加速",
+    "environment.acceleratorBody": "仅适用于 AutoDL 环境，可加速 GitHub 与 HuggingFace 访问；不需要时建议关闭。",
+    "environment.githubTitle": "GitHub 加速",
+    "environment.githubBody": "第三方 GitHub 代理加速，适合访问 GitHub 较慢时使用。",
     "environment.acceleratorEnable": "开启加速",
     "environment.acceleratorDisable": "关闭加速",
-    "environment.acceleratorSuccess": "命令执行成功",
-    "environment.acceleratorFail": "命令执行失败",
-    "environment.acceleratorUnsupported": "该功能仅在 Linux/Autodl 环境可用",
-    "environment.acceleratorOn": "已开启",
-    "environment.acceleratorOff": "已关闭",
+    "environment.acceleratorSuccess": "加速设置已更新",
+    "environment.acceleratorFail": "加速设置失败",
+    "environment.acceleratorUnsupported": "该功能仅适用于 Linux/AutoDL 环境",
+    "environment.acceleratorOn": "开启",
+    "environment.acceleratorOff": "关闭",
+    "environment.acceleratorConflict": "Autodl 学术镜像加速与 GitHub 加速不能同时开启，请先关闭 GitHub 加速。",
+    "environment.githubAutoDisabledAutodl": "检测到同时启用两个加速功能，已自动关闭 Autodl 学术镜像加速。",
     "download.title": "模型选择与下载渠道",
-    "download.desc": "根据用途选择模型，并在两个下载渠道之间切换。系统会自动创建存储目录。",
+    "download.desc": "按需求选择模型，并在下载来源之间切换。系统会自动创建模型目录。",
     "download.modelLegend": "选择模型",
     "download.sourceLegend": "下载来源",
     "download.button": "开始下载",
     "download.note": "默认目录：{{dir}}/模型名",
+    "download.modelQwenDesc": "推荐用于图像编辑任务",
+    "download.modelFluxDesc": "适合上下文理解和风格修改",
+    "download.sourceRecommended": "推荐",
+    "download.sourceAltDesc": "官方社区源",
     "images.title": "图像处理 · 管理",
-    "images.desc": "上传单图 / 文件夹 / 压缩包，快速整理命名。",
+    "images.desc": "支持上传单图、文件夹或压缩包，并提供批量整理、筛选和导出能力。",
     "images.uploadTitle": "图片上传",
-    "images.uploadDrop": "拖拽文件到此或点击选择",
+    "images.uploadDrop": "拖拽文件到此处，或点击选择文件",
     "images.refreshBtn": "刷新",
-    "images.uploadAutoNote": "选择或拖放文件后会自动开始上传",
+    "images.uploadAutoNote": "选择文件后会自动开始上传",
     "images.deleteSelected": "删除所选",
-    "images.clearAll": "清空所有",
+    "images.clearAll": "清空全部",
     "images.deleteEmpty": "请先选择需要删除的图片",
-    "images.deleteConfirm": "确定删除所选图片？该操作不可撤销。",
-    "images.clearConfirm": "确定清空全部图片？该操作不可撤销。",
+    "images.deleteConfirm": "确定删除所选图片？该操作无法撤销。",
+    "images.clearConfirm": "确定清空全部图片？该操作无法撤销。",
     "images.clearSuccess": "已清空全部图片",
     "images.deleteSuccess": "已删除所选图片",
     "images.renameTitle": "批量重命名",
     "images.prefixPlaceholder": "前缀",
+    "images.startNumberPlaceholder": "起始数字",
     "images.keywordPlaceholder": "关键字",
     "images.keywordActionNone": "仅重命名",
     "images.keywordActionFilter": "只作用于命中项",
@@ -82,13 +90,45 @@ const dictionary = {
     "images.renameBtn": "执行整理",
     "images.exportTitle": "批量导出",
     "images.exportBtn": "导出图片包",
-    "images.generateTitle": "Gemini 批量生成",
-    "images.promptPlaceholder": "描述你想生成的风格...",
+    "images.generateTitle": "AI 批量生成",
+    "images.promptPlaceholder": "描述你想生成的目标风格或修改效果...",
     "images.overwriteLabel": "生成后覆盖同名文件",
-    "images.keyPathPlaceholder": "填写 KEY_PATH",
-    "images.projectIdPlaceholder": "填写 PROJECT_ID",
-    "images.locationPlaceholder": "填写 LOCATION",
-    "images.configRequired": "请填写 KEY_PATH、PROJECT_ID 与 LOCATION",
+    "images.apiKeyPlaceholder": "输入 RunningHub API Key",
+    "images.configRequired": "请填写 RunningHub API Key",
+    "images.requestUrlPlaceholder": "输入 RunningHub 工作流接口地址",
+    "images.queryUrlPlaceholder": "输入查询接口地址",
+    "images.aspectRatioCustom": "自定义",
+    "images.customAspectRatioPlaceholder": "输入自定义 aspectRatio，例如 7:10",
+    "images.requestUrlRequired": "请填写 RunningHub 工作流接口地址",
+    "images.queryUrlRequired": "请填写查询接口地址",
+    "images.customAspectRatioRequired": "请选择自定义后再填写 aspectRatio",
+    "images.extraReferenceLabel": "附加参考图（图2~图N）",
+    "images.extraReferenceSelectBtn": "选择附加参考图",
+    "images.extraReferenceSummaryIdle": "未选择文件",
+    "images.extraReferenceSummarySelected": "已选择 {{count}} 个文件",
+    "images.extraReferenceHint": "默认图像处理区的原图会作为图1；这里上传的图片会按顺序作为图2、图3、图4……",
+    "images.extraReferenceItem": "图{{index}} · {{name}}",
+    "images.extraReferenceRemove": "移除",
+    "images.workflowExtraImageNodesPlaceholder": "额外图像节点，每行一个，格式：nodeId:fieldName",
+    "images.workflowExtraImageNodesInvalid": "额外图像节点格式无效，请使用每行一个 nodeId:fieldName",
+    "images.extraReferenceNodeMissing": "已上传额外参考图，但当前工作流没有足够的图像节点映射",
+    "images.workflowImageNodeIdPlaceholder": "图片节点 ID",
+    "images.workflowImageFieldNamePlaceholder": "图片字段名",
+    "images.workflowPromptNodeIdPlaceholder": "提示词节点 ID",
+    "images.workflowPromptFieldNamePlaceholder": "提示词字段名",
+    "images.workflowAspectNodeIdPlaceholder": "比例节点 ID",
+    "images.workflowAspectFieldNamePlaceholder": "比例字段名",
+    "images.workflowAspectFieldDataPlaceholder": "比例 fieldData（可留空）",
+    "images.workflowHint": "不同 RunningHub 工作流的 nodeId / fieldName 可能不同；如果日志提示 NODE_INFO_MISMATCH，请先修改这里。",
+    "images.workflowImageConfigRequired": "请填写图片节点的 nodeId 和 fieldName",
+    "images.workflowPromptConfigInvalid": "提示词节点的 nodeId 和 fieldName 需要同时填写，或同时留空",
+    "images.workflowAspectConfigInvalid": "比例节点的 nodeId 和 fieldName 需要同时填写，或同时留空",
+    "images.advancedToggle": "高级设置（自动解析 / 手动节点）",
+    "images.exampleFileLabel": "上传官方 Python 示例",
+    "images.exampleTextareaPlaceholder": "粘贴官方 Python 请求示例，点击解析后自动回填配置",
+    "images.parseExampleBtn": "解析示例",
+    "images.exampleParseRequired": "请先上传或粘贴 RunningHub 官方 Python 请求示例",
+    "images.exampleParseSuccess": "示例解析成功，已自动回填工作流配置",
     "images.selectionHint": "未选择图片时默认处理全部",
     "images.selectionSelected": "已选择 {{count}} 张图片",
     "images.generateBtn": "开始生成",
@@ -96,252 +136,313 @@ const dictionary = {
     "images.galleryTitle": "图像瀑布流",
     "images.galleryFilter": "搜索...",
     "images.filterBtn": "搜索",
-    "images.galleryEmpty": "暂未上传图片",
+    "images.galleryEmpty": "暂无图片",
     "images.uploadProgressTitle": "上传进度",
     "images.uploadProgressIdle": "暂无上传任务",
-    "images.uploadProgressPreparing": "共 {{count}} 个文件待上传",
+    "images.uploadProgressPreparing": "共有 {{count}} 个文件待上传",
     "images.uploadProgressRunning": "正在上传 {{done}} / {{total}}",
     "images.uploadProgressDone": "全部上传完成",
-    "images.uploadProgressError": "上传完成，但部分文件失败",
+    "images.uploadProgressError": "上传结束，但部分文件失败",
     "images.uploadProgressWaiting": "等待上传",
     "images.uploadProgressSuccess": "上传完成",
     "images.uploadProgressFailed": "上传失败",
     "images.uploadProgressNetwork": "网络异常，请稍后重试",
-    "images.uploadSummarySuccess": "成功 {{count}} 张",
-    "images.uploadSummarySkip": "忽略 {{count}} 张",
-    "images.uploadSummaryFail": "失败 {{count}} 张",
-    "images.uploadBusy": "已有上传任务正在执行，请稍候",
+    "images.uploadSummarySuccess": "成功 {{count}} 个",
+    "images.uploadSummarySkip": "跳过 {{count}} 个",
+    "images.uploadSummaryFail": "失败 {{count}} 个",
+    "images.uploadBusy": "已有上传任务正在进行，请稍候",
     "images.consoleTitle": "AI 生成日志",
     "images.uploadEmpty": "请至少选择一个文件",
-    "ai.title": "AI 批量处理",
-    "ai.desc": "使用 Gemini 批量生成 AI 图像，打标并导出。",
-    "ai.tagTitle": "🏷️ 批量打标",
+    "images.manualUploadTitle": "上传生成图",
+    "images.manualUploadSuccess": "上传成功",
+    "images.manualUploadFailed": "上传失败",
+    "ai.title": "AI 处理",
+    "ai.desc": "使用 AI 批量生成图像、批量打标并导出结果。",
+    "ai.tagTitle": "批量打标",
     "ai.tagPlaceholder": "输入标签...",
     "ai.tagBtn": "应用标签",
-    "ai.exportBtn": "导出 AI 图像",
+    "ai.exportBtn": "导出 AI 数据包",
     "ai.galleryTitle": "AI 生成预览",
     "ai.tagSuccess": "标签已更新",
-    "ai.tagHint": "请用简洁的语言描述你希望将原图转换成的目标图风格或效果（优先使用英文）<br>例如：<br>- 转换为吉卜力动画风格 (Transform into Ghibli anime style)<br>- 转换为水墨画风格 (Transform into inkwash painting style)<br>- 给角色戴上眼镜 (Add glasses to the character)",
+    "ai.tagHint": "请用简洁语言描述你希望生成图的目标风格或效果，建议优先使用英文。<br>例如：<br>- Transform into Ghibli anime style<br>- Transform into inkwash painting style<br>- Add glasses to the character",
     "ai.platformTitle": "AI 平台配置",
     "ai.platformProvider": "平台",
     "ai.platformModelPreset": "模型预设",
     "ai.platformCustomModel": "自定义模型",
-    "ai.platformCustomModelPlaceholder": "自定义模型名称...",
+    "ai.platformCustomModelPlaceholder": "输入自定义模型名...",
     "ai.platformApiKey": "API Key",
-    "ai.platformBaseUrl": "Base URL（选填，自定义/代理时使用）",
+    "ai.platformBaseUrl": "Base URL（选填，自定义或代理时使用）",
     "ai.platformTestBtn": "测试连接",
     "ai.platformTestOk": "连接测试成功",
     "ai.platformTestFail": "连接测试失败",
-    "ai.platformErrorModelMissing": "请先选择或输入要使用的大模型名称。",
-    "ai.platformErrorApiKeyMissing": "请填写对应平台的 API Key，用于调用大模型。",
-    "ai.platformErrorBaseUrlMissing": "使用自定义平台时，请填写对应的 Base URL 地址。",
+    "ai.platformErrorModelMissing": "请先选择或输入要使用的模型名称。",
+    "ai.platformErrorApiKeyMissing": "请填写对应平台的 API Key。",
+    "ai.platformErrorBaseUrlMissing": "使用自定义平台时，请填写 Base URL。",
     "ai.cleanTitle": "AI 图片清洗",
+    "ai.cleanPageDesc": "调整提示词后即可调用大模型分析图片内容，生成结构化标签并支持进一步筛选。",
     "ai.cleanPromptPlaceholder": "输入提示词...",
-    "ai.cleanPromptHint": "提示词默认模版，可根据需要修改。",
+    "ai.cleanPromptHint": "提示词支持自定义，适合按业务调整清洗维度。",
     "ai.cleanSelectionHint": "未选择图片时默认处理全部",
     "ai.cleanRunBtn": "开始清洗",
     "ai.cleanResetBtn": "重置筛选",
     "ai.cleanResultTitle": "AI 图片清洗结果",
     "ai.cleanNoTags": "尚未生成标签，请先运行 AI 图片清洗。",
-    "ai.cleanDimension.main_subject": "核心主体",
-    "ai.cleanDimension.appearance": "外观特征",
+    "ai.cleanDimension.main_subject": "主体",
+    "ai.cleanDimension.appearance": "外观",
     "ai.cleanDimension.action_state": "动作状态",
-    "ai.cleanDimension.environment": "环境物品",
+    "ai.cleanDimension.environment": "环境物件",
     "ai.cleanDimension.visual_style": "视觉风格",
     "step.next": "下一步",
     "step.prev": "上一步",
     "step.finish": "完成",
+    "step.progress": "第 {{current}} / {{total}} 步",
+    "step.pageBadge": "步骤 {{current}} / {{total}}",
+    "console.desc": "在这里查看环境安装、模型下载、AI 生成和 AI 图片清洗的实时状态与日志。",
     "console.setupTitle": "环境执行日志",
     "console.downloadTitle": "模型下载日志",
     "console.copy": "复制",
     "status.label": "状态：",
     "status.idle": "待命",
     "status.queued": "排队中",
-    "status.running": "执行中",
+    "status.running": "运行中",
     "status.success": "已完成",
-    "status.error": "出错",
+    "status.error": "异常",
     "log.waiting": "等待任务...",
     "modal.title": "提示",
+    "modal.close": "知道了",
     "toast.copyOk": "已复制",
     "toast.copyFail": "复制失败",
-    "toast.preview": "当前为预览模式",
+    "toast.preview": "当前处于预览模式",
     "update.title": "发现新版本",
     "update.current": "当前版本：",
     "update.latest": "最新版本：",
-    "update.notes": "更新内容：",
-    "update.btn": "前往更新",
+    "update.notes": "更新说明：",
+    "update.btn": "立即更新",
     "update.checking": "正在检查更新...",
     "update.latestMsg": "当前已是最新版本",
     "update.fail": "检查更新失败",
+    "toolbar.theme": "主题切换",
+    "toolbar.language": "语言切换",
+    "toolbar.update": "检查更新"
   },
   en: {
     "brand.eyebrow": "AI Toolkit",
     "brand.title": "LoRA Training Toolkit",
     "nav.overview": "Overview",
-    "nav.environment": "Environment Setup",
-    "nav.download": "Model Download",
-    "nav.images": "Image Processing",
+    "nav.environment": "Setup",
+    "nav.download": "Models",
+    "nav.images": "Images",
     "nav.ai": "AI Processing",
-    "nav.aiClean": "AI Image Cleaning",
+    "nav.aiClean": "AI Clean",
     "nav.console": "Console",
     "nav.system": "System",
     "nav.linux": "Status",
-    "overview.title": "One-Stop Deployment & Download Docs",
-    "overview.lead": "Read instructions in each section first, then run commands sequentially. The system automatically logs all activity and progress.",
-    "overview.step1": "Step 1 · Initialization",
-    "overview.step1Desc": "Install dependencies, prepare Node.js and toolchain.",
-    "overview.step2": "Step 2 · Select Model",
-    "overview.step2Desc": "Choose a model and select between ModelScope or HuggingFace.",
-    "overview.step3": "Step 3 · Image Processing",
-    "overview.step3Desc": "Upload, manage images, and batch-generate with AI.",
+    "overview.title": "One Panel for Setup and Training Flow",
+    "overview.lead": "Read each section first, then run actions in order. The app keeps status, progress, and logs in sync.",
+    "overview.step1": "Step 1 · Setup",
+    "overview.step1Desc": "Install dependencies and prepare Python, Node.js, and the toolchain.",
+    "overview.step2": "Step 2 · Models",
+    "overview.step2Desc": "Choose the model you need and switch download sources.",
+    "overview.step3": "Step 3 · Images",
+    "overview.step3Desc": "Upload, filter, rename, and export source images.",
     "overview.step5": "Step 5 · AI Processing",
-    "overview.step5Desc": "Gemini batch generation, tagging, and export.",
+    "overview.step5Desc": "Run AI generation, tagging, and exports.",
     "overview.step4": "Step 6 · Monitoring",
-    "overview.step4Desc": "Check progress, copy logs, and receive pop-up alerts in the console.",
-    "environment.title": "Environment Initialization Wizard",
-    "environment.desc": "Automatically runs dependency installation scripts. Linux installs all dependencies sequentially; Windows uses the Easy Install script.",
-    "environment.button": "Start Execution",
-    "environment.startBtn": "Start UI",
+    "overview.step4Desc": "Track progress, copy logs, and catch errors in one place.",
+    "environment.title": "Environment Setup",
+    "environment.desc": "Run dependency and toolchain setup automatically. Linux installs components in sequence, while Windows uses the Easy Install script.",
+    "environment.button": "Run Setup",
+    "environment.startBtn": "Launch UI",
+    "environment.executionTitle": "What Will Run",
     "environment.item1": "Install huggingface_hub and modelscope",
-    "environment.item2": "Configure Node.js 20 source and install nodejs",
-    "environment.item3": "Clone or update ai-toolkit, install requirements",
-    "environment.item4": "Launch the ai-toolkit. Linux uses the default port 6006, while Windows defaults to port 7867.",
-    "environment.alertTitle": "Friendly Reminder:",
-    "environment.alertDesc": "This interface maintains a complete command log. Do not click repeatedly during execution.",
-    "environment.acceleratorTitle": "Autodl Academic Mirror Acceleration",
-    "environment.acceleratorBody": "For Autodl environments only. Resolves slow github/huggingface connections. Disable when unused to avoid network issues.",
-    "environment.githubTitle": "GitHub Academic Accelerator",
-    "environment.githubBody": "GitHub Academic Accelerator, provided by third party, no guarantee. Uses GitHub Proxy proxy when enabled.",
-    "environment.acceleratorEnable": "Enable Acceleration",
-    "environment.acceleratorDisable": "Disable Acceleration",
-    "environment.acceleratorSuccess": "Command executed successfully",
-    "environment.acceleratorFail": "Command failed to execute",
-    "environment.acceleratorUnsupported": "Only available on Linux/Autodl environments",
-    "environment.acceleratorOn": "Enabled",
-    "environment.acceleratorOff": "Disabled",
-    "download.title": "Model Selection & Download Source",
-    "download.desc": "Select a model based on your needs and switch between two download sources. The system auto-creates storage directories.",
-    "download.modelLegend": "Select Model",
-    "download.sourceLegend": "Download Source",
-    "download.button": "Start Download",
-    "download.note": "Default Directory: {{dir}}/model-name",
-    "images.title": "Image Processing · Management",
-    "images.desc": "Upload single images / folders / archives, quickly organize and rename.",
-    "images.uploadTitle": "Image Upload",
-    "images.uploadDrop": "Drop files here or click to select",
+    "environment.item2": "Configure the Node.js 20 source and install nodejs",
+    "environment.item3": "Clone or update ai-toolkit and install requirements",
+    "environment.item4": "Launch ai-toolkit on port 6006 for Linux or 7867 for Windows",
+    "environment.alertTitle": "Reminder:",
+    "environment.alertDesc": "This page keeps a full command log. Avoid clicking the same action repeatedly while it is running.",
+    "environment.acceleratorTitle": "Autodl Mirror Boost",
+    "environment.acceleratorBody": "Only for AutoDL environments. Speeds up GitHub and HuggingFace access when needed.",
+    "environment.githubTitle": "GitHub Proxy Boost",
+    "environment.githubBody": "Uses a third-party GitHub proxy when direct access is slow.",
+    "environment.acceleratorEnable": "Enable",
+    "environment.acceleratorDisable": "Disable",
+    "environment.acceleratorSuccess": "Acceleration settings updated",
+    "environment.acceleratorFail": "Failed to update acceleration settings",
+    "environment.acceleratorUnsupported": "Available only on Linux/AutoDL",
+    "environment.acceleratorOn": "On",
+    "environment.acceleratorOff": "Off",
+    "environment.acceleratorConflict": "Autodl mirror boost and GitHub boost cannot be enabled at the same time. Turn off GitHub boost first.",
+    "environment.githubAutoDisabledAutodl": "Both boosts were enabled, so Autodl mirror boost was turned off automatically.",
+    "download.title": "Model Selection",
+    "download.desc": "Pick the model you need and switch between download sources. The app creates the model directory automatically.",
+    "download.modelLegend": "Model",
+    "download.sourceLegend": "Source",
+    "download.button": "Download",
+    "download.note": "Default directory: {{dir}}/model-name",
+    "download.modelQwenDesc": "Recommended for image editing tasks",
+    "download.modelFluxDesc": "Good for contextual edits and style changes",
+    "download.sourceRecommended": "Recommended",
+    "download.sourceAltDesc": "Official community source",
+    "images.title": "Image Management",
+    "images.desc": "Upload single files, folders, or archives, then organize, filter, and export them in batches.",
+    "images.uploadTitle": "Upload Images",
+    "images.uploadDrop": "Drop files here or click to choose",
     "images.refreshBtn": "Refresh",
-    "images.uploadAutoNote": "Upload starts automatically after selecting/dragging files",
+    "images.uploadAutoNote": "Uploading starts automatically after files are selected",
     "images.deleteSelected": "Delete Selected",
     "images.clearAll": "Clear All",
-    "images.deleteEmpty": "Please select images to delete first",
-    "images.deleteConfirm": "Delete selected images? This action cannot be undone.",
-    "images.clearConfirm": "Clear all images? This action cannot be undone.",
-    "images.clearSuccess": "All images cleared",
-    "images.deleteSuccess": "Selected images deleted",
+    "images.deleteEmpty": "Select images to delete first",
+    "images.deleteConfirm": "Delete the selected images? This cannot be undone.",
+    "images.clearConfirm": "Clear all images? This cannot be undone.",
+    "images.clearSuccess": "All images were cleared",
+    "images.deleteSuccess": "Selected images were deleted",
     "images.renameTitle": "Batch Rename",
     "images.prefixPlaceholder": "Prefix",
+    "images.startNumberPlaceholder": "Start number",
     "images.keywordPlaceholder": "Keyword",
     "images.keywordActionNone": "Rename only",
-    "images.keywordActionFilter": "Apply to matches only",
+    "images.keywordActionFilter": "Apply to matches",
     "images.keywordActionDelete": "Delete matches",
     "images.keywordActionKeep": "Keep matches only",
-    "images.renameBtn": "Execute Organization",
+    "images.renameBtn": "Apply",
     "images.exportTitle": "Batch Export",
     "images.exportBtn": "Export Image Pack",
-    "images.generateTitle": "Gemini Batch Generation",
-    "images.promptPlaceholder": "Describe the style you want to generate...",
-    "images.overwriteLabel": "Overwrite files with the same name after generation",
-    "images.keyPathPlaceholder": "Enter KEY_PATH",
-    "images.projectIdPlaceholder": "Enter PROJECT_ID",
-    "images.locationPlaceholder": "Enter LOCATION",
-    "images.configRequired": "Please fill in KEY_PATH, PROJECT_ID, and LOCATION",
-    "images.selectionHint": "Process all images when none are selected",
+    "images.generateTitle": "AI Batch Generate",
+    "images.promptPlaceholder": "Describe the target style or edit you want...",
+    "images.overwriteLabel": "Overwrite files with the same name",
+    "images.apiKeyPlaceholder": "Enter the RunningHub API key",
+    "images.configRequired": "Enter the RunningHub API key",
+    "images.requestUrlPlaceholder": "Enter the RunningHub workflow URL",
+    "images.queryUrlPlaceholder": "Enter the query endpoint URL",
+    "images.aspectRatioCustom": "Custom",
+    "images.customAspectRatioPlaceholder": "Enter a custom aspectRatio, such as 7:10",
+    "images.requestUrlRequired": "Enter the RunningHub workflow URL",
+    "images.queryUrlRequired": "Enter the query endpoint URL",
+    "images.customAspectRatioRequired": "Enter a custom aspectRatio",
+    "images.extraReferenceLabel": "Extra reference images (Image 2~N)",
+    "images.extraReferenceSelectBtn": "Choose extra references",
+    "images.extraReferenceSummaryIdle": "No files selected",
+    "images.extraReferenceSummarySelected": "{{count}} file(s) selected",
+    "images.extraReferenceHint": "The original image from the Images page is always submitted as Image 1. Files uploaded here are sent in order as Image 2, Image 3, Image 4, and so on.",
+    "images.extraReferenceItem": "Image {{index}} · {{name}}",
+    "images.extraReferenceRemove": "Remove",
+    "images.workflowExtraImageNodesPlaceholder": "Extra image nodes, one per line, format: nodeId:fieldName",
+    "images.workflowExtraImageNodesInvalid": "Invalid extra image node format. Use one nodeId:fieldName per line.",
+    "images.extraReferenceNodeMissing": "Extra reference images were uploaded, but the current workflow does not have enough image node mappings",
+    "images.workflowImageNodeIdPlaceholder": "Image node ID",
+    "images.workflowImageFieldNamePlaceholder": "Image field name",
+    "images.workflowPromptNodeIdPlaceholder": "Prompt node ID",
+    "images.workflowPromptFieldNamePlaceholder": "Prompt field name",
+    "images.workflowAspectNodeIdPlaceholder": "Aspect node ID",
+    "images.workflowAspectFieldNamePlaceholder": "Aspect field name",
+    "images.workflowAspectFieldDataPlaceholder": "Aspect fieldData (optional)",
+    "images.workflowHint": "Different RunningHub workflows may use different nodeId / fieldName values. If you see NODE_INFO_MISMATCH in logs, update them here first.",
+    "images.workflowImageConfigRequired": "Enter the image nodeId and fieldName",
+    "images.workflowPromptConfigInvalid": "Prompt nodeId and fieldName must be filled together or left blank together",
+    "images.workflowAspectConfigInvalid": "Aspect nodeId and fieldName must be filled together or left blank together",
+    "images.advancedToggle": "Advanced Settings (Auto Parse / Manual Nodes)",
+    "images.exampleFileLabel": "Upload official Python example",
+    "images.exampleTextareaPlaceholder": "Paste the official RunningHub Python request example and click Parse to fill the config automatically",
+    "images.parseExampleBtn": "Parse Example",
+    "images.exampleParseRequired": "Upload or paste the official RunningHub Python request example first",
+    "images.exampleParseSuccess": "Example parsed and workflow config filled automatically",
+    "images.selectionHint": "All images will be used when none are selected",
     "images.selectionSelected": "{{count}} image(s) selected",
-    "images.generateBtn": "Start Generation",
-    "images.clearSelection": "Clear Selection",
+    "images.generateBtn": "Generate",
+    "images.clearSelection": "Clear",
     "images.galleryTitle": "Image Gallery",
     "images.galleryFilter": "Search...",
     "images.filterBtn": "Search",
-    "images.galleryEmpty": "No images uploaded yet",
+    "images.galleryEmpty": "No images yet",
     "images.uploadProgressTitle": "Upload Progress",
     "images.uploadProgressIdle": "No upload tasks",
-    "images.uploadProgressPreparing": "{{count}} files ready to upload",
+    "images.uploadProgressPreparing": "{{count}} file(s) waiting to upload",
     "images.uploadProgressRunning": "Uploading {{done}} / {{total}}",
-    "images.uploadProgressDone": "All uploads completed",
-    "images.uploadProgressError": "Upload finished with some failures",
-    "images.uploadProgressWaiting": "Waiting to upload",
-    "images.uploadProgressSuccess": "Upload completed",
-    "images.uploadProgressFailed": "Upload failed",
-    "images.uploadProgressNetwork": "Network error, please retry later",
-    "images.uploadSummarySuccess": "{{count}} successful upload(s)",
-    "images.uploadSummarySkip": "{{count}} skipped file(s)",
-    "images.uploadSummaryFail": "{{count}} failed upload(s)",
-    "images.uploadBusy": "An upload task is already running, please wait",
+    "images.uploadProgressDone": "All uploads finished",
+    "images.uploadProgressError": "Uploads finished with some failures",
+    "images.uploadProgressWaiting": "Waiting",
+    "images.uploadProgressSuccess": "Uploaded",
+    "images.uploadProgressFailed": "Failed",
+    "images.uploadProgressNetwork": "Network error, please try again later",
+    "images.uploadSummarySuccess": "{{count}} succeeded",
+    "images.uploadSummarySkip": "{{count}} skipped",
+    "images.uploadSummaryFail": "{{count}} failed",
+    "images.uploadBusy": "Another upload is already running",
     "images.consoleTitle": "AI Generation Logs",
-    "images.uploadEmpty": "Please select at least one file",
+    "images.uploadEmpty": "Choose at least one file",
+    "images.manualUploadTitle": "Upload generated image",
+    "images.manualUploadSuccess": "Upload succeeded",
+    "images.manualUploadFailed": "Upload failed",
     "ai.title": "AI Processing",
-    "ai.desc": "Batch generate AI images with Gemini, tag, and export.",
+    "ai.desc": "Generate images with AI, apply tags, and export the results.",
     "ai.tagTitle": "Batch Tagging",
     "ai.tagPlaceholder": "Enter tags...",
     "ai.tagBtn": "Apply Tags",
-    "ai.exportBtn": "Export AI Images",
-    "ai.galleryTitle": "AI Generation Preview",
+    "ai.exportBtn": "Export AI Package",
+    "ai.galleryTitle": "AI Preview",
     "ai.tagSuccess": "Tags updated",
-    "ai.tagHint": "Please describe the target style or effect you want to transform the original image into (English preferred)<br>Example:<br>- Transform into Ghibli anime style<br>- Transform into inkwash painting style<br>- Add glasses to the character",
-    "ai.platformTitle": "AI Platform Config",
+    "ai.tagHint": "Describe the target style or effect you want, preferably in English.<br>Examples:<br>- Transform into Ghibli anime style<br>- Transform into inkwash painting style<br>- Add glasses to the character",
+    "ai.platformTitle": "AI Platform",
     "ai.platformProvider": "Provider",
     "ai.platformModelPreset": "Model Preset",
     "ai.platformCustomModel": "Custom Model",
-    "ai.platformCustomModelPlaceholder": "Custom model name...",
+    "ai.platformCustomModelPlaceholder": "Enter a custom model name...",
     "ai.platformApiKey": "API Key",
-    "ai.platformBaseUrl": "Base URL (optional, for custom/proxy)",
+    "ai.platformBaseUrl": "Base URL (optional, for custom or proxy access)",
     "ai.platformTestBtn": "Test Connection",
-    "ai.platformTestOk": "Connection succeeded",
-    "ai.platformTestFail": "Connection failed",
-    "ai.platformErrorModelMissing": "Please choose or enter the model name to use.",
-    "ai.platformErrorApiKeyMissing": "Please provide the API Key for the selected provider.",
-    "ai.platformErrorBaseUrlMissing": "When using a custom provider, please specify the Base URL.",
-    "ai.cleanTitle": "AI Image Cleaning",
-    "ai.cleanPromptPlaceholder": "Enter prompt...",
-    "ai.cleanPromptHint": "Default prompt template, you can customize it.",
-    "ai.cleanSelectionHint": "Process all images when none are selected",
-    "ai.cleanRunBtn": "Start Cleaning",
+    "ai.platformTestOk": "Connection test passed",
+    "ai.platformTestFail": "Connection test failed",
+    "ai.platformErrorModelMissing": "Choose a model or enter a custom one first.",
+    "ai.platformErrorApiKeyMissing": "Enter the API key for the selected provider.",
+    "ai.platformErrorBaseUrlMissing": "Enter a Base URL when using a custom provider.",
+    "ai.cleanTitle": "AI Image Clean",
+    "ai.cleanPageDesc": "Edit the prompt and let the model extract structured tags from each image for later filtering.",
+    "ai.cleanPromptPlaceholder": "Enter a prompt...",
+    "ai.cleanPromptHint": "The prompt is editable so you can adapt the cleaning dimensions to your workflow.",
+    "ai.cleanSelectionHint": "All images will be used when none are selected",
+    "ai.cleanRunBtn": "Run Clean",
     "ai.cleanResetBtn": "Reset Filters",
-    "ai.cleanResultTitle": "AI Cleaning Results",
-    "ai.cleanNoTags": "No tags generated yet. Please run AI image cleaning first.",
-    "ai.cleanDimension.main_subject": "Main Subject",
+    "ai.cleanResultTitle": "AI Clean Results",
+    "ai.cleanNoTags": "No tags yet. Run AI image cleaning first.",
+    "ai.cleanDimension.main_subject": "Subject",
     "ai.cleanDimension.appearance": "Appearance",
-    "ai.cleanDimension.action_state": "Action/State",
+    "ai.cleanDimension.action_state": "Action / State",
     "ai.cleanDimension.environment": "Environment",
     "ai.cleanDimension.visual_style": "Visual Style",
     "step.next": "Next",
-    "step.prev": "Previous",
+    "step.prev": "Back",
     "step.finish": "Finish",
-    "console.setupTitle": "Environment Execution Logs",
-    "console.downloadTitle": "Model Download Logs",
+    "step.progress": "Step {{current}} / {{total}}",
+    "step.pageBadge": "Step {{current}} / {{total}}",
+    "console.desc": "View live status and logs here for setup, model downloads, AI generation, and AI image cleaning.",
+    "console.setupTitle": "Setup Logs",
+    "console.downloadTitle": "Download Logs",
     "console.copy": "Copy",
-    "status.label": "Status:",
+    "status.label": "Status: ",
     "status.idle": "Idle",
     "status.queued": "Queued",
     "status.running": "Running",
-    "status.success": "Completed",
+    "status.success": "Done",
     "status.error": "Error",
     "log.waiting": "Waiting for task...",
-    "modal.title": "Prompt",
+    "modal.title": "Notice",
+    "modal.close": "Close",
     "toast.copyOk": "Copied",
     "toast.copyFail": "Copy failed",
-    "toast.preview": "Currently in preview mode",
+    "toast.preview": "Preview mode is active",
     "update.title": "New Version Available",
-    "update.current": "Current: ",
-    "update.latest": "Latest: ",
-    "update.notes": "Release Notes:",
-    "update.btn": "Update Now",
+    "update.current": "Current:",
+    "update.latest": "Latest:",
+    "update.notes": "Release notes:",
+    "update.btn": "Open Update",
     "update.checking": "Checking for updates...",
-    "update.latestMsg": "You are up to date",
-    "update.fail": "Update check failed",
+    "update.latestMsg": "You are already on the latest version",
+    "update.fail": "Failed to check for updates",
+    "toolbar.theme": "Toggle theme",
+    "toolbar.language": "Switch language",
+    "toolbar.update": "Check for updates"
   },
 };
-
 const STATUS_KEYS = {
   idle: "status.idle",
   queued: "status.queued",
@@ -394,9 +495,27 @@ const dom = {
   generationForm: document.getElementById("generationForm"),
   promptInput: document.getElementById("promptInput"),
   overwriteToggle: document.getElementById("overwriteToggle"),
-  keyPathInput: document.getElementById("keyPathInput"),
-  projectIdInput: document.getElementById("projectIdInput"),
-  locationInput: document.getElementById("locationInput"),
+  runninghubApiKeyInput: document.getElementById("runninghubApiKeyInput"),
+  aspectRatioSelect: document.getElementById("aspectRatioSelect"),
+  customAspectRatioInput: document.getElementById("customAspectRatioInput"),
+  aspectRatioCustomRow: document.getElementById("aspectRatioCustomRow"),
+  aspectRatioBackBtn: document.getElementById("aspectRatioBackBtn"),
+  runninghubImageUrlInput: document.getElementById("runninghubImageUrlInput"),
+  runninghubQueryUrlInput: document.getElementById("runninghubQueryUrlInput"),
+  extraReferenceInput: document.getElementById("extraReferenceInput"),
+  extraReferenceList: document.getElementById("extraReferenceList"),
+  extraReferenceSummary: document.getElementById("extraReferenceSummary"),
+  runninghubExampleFileInput: document.getElementById("runninghubExampleFileInput"),
+  runninghubExampleTextInput: document.getElementById("runninghubExampleTextInput"),
+  runninghubParseBtn: document.getElementById("runninghubParseBtn"),
+  workflowImageNodeIdInput: document.getElementById("workflowImageNodeIdInput"),
+  workflowImageFieldNameInput: document.getElementById("workflowImageFieldNameInput"),
+  workflowExtraImageNodesInput: document.getElementById("workflowExtraImageNodesInput"),
+  workflowPromptNodeIdInput: document.getElementById("workflowPromptNodeIdInput"),
+  workflowPromptFieldNameInput: document.getElementById("workflowPromptFieldNameInput"),
+  workflowAspectNodeIdInput: document.getElementById("workflowAspectNodeIdInput"),
+  workflowAspectFieldNameInput: document.getElementById("workflowAspectFieldNameInput"),
+  workflowAspectFieldDataInput: document.getElementById("workflowAspectFieldDataInput"),
   generateBtn: document.getElementById("generateBtn"),
   clearSelectionBtn: document.getElementById("clearSelectionBtn"),
   clearAiSelectionBtn: document.getElementById("clearAiSelectionBtn"),
@@ -446,30 +565,30 @@ let currentLang = "zh";
 let aiProviderConfig = null;
 
 const DEFAULT_AI_CLEAN_PROMPT = `# Role
-你是一个计算机视觉辅助的大模型，专门负责将图像内容转化为结构化的 JSON 数据。
+你是一个用于图像理解的视觉标注助手，负责将图片内容提炼成结构化 JSON 数据。
 
 # Objective
-分析用户上传的图片，提取关键视觉信息，并将其分类为 5 个核心维度。请忽略所有修饰性长句，仅输出精准的中文关键词标签。
+分析用户上传的图片，提取关键视觉信息，并按 5 个核心维度输出简洁标签。请忽略冗长修饰语，只输出准确、可复用的中文关键词。
 
 # Response Format
-**必须** 仅输出一段合法的 JSON 代码，不要包含 Markdown 标记（如 json 代码块）或任何其他解释性文字。
+必须只输出一段合法 JSON，不要包含 Markdown 代码块或任何额外解释。
 
 JSON 结构如下：
 {
-  "main_subject": ["关键词1", "关键词2"],      // 核心主体：画面焦点（人/物/景）
-  "appearance": ["关键词1", "关键词2"],        // 外观特征：颜色、材质、服饰、外貌
-  "action_state": ["关键词1", "关键词2"],      // 动作状态：姿态、动态、表情、静止
-  "environment": ["关键词1", "关键词2"],       // 环境物品：背景、地点、道具、天气
-  "visual_style": ["关键词1", "关键词2"]       // 视觉风格：色调、构图、光影、氛围
+  "main_subject": ["关键词", "关键词"],
+  "appearance": ["关键词", "关键词"],
+  "action_state": ["关键词", "关键词"],
+  "environment": ["关键词", "关键词"],
+  "visual_style": ["关键词", "关键词"]
 }
 
 # Rules
-1. **关键词提取**：值必须是字符串数组，使用**简体中文**。
-2. **简洁性**：每个关键词控制在 2-6 个字以内，不要写句子。
-3. **通用性**：适用于人物、宠物、风景、物品等任何类型的图片。
-4. **空值处理**：如果某个维度不适用（例如风景照没有动作），请返回空数组 [] 或描述其静态属性（如“静止”）。
+1. 所有字段都必须是数组，内容使用简体中文。
+2. 每个关键词尽量控制在 2 到 6 个字以内，不要写成长句。
+3. 适用于人物、动物、物体、场景等各种类型的图片。
+4. 某个维度不适用时，返回空数组 []。
 
-# Example (Few-Shot)
+# Example
 Input: [一张带露珠的红玫瑰特写]
 Output:
 {
@@ -477,7 +596,7 @@ Output:
   "appearance": ["鲜红色", "丝绒质感", "水珠", "花瓣层叠"],
   "action_state": ["静止", "盛开"],
   "environment": ["模糊绿叶", "自然光", "花园"],
-  "visual_style": ["微距摄影", "高饱和度", "清新", "唯美"]
+  "visual_style": ["微距摄影", "高饱和", "清新", "唯美"]
 }`;
 
 const galleryState = {
@@ -489,6 +608,9 @@ const aiGalleryState = {
   items: [],
   selected: new Set(),
   filterKeyword: "",
+};
+const extraReferenceState = {
+  files: [],
 };
 
 const aiCleaningState = {
@@ -543,12 +665,33 @@ function getText(key, lang = currentLang) {
   return dictionary[lang]?.[key] ?? dictionary.zh?.[key] ?? key;
 }
 
+function formatText(key, replacements = {}, lang = currentLang) {
+  return Object.entries(replacements).reduce((text, [name, value]) => {
+    return text.replaceAll(`{{${name}}}`, String(value));
+  }, getText(key, lang));
+}
+
 function getLocalizedLabelFromConfig(item) {
   if (!item) return "";
   if (currentLang === "en") {
     return item.label_en || item.label || item.id || item.model || "";
   }
   return item.label_zh || item.label || item.id || item.model || "";
+}
+
+function updateStepText() {
+  if (dom.progressText) {
+    dom.progressText.textContent = formatText("step.progress", {
+      current: currentStepIndex + 1,
+      total: STEPS.length,
+    });
+  }
+  document.querySelectorAll(".page-badge").forEach((badge, index) => {
+    badge.textContent = formatText("step.pageBadge", {
+      current: index + 1,
+      total: STEPS.length,
+    });
+  });
 }
 
 function applyTranslations() {
@@ -564,13 +707,10 @@ function applyTranslations() {
   document.querySelectorAll("[data-i18n-html]").forEach((el) => {
     el.innerHTML = getText(el.dataset.i18nHtml);
   });
-  // Special handling for tag hint which contains HTML
-  const tagHint = document.querySelector(".tag-hint");
-  if (tagHint) {
-      tagHint.innerHTML = getText("ai.tagHint");
-  }
-  
-  // 重建 AI 平台配置下拉的文案（多语言）
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    el.setAttribute("title", getText(el.dataset.i18nTitle));
+  });
+
   if (aiProviderConfig && dom.aiProviderSelect && dom.aiModelPresetSelect) {
     const prevProvider = dom.aiProviderSelect.value;
     const prevModel = dom.aiModelPresetSelect.value;
@@ -584,13 +724,31 @@ function applyTranslations() {
       handleAiModelPresetVisibility();
     }
   }
-  
+
+  const linuxStateValue = document.getElementById("linuxStateValue");
+  if (linuxStateValue) {
+    const mode = linuxStateValue.dataset.mode === "preview" ? "preview" : "exec";
+    linuxStateValue.textContent =
+      currentLang === "en"
+        ? linuxStateValue.dataset[mode === "preview" ? "previewEn" : "execEn"]
+        : linuxStateValue.dataset[mode === "preview" ? "previewZh" : "execZh"];
+  }
+
+  updateStepText();
   updateSelectionHint();
   updateAiSelectionHint();
   updateAiCleanSelectionHint();
+  renderExtraReferenceList();
   updateUploadProgressHint();
   updateSwitchState(dom.autodlSwitch, featureStates.autodlAccelerator);
   updateSwitchState(dom.githubSwitch, featureStates.githubAccelerator);
+  if (Array.isArray(aiGalleryState.items) && aiGalleryState.items.length) {
+    renderAiGallery(aiGalleryState.items);
+  }
+  if (Array.isArray(aiCleaningState.baseItems) && aiCleaningState.baseItems.length) {
+    renderAiCleanFilters();
+    renderAiCleanGallery();
+  }
 }
 
 function applyTheme(theme) {
@@ -608,10 +766,12 @@ function toggleTheme() {
 
 function applyLanguage(lang) {
   currentLang = lang === "en" ? "en" : "zh";
+  document.body.dataset.lang = currentLang;
   try {
     localStorage.setItem(storageKeys.lang, currentLang);
   } catch {}
   applyTranslations();
+  fetchStatus();
 }
 
 function toggleLanguage() {
@@ -625,6 +785,7 @@ async function loadAiProviderConfig() {
     aiProviderConfig = await res.json();
     populateAiProviderOptions();
     syncModelPresetWithProvider();
+    bindAiModelPresetChange();
   } catch (err) {
     console.error("load ai provider config failed", err);
   }
@@ -647,65 +808,303 @@ function populateAiProviderOptions(selectedId) {
   }
 }
 
-function syncModelPresetWithProvider() {
-  if (!dom.aiProviderSelect || !dom.aiModelPresetSelect || !aiProviderConfig) return;
-  const providerId = dom.aiProviderSelect.value;
-  const providers = aiProviderConfig.providers || [];
-  const providerCfg = providers.find((p) => p.id === providerId) || providers[0];
-  const select = dom.aiModelPresetSelect;
-  const prevModel = select.value;
-  select.innerHTML = "";
+function updateAspectRatioInputState() {
+  if (!dom.aspectRatioSelect) return;
+  const isCustom = dom.aspectRatioSelect.value === "custom";
+  dom.aspectRatioSelect.classList.toggle("hidden", isCustom);
+  if (dom.aspectRatioCustomRow) {
+    dom.aspectRatioCustomRow.classList.toggle("hidden", !isCustom);
+  }
+  if (isCustom && dom.customAspectRatioInput) {
+    dom.customAspectRatioInput.focus();
+  }
+}
 
-  if (providerCfg && Array.isArray(providerCfg.models)) {
-    providerCfg.models.forEach((m) => {
-      const opt = document.createElement("option");
-      opt.value = m.model;
-      opt.textContent = getLocalizedLabelFromConfig(m);
-      select.appendChild(opt);
+function resolveAspectRatioValue() {
+  if (!dom.aspectRatioSelect) return "auto";
+  if (dom.aspectRatioSelect.value !== "custom") {
+    return dom.aspectRatioSelect.value || "auto";
+  }
+  return dom.customAspectRatioInput?.value.trim() || "";
+}
+
+function setAspectRatioValue(value) {
+  const resolved = (value || "").trim();
+  if (!dom.aspectRatioSelect) return;
+  if (!resolved) {
+    dom.aspectRatioSelect.value = "auto";
+    if (dom.customAspectRatioInput) {
+      dom.customAspectRatioInput.value = "";
+    }
+    updateAspectRatioInputState();
+    return;
+  }
+
+  const hasOption = Array.from(dom.aspectRatioSelect.options).some((opt) => opt.value === resolved);
+  if (hasOption) {
+    dom.aspectRatioSelect.value = resolved;
+    if (dom.customAspectRatioInput) {
+      dom.customAspectRatioInput.value = "";
+    }
+  } else {
+    dom.aspectRatioSelect.value = "custom";
+    if (dom.customAspectRatioInput) {
+      dom.customAspectRatioInput.value = resolved;
+    }
+  }
+  updateAspectRatioInputState();
+}
+
+function readTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsText(file);
+  });
+}
+
+function readDataUrlFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderExtraReferenceList() {
+  if (!dom.extraReferenceList) return;
+  if (dom.extraReferenceSummary) {
+    dom.extraReferenceSummary.textContent = extraReferenceState.files.length
+      ? formatText("images.extraReferenceSummarySelected", { count: extraReferenceState.files.length })
+      : getText("images.extraReferenceSummaryIdle");
+  }
+  if (!extraReferenceState.files.length) {
+    dom.extraReferenceList.classList.add("hidden");
+    dom.extraReferenceList.classList.remove("empty");
+    dom.extraReferenceList.innerHTML = "";
+    return;
+  }
+
+  dom.extraReferenceList.classList.remove("hidden");
+  dom.extraReferenceList.classList.remove("empty");
+  dom.extraReferenceList.innerHTML = "";
+  extraReferenceState.files.forEach((file, index) => {
+    const item = document.createElement("div");
+    item.className = "reference-item";
+
+    const thumbWrap = document.createElement("div");
+    thumbWrap.className = "reference-item-thumb";
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.alt = file.name;
+    img.addEventListener("load", () => URL.revokeObjectURL(img.src));
+    const badge = document.createElement("span");
+    badge.className = "reference-item-badge";
+    badge.textContent = `${index + 2}`;
+    thumbWrap.appendChild(img);
+    thumbWrap.appendChild(badge);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "btn-reference-remove";
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", () => {
+      extraReferenceState.files.splice(index, 1);
+      renderExtraReferenceList();
     });
+    thumbWrap.appendChild(removeBtn);
+
+    const label = document.createElement("span");
+    label.className = "reference-item-label";
+    label.textContent = file.name;
+
+    item.appendChild(thumbWrap);
+    item.appendChild(label);
+    dom.extraReferenceList.appendChild(item);
+  });
+}
+
+function parseExtraImageNodesText() {
+  const raw = dom.workflowExtraImageNodesInput?.value || "";
+  const lines = raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const nodes = [];
+  for (const line of lines) {
+    const separatorIndex = line.indexOf(":");
+    if (separatorIndex <= 0 || separatorIndex === line.length - 1) {
+      throw new Error(getText("images.workflowExtraImageNodesInvalid"));
+    }
+    const nodeId = line.slice(0, separatorIndex).trim();
+    const fieldName = line.slice(separatorIndex + 1).trim();
+    if (!nodeId || !fieldName) {
+      throw new Error(getText("images.workflowExtraImageNodesInvalid"));
+    }
+    nodes.push({ node_id: nodeId, field_name: fieldName });
+  }
+  return nodes;
+}
+
+function buildImageNodeConfig() {
+  const imageNodes = [];
+  const primaryNodeId = dom.workflowImageNodeIdInput?.value.trim() || "";
+  const primaryFieldName = dom.workflowImageFieldNameInput?.value.trim() || "";
+  if (primaryNodeId || primaryFieldName) {
+    imageNodes.push({ node_id: primaryNodeId, field_name: primaryFieldName });
+  }
+  imageNodes.push(...parseExtraImageNodesText());
+  return imageNodes;
+}
+
+function fillImageNodeConfig(imageNodes = []) {
+  const normalized = Array.isArray(imageNodes) ? imageNodes.filter(Boolean) : [];
+  const [primaryNode, ...extraNodes] = normalized;
+
+  if (dom.workflowImageNodeIdInput) {
+    dom.workflowImageNodeIdInput.value = primaryNode?.node_id || "";
+  }
+  if (dom.workflowImageFieldNameInput) {
+    dom.workflowImageFieldNameInput.value = primaryNode?.field_name || "";
+  }
+  if (dom.workflowExtraImageNodesInput) {
+    dom.workflowExtraImageNodesInput.value = extraNodes
+      .map((node) => `${node.node_id}:${node.field_name}`)
+      .join("\n");
+  }
+}
+
+function applyParsedRunningHubExample(data = {}) {
+  if (dom.runninghubImageUrlInput && data.image_api_url) {
+    dom.runninghubImageUrlInput.value = data.image_api_url;
+  }
+  if (dom.runninghubQueryUrlInput && data.query_url) {
+    dom.runninghubQueryUrlInput.value = data.query_url;
+  }
+  if (dom.promptInput && data.prompt) {
+    dom.promptInput.value = data.prompt;
+  }
+  if (data.aspect_ratio) {
+    setAspectRatioValue(data.aspect_ratio);
   }
 
-  const customOpt = document.createElement("option");
-  customOpt.value = "custom";
-  customOpt.textContent = getText("ai.platformCustomModel");
-  select.appendChild(customOpt);
-
-  if (prevModel) {
-    select.value = prevModel;
+  const workflowConfig = data.workflow_config || {};
+  fillImageNodeConfig(workflowConfig.image_nodes || []);
+  if (dom.workflowPromptNodeIdInput) {
+    dom.workflowPromptNodeIdInput.value = workflowConfig.prompt_node_id || "";
   }
+  if (dom.workflowPromptFieldNameInput) {
+    dom.workflowPromptFieldNameInput.value = workflowConfig.prompt_field_name || "";
+  }
+  if (dom.workflowAspectNodeIdInput) {
+    dom.workflowAspectNodeIdInput.value = workflowConfig.aspect_ratio_node_id || "";
+  }
+  if (dom.workflowAspectFieldNameInput) {
+    dom.workflowAspectFieldNameInput.value = workflowConfig.aspect_ratio_field_name || "";
+  }
+  if (dom.workflowAspectFieldDataInput) {
+    dom.workflowAspectFieldDataInput.value = workflowConfig.aspect_ratio_field_data || "";
+  }
+}
 
-  handleAiModelPresetVisibility();
+async function handleRunningHubExampleParse() {
+  if (!dom.runninghubParseBtn) return;
+  dom.runninghubParseBtn.disabled = true;
+
+  try {
+    let exampleText = dom.runninghubExampleTextInput?.value.trim() || "";
+    if (!exampleText && dom.runninghubExampleFileInput?.files?.length) {
+      exampleText = (await readTextFile(dom.runninghubExampleFileInput.files[0])).trim();
+      if (dom.runninghubExampleTextInput) {
+        dom.runninghubExampleTextInput.value = exampleText;
+      }
+    }
+
+    if (!exampleText) {
+      throw new Error(getText("images.exampleParseRequired"));
+    }
+
+    const res = await postJSON("/api/runninghub/parse_example", { example_text: exampleText });
+    applyParsedRunningHubExample(res.data || {});
+    showToast(res.message || getText("images.exampleParseSuccess"));
+  } catch (err) {
+    showModal(getText("modal.title"), err.message || getText("images.exampleParseRequired"));
+  } finally {
+    dom.runninghubParseBtn.disabled = false;
+  }
+}
+
+function initializeGenerationDefaults() {
+  const config = window.__APP_CONFIG__ || {};
+  if (dom.runninghubImageUrlInput && !dom.runninghubImageUrlInput.value) {
+    dom.runninghubImageUrlInput.value = config.runninghubImageEditUrl || "";
+  }
+  if (dom.runninghubQueryUrlInput && !dom.runninghubQueryUrlInput.value) {
+    dom.runninghubQueryUrlInput.value = config.runninghubQueryUrl || "";
+  }
+  if (dom.workflowImageNodeIdInput && !dom.workflowImageNodeIdInput.value && !dom.workflowExtraImageNodesInput?.value) {
+    fillImageNodeConfig([
+      {
+        node_id: config.runninghubWorkflowImageNodeId || "",
+        field_name: config.runninghubWorkflowImageFieldName || "",
+      },
+    ]);
+  }
+  if (dom.workflowPromptNodeIdInput && !dom.workflowPromptNodeIdInput.value) {
+    dom.workflowPromptNodeIdInput.value = config.runninghubWorkflowPromptNodeId || "";
+  }
+  if (dom.workflowPromptFieldNameInput && !dom.workflowPromptFieldNameInput.value) {
+    dom.workflowPromptFieldNameInput.value = config.runninghubWorkflowPromptFieldName || "";
+  }
+  if (dom.workflowAspectNodeIdInput && !dom.workflowAspectNodeIdInput.value) {
+    dom.workflowAspectNodeIdInput.value = config.runninghubWorkflowAspectNodeId || "";
+  }
+  if (dom.workflowAspectFieldNameInput && !dom.workflowAspectFieldNameInput.value) {
+    dom.workflowAspectFieldNameInput.value = config.runninghubWorkflowAspectFieldName || "";
+  }
+  if (dom.workflowAspectFieldDataInput && !dom.workflowAspectFieldDataInput.value) {
+    dom.workflowAspectFieldDataInput.value = config.runninghubWorkflowAspectFieldData || "";
+  }
+  if (config.runninghubDefaultAspectRatio) {
+    setAspectRatioValue(config.runninghubDefaultAspectRatio);
+  } else {
+    updateAspectRatioInputState();
+  }
+}
+
+function bindAiModelPresetChange() {
+  if (!dom.aiModelPresetSelect) return;
+  dom.aiModelPresetSelect.onchange = () => {
+    handleAiModelPresetVisibility();
+  };
 }
 
 function goToStep(stepIndex) {
   if (stepIndex < 0 || stepIndex >= STEPS.length) return;
-  
+
   currentStepIndex = stepIndex;
   const stepName = STEPS[stepIndex];
-  
-  // 切换页面
+
   document.querySelectorAll(".wizard-page").forEach((page, idx) => {
     page.classList.toggle("active", idx === stepIndex);
   });
-  
-  // 更新导航
+
   document.querySelectorAll(".step-nav-item").forEach((item, idx) => {
     item.classList.toggle("active", idx === stepIndex);
     if (idx < stepIndex) {
       item.classList.add("completed");
     }
   });
-  
-  // 更新进度条
+
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
   if (dom.progressFill) {
     dom.progressFill.style.width = `${progress}%`;
   }
-  if (dom.progressText) {
-    dom.progressText.textContent = `第 ${stepIndex + 1} / ${STEPS.length} 步`;
-  }
+  updateStepText();
 
-  // 如果进入 AI 页面，加载 AI 画廊
   if (stepName === "ai") {
     loadAiGallery(aiGalleryState.filterKeyword);
   }
@@ -721,21 +1120,19 @@ function goToStep(stepIndex) {
 }
 
 function initNavigation() {
-  // 左侧步骤导航
   document.querySelectorAll(".step-nav-item").forEach((btn, idx) => {
     btn.addEventListener("click", () => goToStep(idx));
   });
-  
-  // 底部上一步/下一步按钮
+
   document.querySelectorAll(".btn-prev").forEach((btn) => {
     btn.addEventListener("click", () => goToStep(currentStepIndex - 1));
   });
-  
+
   document.querySelectorAll(".btn-next").forEach((btn) => {
     btn.addEventListener("click", () => {
       const nextStep = currentStepIndex + 1;
       if (nextStep >= STEPS.length) {
-        goToStep(0); // 循环回到第一步
+        goToStep(0);
       } else {
         goToStep(nextStep);
       }
@@ -752,7 +1149,6 @@ async function fetchStatus() {
     applySectionState("generation", data.image_generation);
     applySectionState("ai_clean", data.ai_clean);
     
-    // 如果正在生成图片，且当前在 AI 页面，刷新 AI 画廊
     if (data.image_generation.status === "running" && STEPS[currentStepIndex] === "ai") {
       loadAiGallery(aiGalleryState.filterKeyword);
     }
@@ -818,7 +1214,7 @@ function applySectionState(section, data) {
   if (progressEl) {
     const progress = typeof data.progress === "number" ? data.progress : 0;
     progressEl.style.width = `${progress}%`;
-    progressEl.style.transition = "width 0.4s ease"; // 确保有过渡效果
+    progressEl.style.transition = "width 0.4s ease";
   }
   
   if (percentEl) {
@@ -918,13 +1314,13 @@ async function postJSON(url, payload = {}) {
 
 function showModal(title, body, actions = [], options = {}) {
   dom.modalTitle.textContent = title || getText("modal.title");
-  
+
   if (options.html) {
       dom.modalBody.innerHTML = options.html;
   } else {
       dom.modalBody.textContent = body || "";
   }
-  
+
   if (options.force) {
       dom.modal.classList.add('modal-force');
       if (dom.modalClose) dom.modalClose.classList.add('hidden');
@@ -948,11 +1344,9 @@ function showModal(title, body, actions = [], options = {}) {
         });
         dom.modalActions.appendChild(btn);
       });
-      // 当有选择选项时,隐藏默认的"知道了"按钮
       if (dom.modalClose) dom.modalClose.classList.add('hidden');
     } else {
       dom.modalActions.classList.add("hidden");
-      // 没有选择选项时,显示"知道了"按钮
       if (dom.modalClose && !options.force) dom.modalClose.classList.remove('hidden');
     }
   }
@@ -975,17 +1369,17 @@ function showToast(message, duration = 2800) {
 }
 
 function updateSwitchState(btn, state) {
-    if (!btn) return;
-    const label = btn.querySelector(".switch-label");
-    if (state === "on") {
-        btn.classList.add("active");
-        btn.dataset.state = "on";
-        if (label) label.textContent = label.dataset.on;
-    } else {
-        btn.classList.remove("active");
-        btn.dataset.state = "off";
-        if (label) label.textContent = label.dataset.off;
-    }
+  if (!btn) return;
+  const label = btn.querySelector(".switch-label");
+  if (state === "on") {
+    btn.classList.add("active");
+    btn.dataset.state = "on";
+    if (label) label.textContent = getText("environment.acceleratorOn");
+  } else {
+    btn.classList.remove("active");
+    btn.dataset.state = "off";
+    if (label) label.textContent = getText("environment.acceleratorOff");
+  }
 }
 
 async function handleAcceleratorAction(action) {
@@ -996,7 +1390,6 @@ async function handleAcceleratorAction(action) {
     showToast(res.message || getText("environment.acceleratorSuccess"));
   } catch (err) {
     showModal(getText("modal.title"), err.message || getText("environment.acceleratorFail"));
-    // Revert state on failure
     updateSwitchState(dom.autodlSwitch, featureStates.autodlAccelerator);
   }
 }
@@ -1400,7 +1793,6 @@ function renderAiCleanGallery() {
 
   const filtered = sourceItems.filter((image) => {
     if (!aiCleaningState.itemsByPath || aiCleaningState.itemsByPath.size === 0) {
-      // 尚未有标签时，直接展示全部图片瀑布流
       return true;
     }
 
@@ -1409,7 +1801,6 @@ function renderAiCleanGallery() {
 
     const tags = payload.tags;
 
-    // 所有维度都满足当前选中的标签
     return AI_CLEAN_DIMENSIONS.every(({ key }) => {
       const selected = aiCleaningState.selectedTags[key];
       if (!selected || selected.size === 0) return true;
@@ -1546,7 +1937,7 @@ function renderAiGallery(pairs) {
     } else {
       generatedHtml = `
         <div class="ai-img-placeholder">
-            <button type="button" class="btn-upload-gen" title="上传生成图">
+            <button type="button" class="btn-upload-gen" title="${getText("images.manualUploadTitle")}">
                 <span>+</span>
             </button>
             <input type="file" class="hidden-file-input" accept="image/*" style="display:none">
@@ -1656,10 +2047,10 @@ function attachAiCardEvents(card, stem, srcPath) {
                     const json = await res.json();
                     if (!res.ok) throw new Error(json.message);
                     
-                    showToast("上传成功");
+                    showToast(getText("images.manualUploadSuccess"));
                     loadAiGallery(aiGalleryState.filterKeyword);
                 } catch (err) {
-                    showToast(err.message || "上传失败");
+                    showToast(err.message || getText("images.manualUploadFailed"));
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<span>+</span>`;
                 }
@@ -1895,23 +2286,20 @@ async function handleOrganizeSubmit(event) {
 }
 
 function getAiPlatformConfig() {
-  const provider = dom.aiProviderSelect?.value || "gemini";
+  const provider = dom.aiProviderSelect?.value || aiProviderConfig?.providers?.[0]?.id || "openai";
   let model = "";
-  
-  // 判断当前是select还是input
+
   if (dom.aiModelPresetSelect) {
     if (dom.aiModelPresetSelect.tagName === "INPUT") {
-      // 自定义模型输入框
       model = dom.aiModelPresetSelect.value.trim();
     } else {
-      // 预设模型下拉框
       const selectedValue = dom.aiModelPresetSelect.value;
       if (selectedValue && selectedValue !== "custom") {
         model = selectedValue;
       }
     }
   }
-  
+
   const apiKey = dom.aiApiKeyInput?.value.trim() || "";
   const baseUrl = dom.aiBaseUrlInput?.value.trim() || "";
   return { provider, model, apiKey, baseUrl };
@@ -1953,7 +2341,6 @@ function syncModelPresetWithProvider() {
   customOpt.textContent = getText("ai.platformCustomModel");
   select.appendChild(customOpt);
 
-  // 如果之前有选择过,且仍然存在,则保留;否则使用默认模型
   if (prevModel && Array.from(select.options).some(opt => opt.value === prevModel)) {
     select.value = prevModel;
   } else if (providerCfg && providerCfg.default_model) {
@@ -1961,48 +2348,44 @@ function syncModelPresetWithProvider() {
   }
 
   handleAiModelPresetVisibility();
+  bindAiModelPresetChange();
 }
 
 function handleAiModelPresetVisibility() {
   if (!dom.aiModelPresetSelect) return;
   const isCustom = dom.aiModelPresetSelect.value === "custom";
-  
-  // 当选择自定义模型时,将select变为input
+
   if (isCustom) {
     const input = document.createElement("input");
     input.id = "aiModelPresetSelect";
     input.type = "text";
     input.placeholder = getText("ai.platformCustomModelPlaceholder");
     input.className = dom.aiModelPresetSelect.className;
-    
-    // 保存之前可能输入的自定义值
+
     const prevValue = dom.aiModelPresetSelect.dataset.customValue || "";
     input.value = prevValue;
-    
-    // 添加输入事件保存自定义值
+
     input.addEventListener("input", (e) => {
       input.dataset.customValue = e.target.value;
     });
-    
-    // 替换select为input
+
     dom.aiModelPresetSelect.parentNode.replaceChild(input, dom.aiModelPresetSelect);
     dom.aiModelPresetSelect = input;
+    bindAiModelPresetChange();
   } else {
-    // 如果当前是input,恢复为select
     if (dom.aiModelPresetSelect.tagName === "INPUT") {
       const select = document.createElement("select");
       select.id = "aiModelPresetSelect";
       select.className = dom.aiModelPresetSelect.className;
-      
-      // 保存自定义值以便后续使用
+
       const customValue = dom.aiModelPresetSelect.value;
       select.dataset.customValue = customValue;
-      
+
       dom.aiModelPresetSelect.parentNode.replaceChild(select, dom.aiModelPresetSelect);
       dom.aiModelPresetSelect = select;
-      
-      // 重新同步选项
+
       syncModelPresetWithProvider();
+      bindAiModelPresetChange();
     }
   }
 }
@@ -2080,16 +2463,87 @@ async function handleAiCleanSubmit(event) {
 async function handleGenerateSubmit(event) {
   event.preventDefault();
   if (dom.generateBtn) dom.generateBtn.disabled = true;
+  const resolvedAspectRatio = resolveAspectRatioValue();
+  let imageNodes = [];
+  try {
+    imageNodes = buildImageNodeConfig();
+  } catch (err) {
+    showModal(getText("modal.title"), err.message || getText("images.workflowExtraImageNodesInvalid"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  const workflowConfig = {
+    image_nodes: imageNodes,
+    image_node_id: imageNodes[0]?.node_id || "",
+    image_field_name: imageNodes[0]?.field_name || "",
+    prompt_node_id: dom.workflowPromptNodeIdInput?.value.trim() || "",
+    prompt_field_name: dom.workflowPromptFieldNameInput?.value.trim() || "",
+    aspect_ratio_node_id: dom.workflowAspectNodeIdInput?.value.trim() || "",
+    aspect_ratio_field_name: dom.workflowAspectFieldNameInput?.value.trim() || "",
+    aspect_ratio_field_data: dom.workflowAspectFieldDataInput?.value.trim() || "",
+  };
   const payload = {
-    prompt: dom.promptInput?.value.trim() || getText("images.promptPlaceholder"),
+    prompt: dom.promptInput?.value.trim() || "",
     overwrite: dom.overwriteToggle?.checked ?? false,
     targets: Array.from(aiGalleryState.selected),
-    key_path: dom.keyPathInput?.value.trim() || "",
-    project_id: dom.projectIdInput?.value.trim() || "",
-    location: dom.locationInput?.value.trim() || "",
+    api_key: dom.runninghubApiKeyInput?.value.trim() || "",
+    aspect_ratio: resolvedAspectRatio,
+    image_api_url: dom.runninghubImageUrlInput?.value.trim() || "",
+    query_url: dom.runninghubQueryUrlInput?.value.trim() || "",
+    workflow_config: workflowConfig,
   };
-  if (!payload.key_path || !payload.project_id || !payload.location) {
+  if (!payload.api_key) {
     showModal(getText("modal.title"), getText("images.configRequired"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (!payload.image_api_url) {
+    showModal(getText("modal.title"), getText("images.requestUrlRequired"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (!payload.query_url) {
+    showModal(getText("modal.title"), getText("images.queryUrlRequired"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (!payload.aspect_ratio) {
+    showModal(getText("modal.title"), getText("images.customAspectRatioRequired"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (!workflowConfig.image_node_id || !workflowConfig.image_field_name) {
+    showModal(getText("modal.title"), getText("images.workflowImageConfigRequired"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (Boolean(workflowConfig.prompt_node_id) !== Boolean(workflowConfig.prompt_field_name)) {
+    showModal(getText("modal.title"), getText("images.workflowPromptConfigInvalid"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (Boolean(workflowConfig.aspect_ratio_node_id) !== Boolean(workflowConfig.aspect_ratio_field_name)) {
+    showModal(getText("modal.title"), getText("images.workflowAspectConfigInvalid"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+  if (extraReferenceState.files.length > Math.max(imageNodes.length - 1, 0)) {
+    showModal(getText("modal.title"), getText("images.extraReferenceNodeMissing"));
+    if (dom.generateBtn) dom.generateBtn.disabled = false;
+    return;
+  }
+
+  try {
+    if (extraReferenceState.files.length) {
+      payload.extra_reference_images = await Promise.all(
+        extraReferenceState.files.map(async (file) => ({
+          name: file.name,
+          data_url: await readDataUrlFile(file),
+        })),
+      );
+    }
+  } catch (err) {
+    showModal(getText("modal.title"), err.message || getText("images.extraReferenceNodeMissing"));
     if (dom.generateBtn) dom.generateBtn.disabled = false;
     return;
   }
@@ -2102,7 +2556,6 @@ async function handleGenerateSubmit(event) {
   try {
     const res = await postJSON("/api/images/generate", payload);
     showModal(getText("modal.title"), res.message);
-    // 触发一次刷新
     loadAiGallery(aiGalleryState.filterKeyword);
   } catch (err) {
     showModal(getText("modal.title"), err.message);
@@ -2266,12 +2719,7 @@ function initActions() {
       syncModelPresetWithProvider();
     });
   }
-  if (dom.aiModelPresetSelect) {
-    dom.aiModelPresetSelect.addEventListener("change", () => {
-      handleAiModelPresetVisibility();
-    });
-  }
-  // 初始化预设模型与自定义模型输入框显隐由配置加载完成后处理
+  bindAiModelPresetChange();
   if (dom.aiTestConfigBtn) {
     dom.aiTestConfigBtn.addEventListener("click", handleAiConfigTestClick);
   }
@@ -2299,7 +2747,35 @@ function initActions() {
   dom.applyFilterBtn?.addEventListener("click", () => {
     loadGallery(dom.galleryFilter?.value.trim() || "");
   });
+  dom.extraReferenceInput?.addEventListener("change", () => {
+    const files = Array.from(dom.extraReferenceInput?.files || []).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    if (files.length) {
+      extraReferenceState.files.push(...files);
+      renderExtraReferenceList();
+    }
+    if (dom.extraReferenceInput) {
+      dom.extraReferenceInput.value = "";
+    }
+  });
+  dom.runninghubParseBtn?.addEventListener("click", handleRunningHubExampleParse);
+  dom.runninghubExampleFileInput?.addEventListener("change", async () => {
+    const file = dom.runninghubExampleFileInput?.files?.[0];
+    if (!file || !dom.runninghubExampleTextInput) return;
+    try {
+      dom.runninghubExampleTextInput.value = await readTextFile(file);
+    } catch (err) {
+      showModal(getText("modal.title"), err.message || getText("images.exampleParseRequired"));
+    }
+  });
   dom.generationForm?.addEventListener("submit", handleGenerateSubmit);
+  dom.aspectRatioSelect?.addEventListener("change", updateAspectRatioInputState);
+  dom.aspectRatioBackBtn?.addEventListener("click", () => {
+    if (dom.aspectRatioSelect) dom.aspectRatioSelect.value = "auto";
+    if (dom.customAspectRatioInput) dom.customAspectRatioInput.value = "";
+    updateAspectRatioInputState();
+  });
   dom.clearSelectionBtn?.addEventListener("click", clearSelection);
   dom.clearAiSelectionBtn?.addEventListener("click", clearAiSelection);
   dom.applyAiFilterBtn?.addEventListener("click", () => {
@@ -2307,15 +2783,11 @@ function initActions() {
   });
   dom.tagForm?.addEventListener("submit", handleTagSubmit);
 
-  // Switches
   if (dom.autodlSwitch) {
       dom.autodlSwitch.addEventListener("click", () => {
           if (featureStates.autodlAccelerator === "off") {
-              // User wants to turn ON
               if (featureStates.githubAccelerator === "on") {
-                  // Conflict: GitHub is already ON.
-                  // "Default close Autodl and prompt"
-                  showModal(getText("modal.title"), "Autodl 学术加速与 GitHub 加速不能同时开启，请先关闭 GitHub 加速。");
+                  showModal(getText("modal.title"), getText("environment.acceleratorConflict"));
                   return; 
               }
           }
@@ -2325,24 +2797,14 @@ function initActions() {
   }
   if (dom.githubSwitch) {
       dom.githubSwitch.addEventListener("click", () => {
-          // User toggles GitHub switch
           const newState = featureStates.githubAccelerator === "on" ? "off" : "on";
           
           if (newState === "on" && featureStates.autodlAccelerator === "on") {
-              // Conflict: Autodl is ON, and we are turning GitHub ON.
-              // "Default close Autodl and prompt"
-              
-              // 1. Disable Autodl
               handleAcceleratorAction("disable"); 
-              
-              // 2. Enable GitHub
               featureStates.githubAccelerator = "on";
               updateSwitchState(dom.githubSwitch, "on");
-              
-              // 3. Prompt
-              showModal(getText("modal.title"), "检测到同时开启两个加速功能，已自动关闭 Autodl 学术镜像加速。");
+              showModal(getText("modal.title"), getText("environment.githubAutoDisabledAutodl"));
           } else {
-              // Normal toggle
               featureStates.githubAccelerator = newState;
               updateSwitchState(dom.githubSwitch, newState);
           }
@@ -2370,14 +2832,17 @@ function bootstrapPreferences() {
 
 document.addEventListener("DOMContentLoaded", () => {
   bootstrapPreferences();
+  initializeGenerationDefaults();
+  renderExtraReferenceList();
   loadAiProviderConfig();
   initNavigation();
   initActions();
   startPolling();
   updateSelectionHint();
   updateAiSelectionHint();
+  updateStepText();
   loadGallery();
   goToStep(0);
-  // Trigger update check in background (will show modal if update available)
   checkUpdate(true);
 });
+

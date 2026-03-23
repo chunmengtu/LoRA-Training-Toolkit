@@ -26,20 +26,8 @@
       ]
     },
     {
-      "id": "gemini",
-      "label_zh": "Gemini",
-      "label_en": "Gemini",
-      "default_model": "gemini/gemini-2.5-flash",
-      "models": [
-        { "model": "gemini/gemini-3-pro-preview", "label_zh": "Gemini 3.0 Pro Preview", "label_en": "Gemini 3.0 Pro Preview" },
-        { "model": "gemini/gemini-2.5-pro", "label_zh": "Gemini 2.5 Pro", "label_en": "Gemini 2.5 Pro" },
-        { "model": "gemini/gemini-2.5-flash", "label_zh": "Gemini 2.5 Flash", "label_en": "Gemini 2.5 Flash" },
-        { "model": "gemini/gemini-2.5-flash-lite", "label_zh": "Gemini 2.5 Flash Lite", "label_en": "Gemini 2.5 Flash Lite" }
-      ]
-    },
-    {
       "id": "dashscope",
-      "label_zh": "通义千问",
+      "label_zh": "Qwen",
       "label_en": "Qwen",
       "default_model": "dashscope/qwen3-vl-flash",
       "models": [
@@ -59,7 +47,7 @@
     },
     {
       "id": "zhipu",
-      "label_zh": "智谱",
+      "label_zh": "GLM",
       "label_en": "GLM",
       "default_model": "zai/glm-4.6v-flash",
       "models": [
@@ -69,7 +57,7 @@
     },
     {
       "id": "moonshot",
-      "label_zh": "月之暗面",
+      "label_zh": "Kimi",
       "label_en": "Kimi",
       "default_model": "moonshot/kimi-k2-turbo-preview",
       "models": [
@@ -80,7 +68,7 @@
     },
     {
       "id": "yi",
-      "label_zh": "零一万物",
+      "label_zh": "Yi",
       "label_en": "Yi",
       "default_model": "yi/yi-vision-v2",
       "models": [
@@ -89,7 +77,7 @@
     },
     {
       "id": "volcengine",
-      "label_zh": "火山引擎",
+      "label_zh": "Doubao",
       "label_en": "Doubao",
       "default_model": "volcengine/doubao-seed-1.6-vision",
       "models": [
@@ -102,7 +90,7 @@
     },
     {
       "id": "ollama",
-      "label_zh": "Ollama 本地模型",
+      "label_zh": "Ollama",
       "label_en": "Ollama",
       "default_model": "ollama/llava:7b",
       "models": [
@@ -114,7 +102,7 @@
     },
     {
       "id": "custom",
-      "label_zh": "自定义平台",
+      "label_zh": "Custom",
       "label_en": "Custom Provider",
       "models": []
     }
