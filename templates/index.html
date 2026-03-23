@@ -255,26 +255,16 @@
                     </div>
                 </div>
 
-                <div class="page-body">
+                <div class="page-body page-body-scroll">
                     <form id="downloadForm" class="model-form">
                         <div class="form-section">
                             <label class="form-label" data-i18n="download.modelLegend">选择模型</label>
-                            <div class="radio-group">
-                                <label class="radio-card">
-                                    <input type="radio" name="model" value="Qwen-Image-Edit-2509" checked>
-                                    <div class="radio-content">
-                                        <span class="radio-title">Qwen-Image-Edit-2509</span>
-                                        <span class="radio-desc" data-i18n="download.modelQwenDesc">推荐用于图像编辑任务</span>
-                                    </div>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="model" value="FLUX.1-Kontext-dev">
-                                    <div class="radio-content">
-                                        <span class="radio-title">FLUX.1-Kontext-dev</span>
-                                        <span class="radio-desc" data-i18n="download.modelFluxDesc">适合上下文理解和风格修改</span>
-                                    </div>
-                                </label>
-                            </div>
+                            <div class="radio-group" id="modelFeaturedGroup"></div>
+                            <button type="button" class="btn-toggle-models hidden" id="toggleMoreModels">
+                                <span id="toggleMoreText">显示更多模型</span>
+                                <span class="toggle-chevron">▾</span>
+                            </button>
+                            <div class="radio-group model-more hidden" id="modelMoreGroup"></div>
                         </div>
 
                         <div class="form-section">
@@ -740,7 +730,8 @@
             "runninghubWorkflowPromptFieldName": runninghub_workflow_prompt_field_name,
             "runninghubWorkflowAspectNodeId": runninghub_workflow_aspect_ratio_node_id,
             "runninghubWorkflowAspectFieldName": runninghub_workflow_aspect_ratio_field_name,
-            "runninghubWorkflowAspectFieldData": runninghub_workflow_aspect_ratio_field_data
+            "runninghubWorkflowAspectFieldData": runninghub_workflow_aspect_ratio_field_data,
+            "modelRegistry": model_registry_json
         } | tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>

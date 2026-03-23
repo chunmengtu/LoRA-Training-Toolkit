@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from PIL import Image
 from flask import Blueprint, render_template, send_from_directory
@@ -17,6 +18,7 @@ from ..config import (
     SYSTEM_NAME,
     THUMBNAIL_DIR,
 )
+from ..services.tasks import MODEL_REGISTRY
 from ..utils import safe_bucket_path, allowed_image
 
 bp = Blueprint("views", __name__)
@@ -38,6 +40,11 @@ def index():
         runninghub_workflow_aspect_ratio_node_id=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_NODE_ID,
         runninghub_workflow_aspect_ratio_field_name=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_NAME,
         runninghub_workflow_aspect_ratio_field_data=RUNNINGHUB_WORKFLOW_ASPECT_RATIO_FIELD_DATA,
+        model_registry_json=json.dumps(
+            [{"name": m["name"], "desc": m["desc"], "featured": m["featured"]}
+             for m in MODEL_REGISTRY],
+            ensure_ascii=False,
+        ),
     )
 
 @bp.route("/uploads/<path:filename>")

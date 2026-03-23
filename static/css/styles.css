@@ -619,6 +619,46 @@ body {
     font-weight: 700;
 }
 
+.btn-toggle-models.hidden,
+.model-more.hidden {
+    display: none;
+}
+
+.btn-toggle-models {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary, #888);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle-models:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.toggle-chevron {
+    font-size: 11px;
+    transition: transform 0.25s;
+}
+
+.toggle-chevron.expanded {
+    transform: rotate(180deg);
+}
+
+.model-more {
+    margin-top: 10px;
+}
+
 /* 工具面板 */
 .tools-grid {
     display: grid;

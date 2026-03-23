@@ -62,8 +62,8 @@ const dictionary = {
     "download.sourceLegend": "下载来源",
     "download.button": "开始下载",
     "download.note": "默认目录：{{dir}}/模型名",
-    "download.modelQwenDesc": "推荐用于图像编辑任务",
-    "download.modelFluxDesc": "适合上下文理解和风格修改",
+    "download.showMore": "显示更多模型 ({{n}})",
+    "download.showLess": "收起",
     "download.sourceRecommended": "推荐",
     "download.sourceAltDesc": "官方社区源",
     "images.title": "图像处理 · 管理",
@@ -279,8 +279,8 @@ const dictionary = {
     "download.sourceLegend": "Source",
     "download.button": "Download",
     "download.note": "Default directory: {{dir}}/model-name",
-    "download.modelQwenDesc": "Recommended for image editing tasks",
-    "download.modelFluxDesc": "Good for contextual edits and style changes",
+    "download.showMore": "Show more models ({{n}})",
+    "download.showLess": "Collapse",
     "download.sourceRecommended": "Recommended",
     "download.sourceAltDesc": "Official community source",
     "images.title": "Image Management",
@@ -456,6 +456,10 @@ const dom = {
   startBtn: document.getElementById("startBtn"),
   downloadForm: document.getElementById("downloadForm"),
   downloadBtn: document.getElementById("downloadBtn"),
+  modelFeaturedGroup: document.getElementById("modelFeaturedGroup"),
+  modelMoreGroup: document.getElementById("modelMoreGroup"),
+  toggleMoreModels: document.getElementById("toggleMoreModels"),
+  toggleMoreText: document.getElementById("toggleMoreText"),
   setupProgress: document.getElementById("setupProgress"),
   setupStatus: document.getElementById("setupStatus"),
   setupPercent: document.getElementById("setupPercent"),
@@ -749,6 +753,7 @@ function applyTranslations() {
     renderAiCleanFilters();
     renderAiCleanGallery();
   }
+  renderModelCards();
 }
 
 function applyTheme(theme) {
@@ -2594,6 +2599,66 @@ async function handleTagSubmit(event) {
   }
 }
 
+function modelCardHTML(model, checked) {
+  const desc = model.desc[currentLang] || model.desc.zh;
+  return `<label class="radio-card">
+    <input type="radio" name="model" value="${model.name}" ${checked ? "checked" : ""}>
+    <div class="radio-content">
+      <span class="radio-title">${model.name}</span>
+      <span class="radio-desc">${desc}</span>
+    </div>
+  </label>`;
+}
+
+function renderModelCards() {
+  const raw = (window.__APP_CONFIG__ || {}).modelRegistry;
+  const registry = typeof raw === "string" ? JSON.parse(raw) : raw || [];
+  const featured = registry.filter((m) => m.featured);
+  const more = registry.filter((m) => !m.featured);
+
+  const selected = document.querySelector('input[name="model"]:checked')?.value;
+
+  if (dom.modelFeaturedGroup) {
+    dom.modelFeaturedGroup.innerHTML = featured
+      .map((m, i) => modelCardHTML(m, selected ? m.name === selected : i === 0))
+      .join("");
+  }
+
+  if (dom.modelMoreGroup && dom.toggleMoreModels) {
+    if (more.length > 0) {
+      dom.toggleMoreModels.classList.remove("hidden");
+      dom.modelMoreGroup.innerHTML = more
+        .map((m) => modelCardHTML(m, m.name === selected))
+        .join("");
+    } else {
+      dom.toggleMoreModels.classList.add("hidden");
+      dom.modelMoreGroup.innerHTML = "";
+    }
+  }
+  updateToggleMoreText();
+}
+
+function updateToggleMoreText() {
+  if (!dom.toggleMoreText) return;
+  const raw = (window.__APP_CONFIG__ || {}).modelRegistry;
+  const registry = typeof raw === "string" ? JSON.parse(raw) : raw || [];
+  const count = registry.filter((m) => !m.featured).length;
+  const expanded = dom.modelMoreGroup && !dom.modelMoreGroup.classList.contains("hidden");
+  dom.toggleMoreText.textContent = expanded
+    ? getText("download.showLess")
+    : formatText("download.showMore", { n: count });
+}
+
+function toggleMoreModels() {
+  if (!dom.modelMoreGroup) return;
+  dom.modelMoreGroup.classList.toggle("hidden");
+  const chevron = dom.toggleMoreModels?.querySelector(".toggle-chevron");
+  if (chevron) {
+    chevron.classList.toggle("expanded", !dom.modelMoreGroup.classList.contains("hidden"));
+  }
+  updateToggleMoreText();
+}
+
 function initActions() {
   if (dom.setupBtn) {
     dom.setupBtn.addEventListener("click", async () => {
@@ -2625,6 +2690,8 @@ function initActions() {
           }
       });
   }
+
+  dom.toggleMoreModels?.addEventListener("click", toggleMoreModels);
 
   if (dom.downloadForm) {
     dom.downloadForm.addEventListener("submit", async (event) => {
