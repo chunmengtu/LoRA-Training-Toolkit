@@ -1,7 +1,7 @@
 import os
 import platform
 
-CURRENT_VERSION = "0.0.6"
+CURRENT_VERSION = "0.0.7"
 GITEE_REPO = "rcangbaohz/lora-training-toolkit"
 
 SYSTEM_NAME = platform.system()
