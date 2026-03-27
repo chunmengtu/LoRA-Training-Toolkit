@@ -1,18 +1,18 @@
-import os
 from flask import Flask
-from .routes import register_routes
-from .utils import ensure_workspace
+
+from .core.config import PROJECT_ROOT
+from .core.utils import ensure_workspace
+from .modules import register_blueprints
 
 def create_app():
-    # Determine the project root directory (one level up from this file)
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    template_dir = os.path.join(project_root, "templates")
-    static_dir = os.path.join(project_root, "static")
-    
-    app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
-    
+    app = Flask(
+        __name__,
+        template_folder=str(PROJECT_ROOT / "templates"),
+        static_folder=str(PROJECT_ROOT / "static"),
+    )
+
     ensure_workspace()
-    register_routes(app)
-    
+    register_blueprints(app)
+
     return app
 
