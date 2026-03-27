@@ -1,0 +1,2 @@
+.clean-filter-panel:empty { display: none; }
+.clean-filter-panel .tool-hint { margin: 0 0 14px; font-size: 12px; line-height: 1.6; }
