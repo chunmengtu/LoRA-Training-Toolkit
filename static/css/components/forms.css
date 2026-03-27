@@ -1,0 +1,55 @@
+.model-form, .tool-form { display: flex; flex-direction: column; gap: 10px; }
+.form-section, .tool-panel, .content-card, .gallery-section { padding: 24px; background: var(--panel); border-radius: 14px; border: 1px solid var(--border); }
+.form-label { display: block; font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-card { display: flex; align-items: center; padding: 14px 18px; background: var(--panel-alt); border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s ease; }
+.radio-card:hover { border-color: var(--accent); }
+.radio-card input { position: absolute; opacity: 0; }
+.radio-card:has(input:checked) { background: var(--accent); color: #fff; border-color: var(--accent); }
+.radio-content { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; flex-wrap: wrap; }
+.radio-title { flex: 1; font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.radio-desc { font-size: 12px; opacity: 0.8; overflow-wrap: anywhere; }
+.radio-badge { padding: 4px 10px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 11px; font-weight: 700; }
+
+.tool-form input, .tool-form select, .tool-form textarea, .gallery-filter input, .aspect-ratio-combo select, .aspect-ratio-custom-row input, .file-trigger-summary {
+    padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-alt); color: var(--text); font-size: 14px;
+}
+.tool-form textarea { resize: vertical; min-height: 80px; }
+.tool-form input[type="file"] { padding: 8px 10px; width: 100%; min-height: 44px; line-height: 1.4; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+.form-inline { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; min-width: 0; }
+.form-inline--row { flex-direction: row; }
+.form-inline--row > * { flex: 1; min-width: 0; }
+.form-inline--column { flex-direction: column !important; gap: 10px; }
+.form-inline--column .form-label { margin-bottom: 2px; }
+.model-more.hidden, .aspect-ratio-combo select.hidden, .aspect-ratio-custom-row.hidden, .file-input-hidden { display: none; }
+
+.upload-zone { display: block; padding: 40px 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--panel-alt); text-align: center; cursor: pointer; margin-bottom: 12px; }
+.upload-zone.highlight { border-color: var(--accent); background: rgba(99, 102, 241, 0.1); transform: scale(1.02); }
+.upload-zone:hover { border-color: var(--accent); background: var(--accent); color: #fff; }
+.upload-zone input { display: none; }
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+
+.advanced-panel { border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
+.advanced-panel summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; padding: 12px 14px; font-size: 14px; font-weight: 600; color: var(--text); list-style: none; }
+.advanced-panel summary::-webkit-details-marker { display: none; }
+.advanced-panel summary::after { content: "+"; font-size: 18px; line-height: 1; color: var(--text-muted); }
+.advanced-panel[open] summary::after { content: "-"; }
+.advanced-panel-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.tool-actions, .action-card-group, .gallery-filter, .console-status { display: flex; gap: 8px; flex-wrap: wrap; }
+.file-trigger-row { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; }
+.file-trigger-summary { min-height: 42px; display: flex; align-items: center; color: var(--text-muted); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.aspect-ratio-custom-row { display: flex; gap: 8px; align-items: center; }
+.step-list { padding-left: 24px; color: var(--text-muted); line-height: 2; }
+
+@media (min-width: 768px) {
+    .form-inline { flex-direction: row; }
+    .form-inline input { flex: 1; }
+}
+
+@media (max-width: 768px) {
+    .tool-actions, .gallery-filter, .console-status, .form-inline--row, .file-trigger-row { flex-direction: column; }
+    .file-trigger-row { grid-template-columns: 1fr; }
+    .radio-content { align-items: flex-start; }
+}

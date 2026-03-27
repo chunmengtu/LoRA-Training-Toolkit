@@ -1,0 +1,39 @@
+.wizard-container { display: flex; height: 100vh; overflow: hidden; }
+.wizard-sidebar { width: 280px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; gap: 24px; overflow-y: auto; }
+.wizard-content { flex: 1; position: relative; overflow: hidden; }
+.wizard-page { position: absolute; inset: 0; display: none; flex-direction: column; background: var(--bg); }
+.wizard-page.active { display: flex; }
+.page-header { padding: 40px 48px 32px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.page-badge { display: inline-block; padding: 6px 12px; background: var(--accent); color: #fff; border-radius: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; overflow-wrap: anywhere; }
+.page-title { font-size: 32px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; overflow-wrap: anywhere; }
+.page-subtitle { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 800px; overflow-wrap: anywhere; }
+.page-body { flex: 1; padding: 32px 48px; overflow: hidden; }
+.page-body-scroll { overflow-y: auto; }
+.page-footer { padding: 24px 48px; background: var(--panel); border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 16px; }
+.step-progress { padding: 16px; background: var(--panel-alt); border-radius: 12px; }
+.step-progress-bar { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+.step-progress-fill { height: 100%; width: 20%; background: var(--accent); border-radius: 999px; transition: width 0.4s ease; }
+.step-progress-text { font-size: 13px; font-weight: 600; color: var(--text-muted); text-align: center; }
+.step-nav { display: flex; flex-direction: column; gap: 4px; }
+.step-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: transparent; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s ease; text-align: left; color: var(--text); }
+.step-nav-item:hover { background: var(--panel-alt); }
+.step-nav-item.active { background: var(--accent); color: #fff; }
+.step-nav-item.completed .step-check { opacity: 1; }
+.step-badge { width: 28px; height: 28px; border-radius: 8px; background: var(--panel-alt); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.step-nav-item.active .step-badge { background: rgba(255, 255, 255, 0.2); }
+.step-label { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.35; min-width: 0; overflow-wrap: anywhere; }
+.step-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+
+@media (max-width: 1024px) {
+    .wizard-sidebar { width: 240px; }
+    .page-header, .page-body, .page-footer { padding-left: 32px; padding-right: 32px; }
+}
+
+@media (max-width: 768px) {
+    .wizard-container { flex-direction: column; }
+    .wizard-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .step-nav { flex-direction: row; overflow-x: auto; }
+    .page-header, .page-body, .page-footer { padding-left: 20px; padding-right: 20px; }
+    .page-title { font-size: 26px; }
+    .page-subtitle { font-size: 14px; }
+}

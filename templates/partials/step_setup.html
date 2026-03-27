@@ -1,0 +1,85 @@
+<div class="wizard-page" data-page="environment">
+    <div class="page-header">
+        <span class="page-badge">步骤 2 / 7</span>
+        <h1 class="page-title" data-i18n="environment.title">环境初始化向导</h1>
+        <p class="page-subtitle" data-i18n="environment.desc">
+            自动执行依赖安装与工具准备。Linux 会顺序安装相关组件，Windows 会调用 Easy Install 脚本。
+        </p>
+        <div class="gamified-progress hidden" id="gamifiedProgress_setup">
+            <div class="gamified-track" id="gamifiedTrack_setup"></div>
+            <div class="gamified-thumb" id="gamifiedThumb_setup">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="content-card">
+            <div class="card-header">
+                <h3 data-i18n="environment.executionTitle">执行内容</h3>
+            </div>
+            <ol class="step-list">
+                <li data-i18n="environment.item1">安装 huggingface_hub 与 modelscope</li>
+                <li data-i18n="environment.item2">配置 Node.js 20 源并安装 nodejs</li>
+                <li data-i18n="environment.item3">克隆或更新 ai-toolkit，安装 requirements</li>
+                <li data-i18n="environment.item4">启动 ai-toolkit，Linux 默认端口 6006，Windows 默认端口 7867</li>
+            </ol>
+        </div>
+
+        <div class="feature-toggle-stack">
+            <div class="feature-row">
+                <div class="feature-info">
+                    <strong data-i18n="environment.acceleratorTitle">Autodl 学术镜像加速</strong>
+                    <p class="feature-desc" data-i18n="environment.acceleratorBody">
+                        仅适用于 AutoDL 环境，可加速 GitHub 与 HuggingFace 访问；不需要时建议关闭。
+                    </p>
+                </div>
+                <button type="button" class="btn-switch" id="autodlSwitch" data-state="off">
+                    <span class="switch-label">关闭</span>
+                </button>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-info">
+                    <strong data-i18n="environment.githubTitle">GitHub 加速</strong>
+                    <p class="feature-desc" data-i18n="environment.githubBody">
+                        第三方 GitHub 代理加速，适合访问 GitHub 较慢时使用。
+                    </p>
+                </div>
+                <button type="button" class="btn-switch" id="githubSwitch" data-state="off">
+                    <span class="switch-label">关闭</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="alert-box warning">
+            <span class="alert-icon">!</span>
+            <div>
+                <strong data-i18n="environment.alertTitle">温馨提醒：</strong>
+                <span data-i18n="environment.alertDesc">
+                    当前界面会持续记录完整的命令日志，执行期间请勿重复点击同一操作。
+                </span>
+            </div>
+        </div>
+
+        <div class="action-card-group">
+            <button id="setupBtn" class="btn-action primary" data-i18n="environment.button">
+                <span>▶</span> 开始执行
+            </button>
+            <button id="startBtn" class="btn-action secondary" data-i18n="environment.startBtn">
+                <span>UI</span> 启动训练界面
+            </button>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="overview">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="download">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>

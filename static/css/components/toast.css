@@ -1,0 +1,2 @@
+.toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 24px; background: var(--panel); border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--shadow); z-index: 200; transition: all 0.3s ease; }
+.toast.hidden { opacity: 0; transform: translateY(10px); pointer-events: none; }

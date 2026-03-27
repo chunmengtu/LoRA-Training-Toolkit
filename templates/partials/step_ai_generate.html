@@ -1,0 +1,130 @@
+<div class="wizard-page" data-page="ai">
+    <div class="page-header">
+        <span class="page-badge">步骤 5 / 7</span>
+        <h1 class="page-title" data-i18n="ai.title">AI 处理</h1>
+        <p class="page-subtitle" data-i18n="ai.desc">
+            使用 AI 批量生成图像、批量打标并导出结果。
+        </p>
+        <div class="gamified-progress hidden" id="gamifiedProgress_ai">
+            <div class="gamified-track" id="gamifiedTrack_ai"></div>
+            <div class="gamified-thumb" id="gamifiedThumb_ai">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body page-body-scroll">
+        <div class="tools-grid">
+            <div class="tool-panel">
+                <h3 data-i18n="images.generateTitle">AI 批量生成</h3>
+                <form id="generationForm" class="tool-form">
+                    <input id="runninghubApiKeyInput" type="password" placeholder="输入 RunningHub API Key" data-i18n-placeholder="images.apiKeyPlaceholder">
+                    <label class="form-label" for="runninghubModelInput" data-i18n="images.runninghubModelLabel">RunningHub 模型</label>
+                    <input id="runninghubModelInput" type="text" placeholder="上传示例后自动回填，或手动输入模型名" data-i18n-placeholder="images.runninghubModelPlaceholder">
+                    <div class="aspect-ratio-combo">
+                        <select id="aspectRatioSelect">
+                            <option value="auto">auto</option>
+                            <option value="1:1">1:1</option>
+                            <option value="16:9">16:9</option>
+                            <option value="9:16">9:16</option>
+                            <option value="4:3">4:3</option>
+                            <option value="3:4">3:4</option>
+                            <option value="3:2">3:2</option>
+                            <option value="2:3">2:3</option>
+                            <option value="5:4">5:4</option>
+                            <option value="4:5">4:5</option>
+                            <option value="21:9">21:9</option>
+                            <option value="custom" data-i18n="images.aspectRatioCustom">自定义</option>
+                        </select>
+                        <div id="aspectRatioCustomRow" class="aspect-ratio-custom-row hidden">
+                            <button id="aspectRatioBackBtn" type="button" class="aspect-ratio-back-btn">←</button>
+                            <input id="customAspectRatioInput" type="text" placeholder="输入自定义 aspectRatio，例如 7:10" data-i18n-placeholder="images.customAspectRatioPlaceholder">
+                        </div>
+                    </div>
+                    <details class="advanced-panel">
+                        <summary data-i18n="images.autoParseToggle">自动解析</summary>
+                        <div class="advanced-panel-body">
+                            <input id="runninghubImageUrlInput" type="text" placeholder="输入 RunningHub 工作流接口地址" data-i18n-placeholder="images.requestUrlPlaceholder">
+                            <input id="runninghubQueryUrlInput" type="text" placeholder="输入查询接口地址" data-i18n-placeholder="images.queryUrlPlaceholder">
+                            <label class="form-label" for="runninghubExampleFileInput" data-i18n="images.exampleFileLabel">上传官方 Python 示例</label>
+                            <input id="runninghubExampleFileInput" type="file" accept=".py,.txt,.md">
+                            <textarea id="runninghubExampleTextInput" rows="8" placeholder="粘贴官方 Python 请求示例，点击解析后自动回填配置" data-i18n-placeholder="images.exampleTextareaPlaceholder"></textarea>
+                            <div class="tool-actions">
+                                <button id="runninghubParseBtn" type="button" class="btn-tool secondary" data-i18n="images.parseExampleBtn">解析示例</button>
+                            </div>
+                        </div>
+                    </details>
+                    <div class="form-inline form-inline--column">
+                        <label class="form-label" for="extraReferenceInput" data-i18n="images.extraReferenceLabel">附加参考图（图2~图N）</label>
+                        <input id="extraReferenceInput" class="file-input-hidden" type="file" accept="image/*" multiple>
+                        <div class="file-trigger-row">
+                            <label for="extraReferenceInput" class="file-trigger-button" data-i18n="images.extraReferenceSelectBtn">选择附加参考图</label>
+                            <span id="extraReferenceSummary" class="file-trigger-summary" data-i18n="images.extraReferenceSummaryIdle">未选择文件</span>
+                        </div>
+                        <p class="tool-hint" data-i18n="images.extraReferenceHint">默认图像处理区的原图会作为图1；这里上传的图片会按顺序作为图2、图3、图4……</p>
+                        <div id="extraReferenceList" class="reference-list hidden"></div>
+                    </div>
+                    <textarea id="promptInput" rows="3" placeholder="描述你想生成的风格..." data-i18n-placeholder="images.promptPlaceholder"></textarea>
+                    <label class="checkbox-label">
+                        <input id="overwriteToggle" type="checkbox">
+                        <span data-i18n="images.overwriteLabel">生成后覆盖同名文件</span>
+                    </label>
+                    <details id="generationAdvancedPanel" class="advanced-panel">
+                        <summary data-i18n="images.manualNodeToggle">高级设置（手动节点）</summary>
+                        <div class="advanced-panel-body">
+                            <p class="tool-hint" data-i18n="images.runninghubManualParamsHint">这里可填写不同模型的额外请求参数，格式为 JSON 对象；自动解析也会回填到这里。</p>
+                            <textarea id="runninghubExtraParamsInput" rows="10" placeholder='{"resolution":"2k"}' data-i18n-placeholder="images.runninghubExtraParamsPlaceholder"></textarea>
+                        </div>
+                    </details>
+                    <p class="tool-hint" id="aiSelectionHint" data-i18n="images.selectionHint">未选择图片时默认处理全部</p>
+                    <div class="tool-actions">
+                        <button id="generateBtn" type="submit" class="btn-tool primary" data-i18n="images.generateBtn">开始生成</button>
+                        <button id="clearAiSelectionBtn" type="button" class="btn-tool" data-i18n="images.clearSelection">清空</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tool-panel">
+                <h3 data-i18n="ai.tagTitle">批量打标</h3>
+                <form id="tagForm" class="tool-form">
+                    <textarea id="tagInput" rows="3" placeholder="输入标签..." data-i18n-placeholder="ai.tagPlaceholder"></textarea>
+                    <p class="tag-hint" data-i18n-html="ai.tagHint">
+                        请用简洁语言描述你希望生成图的目标风格或效果，建议优先使用英文。
+                    </p>
+                    <div class="tool-actions">
+                        <button type="submit" class="btn-tool secondary" data-i18n="ai.tagBtn">应用标签</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tool-panel">
+                <h3 data-i18n="images.exportTitle">批量导出</h3>
+                <div class="tool-actions">
+                    <a href="/api/ai/export" target="_blank" class="btn-tool primary" data-i18n="ai.exportBtn">导出 AI 数据包</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3 data-i18n="ai.galleryTitle">AI 生成预览</h3>
+                <div class="gallery-filter">
+                    <input id="aiGalleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                    <button id="applyAiFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                </div>
+            </div>
+            <div id="aiGrid" class="ai-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="images">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="ai-clean">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>

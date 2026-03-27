@@ -1,0 +1,69 @@
+<div class="wizard-page" data-page="ai-clean">
+    <div class="page-header">
+        <span class="page-badge">步骤 6 / 7</span>
+        <h1 class="page-title" data-i18n="ai.cleanTitle">AI 图片清洗</h1>
+        <p class="page-subtitle" data-i18n="ai.cleanPageDesc">
+            调整提示词后即可调用大模型分析图片内容，生成结构化标签并支持进一步筛选。
+        </p>
+        <div id="gamifiedProgress_ai-clean" class="gamified-progress hidden">
+            <div id="gamifiedTrack_ai-clean" class="gamified-track"></div>
+            <div id="gamifiedThumb_ai-clean" class="gamified-thumb">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body page-body-scroll">
+        <div class="tools-grid">
+            <div class="tool-panel">
+                <h3 data-i18n="ai.platformTitle">AI 平台配置</h3>
+                <form id="aiConfigForm" class="tool-form">
+                    <label class="form-label" data-i18n="ai.platformProvider">平台</label>
+                    <select id="aiProviderSelect"></select>
+
+                    <label class="form-label" data-i18n="ai.platformModelPreset">模型预设</label>
+                    <select id="aiModelPresetSelect"></select>
+
+                    <input id="aiApiKeyInput" type="password" placeholder="API Key" data-i18n-placeholder="ai.platformApiKey">
+                    <input id="aiBaseUrlInput" type="text" placeholder="Base URL（选填，自定义或代理时使用）" data-i18n-placeholder="ai.platformBaseUrl">
+
+                    <div class="tool-actions">
+                        <button id="aiTestConfigBtn" type="button" class="btn-tool secondary" data-i18n="ai.platformTestBtn">测试连接</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tool-panel">
+                <h3 data-i18n="ai.cleanTitle">AI 图片清洗</h3>
+                <form id="aiCleanForm" class="tool-form">
+                    <textarea id="aiCleanPromptInput" rows="12" placeholder="输入提示词..." data-i18n-placeholder="ai.cleanPromptPlaceholder"></textarea>
+                    <p class="tool-hint" data-i18n="ai.cleanPromptHint">提示词支持自定义，适合按业务调整清洗维度。</p>
+                    <p class="tool-hint" id="aiCleanSelectionHint" data-i18n="ai.cleanSelectionHint">未选择图片时默认处理全部</p>
+                    <div class="tool-actions">
+                        <button id="aiCleanRunBtn" type="submit" class="btn-tool primary" data-i18n="ai.cleanRunBtn">开始清洗</button>
+                        <button id="aiCleanResetBtn" type="button" class="btn-tool" data-i18n="ai.cleanResetBtn">重置筛选</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3 data-i18n="ai.cleanResultTitle">AI 图片清洗结果</h3>
+            </div>
+            <div id="aiCleanFilters" class="clean-filter-panel"></div>
+            <div id="aiCleanGrid" class="image-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="ai">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="console">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>

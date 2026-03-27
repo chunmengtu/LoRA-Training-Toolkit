@@ -1,0 +1,18 @@
+.console-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.console-panel { padding: 20px; }
+.console-header h3 { font-size: 16px; overflow-wrap: anywhere; }
+.console-status { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.console-message { font-size: 13px; margin-bottom: 12px; overflow-wrap: anywhere; }
+.console-log { padding: 14px; background: var(--panel-alt); border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--text-muted); max-height: 240px; overflow-y: auto; font-family: Consolas, monospace; }
+
+.gamified-progress { position: relative; height: 24px; background: rgba(0,0,0,0.05); border-radius: 12px; margin-top: 16px; display: flex; align-items: center; }
+.theme-dark .gamified-progress { background: rgba(255,255,255,0.05); }
+.gamified-progress.hidden { display: none; }
+.gamified-track { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: 2px; transition: width 0.3s linear; background-color: #795548; background-image: linear-gradient(to bottom, #5C9E43 35%, transparent 35%), linear-gradient(90deg, #5C9E43 50%, transparent 50%), linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)), linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05)); background-size: 100% 100%, 10px 6px, 20px 20px, 10px 10px; background-position: 0 0, 0 35%, 0 0, 5px 5px; background-repeat: no-repeat, repeat-x, repeat, repeat; image-rendering: pixelated; box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2); }
+.gamified-thumb { position: absolute; left: 0%; top: 0; bottom: 0; width: 24px; height: 100%; transform: translateX(-50%); pointer-events: none; display: flex; align-items: center; justify-content: center; transition: left 0.3s linear; z-index: 5; }
+.gamified-thumb img { max-height: 100%; width: auto; object-fit: contain; image-rendering: pixelated; }
+
+@media (max-width: 768px) {
+    .console-grid { grid-template-columns: 1fr; }
+    .gallery-header, .console-header { align-items: flex-start; }
+}

@@ -1,0 +1,92 @@
+<div class="wizard-page" data-page="images">
+    <div class="page-header">
+        <span class="page-badge">步骤 4 / 7</span>
+        <h1 class="page-title" data-i18n="images.title">图像处理 · 管理</h1>
+        <p class="page-subtitle" data-i18n="images.desc">
+            支持上传单图、文件夹或压缩包，并提供批量整理、筛选和导出能力。
+        </p>
+        <div class="gamified-progress hidden" id="gamifiedProgress_images">
+            <div class="gamified-track" id="gamifiedTrack_images"></div>
+            <div class="gamified-thumb" id="gamifiedThumb_images">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body page-body-scroll">
+        <div class="tools-grid">
+            <div class="tool-panel">
+                <h3 data-i18n="images.uploadTitle">图片上传</h3>
+                <form id="uploadForm">
+                    <label class="upload-zone">
+                        <input id="imageInput" name="files" type="file" multiple>
+                        <div class="upload-icon">↑</div>
+                        <p data-i18n="images.uploadDrop">拖拽文件到此处，或点击选择文件</p>
+                    </label>
+                    <p id="uploadAutoNote" class="upload-note" data-i18n="images.uploadAutoNote">选择文件后会自动开始上传</p>
+                    <div class="tool-actions">
+                        <button id="refreshGalleryBtn" type="button" class="btn-tool" data-i18n="images.refreshBtn">刷新</button>
+                        <button id="deleteSelectedBtn" type="button" class="btn-tool danger" data-i18n="images.deleteSelected">删除所选</button>
+                        <button id="clearAllBtn" type="button" class="btn-tool danger" data-i18n="images.clearAll">清空全部</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tool-panel">
+                <h3 data-i18n="images.renameTitle">批量重命名</h3>
+                <form id="renameForm" class="tool-form">
+                    <input id="prefixInput" type="text" placeholder="前缀" data-i18n-placeholder="images.prefixPlaceholder">
+                    <input id="startNumberInput" type="number" min="1" value="1" placeholder="起始数字" data-i18n-placeholder="images.startNumberPlaceholder">
+                    <input id="keywordInput" type="text" placeholder="关键字" data-i18n-placeholder="images.keywordPlaceholder">
+                    <select id="keywordActionSelect">
+                        <option value="none" data-i18n="images.keywordActionNone">仅重命名</option>
+                        <option value="filter" data-i18n="images.keywordActionFilter">只作用于命中项</option>
+                        <option value="delete" data-i18n="images.keywordActionDelete">删除命中项</option>
+                        <option value="keep" data-i18n="images.keywordActionKeep">仅保留命中项</option>
+                    </select>
+                    <div class="tool-actions">
+                        <button type="submit" class="btn-tool secondary" data-i18n="images.renameBtn">执行整理</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tool-panel">
+                <h3 data-i18n="images.exportTitle">批量导出</h3>
+                <div class="tool-actions">
+                    <a href="/api/images/export" target="_blank" class="btn-tool primary" data-i18n="images.exportBtn">导出图片包</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="uploadProgressTray" class="upload-progress-tray hidden">
+            <div class="upload-progress-head">
+                <strong data-i18n="images.uploadProgressTitle">上传进度</strong>
+                <span id="uploadProgressHint" data-i18n="images.uploadProgressIdle">暂无上传任务</span>
+            </div>
+            <div id="uploadProgressList" class="upload-progress-list"></div>
+        </div>
+
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3 data-i18n="images.galleryTitle">图像瀑布流</h3>
+                <div class="gallery-filter">
+                    <input id="galleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                    <button id="applyFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                </div>
+            </div>
+            <p class="tool-hint" id="selectionHint" data-i18n="images.selectionHint">未选择图片时默认处理全部</p>
+            <div id="imageGrid" class="image-gallery" data-i18n="images.galleryEmpty">暂无图片</div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="download">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="ai">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>

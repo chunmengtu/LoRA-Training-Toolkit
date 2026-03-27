@@ -1,0 +1,67 @@
+<div class="wizard-page" data-page="download">
+    <div class="page-header">
+        <span class="page-badge">步骤 3 / 7</span>
+        <h1 class="page-title" data-i18n="download.title">模型选择与下载渠道</h1>
+        <p class="page-subtitle" data-i18n="download.desc">
+            按需求选择模型，并在下载来源之间切换。系统会自动创建模型目录。
+        </p>
+        <div class="gamified-progress hidden" id="gamifiedProgress_download">
+            <div class="gamified-track" id="gamifiedTrack_download"></div>
+            <div class="gamified-thumb" id="gamifiedThumb_download">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body page-body-scroll">
+        <form id="downloadForm" class="model-form">
+            <div class="form-section">
+                <label class="form-label" data-i18n="download.modelLegend">选择模型</label>
+                <div class="radio-group" id="modelFeaturedGroup"></div>
+                <button type="button" class="btn-toggle-models hidden" id="toggleMoreModels">
+                    <span id="toggleMoreText">显示更多模型</span>
+                    <span class="toggle-chevron">▾</span>
+                </button>
+                <div class="radio-group model-more hidden" id="modelMoreGroup"></div>
+            </div>
+
+            <div class="form-section">
+                <label class="form-label" data-i18n="download.sourceLegend">下载来源</label>
+                <div class="radio-group">
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="modelscope" checked>
+                        <div class="radio-content">
+                            <span class="radio-title">ModelScope</span>
+                            <span class="radio-badge" data-i18n="download.sourceRecommended">推荐</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="huggingface">
+                        <div class="radio-content">
+                            <span class="radio-title">HuggingFace</span>
+                            <span class="radio-desc" data-i18n="download.sourceAltDesc">官方社区源</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-card">
+                <button id="downloadBtn" type="submit" class="btn-action secondary" data-i18n="download.button">
+                    <span>↓</span> 开始下载
+                </button>
+                <p class="action-note" data-i18n="download.note">默认目录：{{ base_dir }}/模型名</p>
+            </div>
+        </form>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="environment">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="images">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>

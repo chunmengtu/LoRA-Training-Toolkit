@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoRA 训练工具箱</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/toast.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/cards.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/gallery.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/console.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/overview.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/setup.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/download.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/images.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/ai_generate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/ai_clean.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/system.css') }}">
+</head>
+<body class="theme-dark" data-theme="dark" data-lang="zh">
+    <div class="wizard-container">
+        <aside class="wizard-sidebar">
+            <div class="brand-block">
+                <div class="brand-icon">AI</div>
+                <div>
+                    <p class="eyebrow" data-i18n="brand.eyebrow">AI Toolkit</p>
+                    <h2 data-i18n="brand.title">LoRA 训练工具箱</h2>
+                </div>
+            </div>
+
+            <div class="step-progress">
+                <div class="step-progress-bar">
+                    <div class="step-progress-fill" id="progressFill"></div>
+                </div>
+                <p class="step-progress-text" id="progressText">第 1 / 7 步</p>
+            </div>
+
+            <nav class="step-nav">
+                <button class="step-nav-item active completed" data-step="overview" data-step-num="1">
+                    <span class="step-badge">1</span>
+                    <span class="step-label" data-i18n="nav.overview">概览</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="environment" data-step-num="2">
+                    <span class="step-badge">2</span>
+                    <span class="step-label" data-i18n="nav.environment">环境初始化</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="download" data-step-num="3">
+                    <span class="step-badge">3</span>
+                    <span class="step-label" data-i18n="nav.download">模型下载</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="images" data-step-num="4">
+                    <span class="step-badge">4</span>
+                    <span class="step-label" data-i18n="nav.images">图像处理</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="ai" data-step-num="5">
+                    <span class="step-badge">5</span>
+                    <span class="step-label" data-i18n="nav.ai">AI 处理</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="ai-clean" data-step-num="6">
+                    <span class="step-badge">6</span>
+                    <span class="step-label" data-i18n="nav.aiClean">AI 图片清洗</span>
+                    <span class="step-check">✓</span>
+                </button>
+                <button class="step-nav-item" data-step="console" data-step-num="7">
+                    <span class="step-badge">7</span>
+                    <span class="step-label" data-i18n="nav.console">控制台</span>
+                    <span class="step-check">✓</span>
+                </button>
+            </nav>
+
+            <div class="system-info">
+                <div class="info-item">
+                    <span class="info-label" data-i18n="nav.system">系统</span>
+                    <strong class="info-value">{{ system }}</strong>
+                </div>
+                <div class="info-item">
+                    <span class="info-label" data-i18n="nav.linux">状态</span>
+                    <strong class="info-value" id="linuxStateValue" data-exec-zh="可执行" data-preview-zh="预览" data-exec-en="Executable" data-preview-en="Preview">
+                        可执行
+                    </strong>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button id="themeToggle" class="icon-toggle" data-i18n-title="toolbar.theme" title="主题切换">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 0 1 12.21 3 7 7 0 1 0 21 12.79z" />
+                    </svg>
+                </button>
+                <button id="langToggle" class="icon-toggle icon-toggle--lang" data-i18n-title="toolbar.language" title="语言切换">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                    </svg>
+                </button>
+                <button id="updateBtn" class="icon-toggle" data-i18n-title="toolbar.update" title="检查更新">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                        <path d="M16 16h5v5"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="wizard-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modalTitle">提示</h3>
+            <p id="modalBody"></p>
+            <div id="modalActions" class="modal-actions hidden"></div>
+            <button id="modalClose" class="btn-modal" data-i18n="modal.close">知道了</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+        window.__APP_CONFIG__ = {{ {
+            "system": system,
+            "isLinux": is_linux,
+            "baseDir": base_dir,
+            "runninghubQueryUrl": runninghub_query_url,
+            "runninghubDefaultAspectRatio": runninghub_default_aspect_ratio,
+            "runninghubWorkflowImageNodeId": runninghub_workflow_image_node_id,
+            "runninghubWorkflowImageFieldName": runninghub_workflow_image_field_name,
+            "runninghubWorkflowPromptNodeId": runninghub_workflow_prompt_node_id,
+            "runninghubWorkflowPromptFieldName": runninghub_workflow_prompt_field_name,
+            "runninghubWorkflowAspectNodeId": runninghub_workflow_aspect_ratio_node_id,
+            "runninghubWorkflowAspectFieldName": runninghub_workflow_aspect_ratio_field_name,
+            "runninghubWorkflowAspectFieldData": runninghub_workflow_aspect_ratio_field_data,
+            "modelRegistry": model_registry_json
+        } | tojson }};
+    </script>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

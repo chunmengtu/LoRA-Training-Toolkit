@@ -1,0 +1,8 @@
+.aspect-ratio-combo { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.aspect-ratio-combo > select,
+.aspect-ratio-combo > .aspect-ratio-custom-row { width: 100%; }
+.aspect-ratio-custom-row input { flex: 1; min-width: 0; }
+#runninghubModelInput { width: 100%; }
+#runninghubExtraParamsInput { min-height: 180px; font-family: "Consolas", "Courier New", monospace; }
+
+.tag-hint { margin-top: 8px; font-size: 12px; line-height: 1.6; background: var(--panel-alt); padding: 10px; border-radius: 8px; overflow-wrap: anywhere; }

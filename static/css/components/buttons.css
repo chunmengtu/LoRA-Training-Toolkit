@@ -1,0 +1,46 @@
+.btn-nav, .btn-action, .btn-tool, .btn-copy, .btn-modal, .icon-toggle, .btn-switch, .btn-toggle-models, .file-trigger-button, .aspect-ratio-back-btn {
+    transition: all 0.2s ease;
+}
+
+.icon-toggle { flex: 1; height: 44px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-alt); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.icon-toggle:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.icon-toggle svg { width: 20px; height: 20px; fill: var(--text); }
+#updateBtn svg { fill: none; stroke: var(--text); }
+
+.btn-nav { display: flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; white-space: normal; }
+.btn-nav.btn-prev { background: var(--panel-alt); color: var(--text); }
+.btn-nav.btn-next { background: var(--accent); color: #fff; margin-left: auto; }
+.btn-nav:hover:not(:disabled), .btn-action:hover, .btn-tool:hover, .btn-copy:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.btn-nav:disabled, .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-action { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px 36px; border-radius: 14px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
+.btn-action.primary, .btn-tool.primary, .btn-modal { background: var(--accent); color: #fff; }
+.btn-action.secondary, .btn-tool.secondary { background: var(--panel-alt); color: var(--text); border: 1px solid var(--border); }
+
+.btn-tool { flex: 1; padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; min-width: 0; text-align: center; white-space: normal; }
+.btn-tool.danger { background: rgba(248, 113, 113, 0.12); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.4); }
+
+.btn-copy { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel-alt); color: var(--text); font-size: 12px; cursor: pointer; }
+.btn-copy:hover { background: var(--accent); color: #fff; }
+
+.btn-modal { padding: 12px 32px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
+.btn-modal.secondary { background: rgba(148, 163, 184, 0.12); color: var(--text); }
+
+.btn-switch { position: relative; width: 52px; height: 28px; border-radius: 999px; background: var(--panel-alt); border: 1px solid var(--border); cursor: pointer; padding: 2px; }
+.btn-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.btn-switch.active { background: var(--accent); border-color: var(--accent); }
+.btn-switch.active::after { transform: translateX(24px); }
+.switch-label { display: none; }
+
+.btn-toggle-models { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 8px; color: var(--text-muted); font-size: 13px; cursor: pointer; }
+.btn-toggle-models:hover, .file-trigger-button:hover, .aspect-ratio-back-btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-toggle-models.hidden { display: none; }
+.toggle-chevron { font-size: 11px; transition: transform 0.25s; }
+.toggle-chevron.expanded { transform: rotate(180deg); }
+
+.file-trigger-button { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-alt); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.aspect-ratio-back-btn { flex-shrink: 0; width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-alt); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+@media (max-width: 768px) {
+    .btn-action, .btn-tool, .btn-nav, .btn-copy { width: 100%; }
+}

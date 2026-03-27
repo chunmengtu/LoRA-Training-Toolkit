@@ -1,0 +1,37 @@
+:root {
+    font-family: "Space Grotesk", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --bg: #f5f7fb;
+    --panel: #ffffff;
+    --panel-alt: #f0f4ff;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: rgba(15, 23, 42, 0.12);
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+body.theme-dark {
+    --bg: #020617;
+    --panel: #0f172a;
+    --panel-alt: #1e293b;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: rgba(148, 163, 184, 0.2);
+    --accent: #7c3aed;
+    --accent-hover: #6d28d9;
+    --success: #059669;
+    --warning: #d97706;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-light {
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --panel-alt: #eef2ff;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --border: rgba(148, 163, 184, 0.25);
+}

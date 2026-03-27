@@ -1,0 +1,8 @@
+.tools-grid { margin-bottom: 28px; }
+
+.upload-note {
+    margin: 8px 0 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
