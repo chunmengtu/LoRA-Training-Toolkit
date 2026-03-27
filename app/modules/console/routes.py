@@ -18,7 +18,7 @@ def status():
             "setup": dict(task_state["setup"]),
             "download": dict(task_state["download"]),
             "image_generation": dict(task_state["image_generation"]),
-            "ai_clean": dict(task_state["ai_clean"]),
+            "ai_tag": dict(task_state["ai_tag"]),
             "version": CURRENT_VERSION,
         }
     return jsonify(payload)

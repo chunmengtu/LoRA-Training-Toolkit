@@ -33,10 +33,10 @@ task_state: Dict[str, Dict] = {
         "processed": 0,
         "bucket": "source",
     },
-    "ai_clean": {
+    "ai_tag": {
         "status": "idle",
         "progress": 0,
-        "message": "等待清洗任务",
+        "message": "等待打标任务",
         "log": [],
         "last_updated": None,
         "prompt": "",

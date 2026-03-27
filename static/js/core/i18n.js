@@ -6,7 +6,7 @@ const translationHooks = new Set();
 const dictionary = {
     zh: {
         "brand.eyebrow": "AI Toolkit", "brand.title": "LoRA 训练工具箱", "nav.overview": "概览", "nav.environment": "环境初始化",
-        "nav.download": "模型下载", "nav.images": "图像处理", "nav.ai": "AI 处理", "nav.aiClean": "AI 图片清洗", "nav.console": "控制台",
+        "nav.download": "模型下载", "nav.images": "图像处理", "nav.ai": "AI 处理", "nav.aiTag": "AI 图片标签", "nav.console": "控制台",
         "nav.system": "系统", "nav.linux": "状态", "overview.title": "一站式部署与训练流程面板", "overview.lead": "先阅读每个阶段的说明，再按顺序执行命令。系统会自动记录日志、状态和处理进度。",
         "overview.step1": "步骤 1 · 初始化", "overview.step1Desc": "安装依赖，准备 Python、Node.js 与工具链。", "overview.step2": "步骤 2 · 选择模型",
         "overview.step2Desc": "选择训练或编辑模型，并切换下载来源。", "overview.step3": "步骤 3 · 图像处理", "overview.step3Desc": "上传、筛选、重命名和导出素材图片。",
@@ -56,12 +56,12 @@ const dictionary = {
         "ai.platformTitle": "AI 平台配置", "ai.platformProvider": "平台", "ai.platformModelPreset": "模型预设", "ai.platformCustomModel": "自定义模型",
         "ai.platformCustomModelPlaceholder": "输入自定义模型名...", "ai.platformApiKey": "API Key", "ai.platformBaseUrl": "Base URL（选填，自定义或代理时使用）", "ai.platformTestBtn": "测试连接",
         "ai.platformTestOk": "连接测试成功", "ai.platformTestFail": "连接测试失败", "ai.platformErrorModelMissing": "请先选择或输入要使用的模型名称。", "ai.platformErrorApiKeyMissing": "请填写对应平台的 API Key。",
-        "ai.platformErrorBaseUrlMissing": "使用自定义平台时，请填写 Base URL。", "ai.cleanTitle": "AI 图片清洗", "ai.cleanPageDesc": "调整提示词后即可调用大模型分析图片内容，生成结构化标签并支持进一步筛选。",
-        "ai.cleanPromptPlaceholder": "输入提示词...", "ai.cleanPromptHint": "提示词支持自定义，适合按业务调整清洗维度。", "ai.cleanSelectionHint": "未选择图片时默认处理全部", "ai.cleanRunBtn": "开始清洗",
-        "ai.cleanResetBtn": "重置筛选", "ai.cleanResultTitle": "AI 图片清洗结果", "ai.cleanNoTags": "尚未生成标签，请先运行 AI 图片清洗。", "ai.cleanDimension.main_subject": "主体",
+        "ai.platformErrorBaseUrlMissing": "使用自定义平台时，请填写 Base URL。", "ai.cleanTitle": "AI 图片标签", "ai.cleanPageDesc": "调整提示词后即可调用大模型分析图片内容，生成结构化标签并支持进一步筛选。",
+        "ai.cleanPromptPlaceholder": "输入提示词...", "ai.cleanPromptHint": "提示词支持自定义，适合按业务调整标签维度。", "ai.cleanSelectionHint": "未选择图片时默认处理全部", "ai.cleanRunBtn": "开始打标",
+        "ai.cleanResetBtn": "重置筛选", "ai.cleanResultTitle": "AI 图片标签结果", "ai.cleanNoTags": "尚未生成标签，请先运行 AI 图片标签。", "ai.cleanDimension.main_subject": "主体",
         "ai.cleanDimension.appearance": "外观", "ai.cleanDimension.action_state": "动作状态", "ai.cleanDimension.environment": "环境物件", "ai.cleanDimension.visual_style": "视觉风格",
         "step.next": "下一步", "step.prev": "上一步", "step.finish": "完成", "step.progress": "第 {{current}} / {{total}} 步", "step.pageBadge": "步骤 {{current}} / {{total}}",
-        "console.desc": "在这里查看环境安装、模型下载、AI 生成和 AI 图片清洗的实时状态与日志。", "console.setupTitle": "环境执行日志", "console.downloadTitle": "模型下载日志", "console.copy": "复制",
+        "console.desc": "在这里查看环境安装、模型下载、AI 生成和 AI 图片标签的实时状态与日志。", "console.setupTitle": "环境执行日志", "console.downloadTitle": "模型下载日志", "console.copy": "复制",
         "status.label": "状态：", "status.idle": "待命", "status.queued": "排队中", "status.running": "运行中", "status.success": "已完成", "status.error": "异常",
         "log.waiting": "等待任务...", "modal.title": "提示", "modal.close": "知道了", "toast.copyOk": "已复制", "toast.copyFail": "复制失败", "toast.preview": "当前处于预览模式",
         "update.title": "发现新版本", "update.current": "当前版本：", "update.latest": "最新版本：", "update.notes": "更新说明：", "update.btn": "立即更新",
@@ -69,7 +69,7 @@ const dictionary = {
     },
     en: {
         "brand.eyebrow": "AI Toolkit", "brand.title": "LoRA Training Toolkit", "nav.overview": "Overview", "nav.environment": "Setup", "nav.download": "Models",
-        "nav.images": "Images", "nav.ai": "AI Processing", "nav.aiClean": "AI Clean", "nav.console": "Console", "nav.system": "System", "nav.linux": "Status",
+        "nav.images": "Images", "nav.ai": "AI Processing", "nav.aiTag": "AI Image Tagging", "nav.console": "Console", "nav.system": "System", "nav.linux": "Status",
         "overview.title": "One Panel for Setup and Training Flow", "overview.lead": "Read each section first, then run actions in order. The app keeps status, progress, and logs in sync.",
         "overview.step1": "Step 1 · Setup", "overview.step1Desc": "Install dependencies and prepare Python, Node.js, and the toolchain.", "overview.step2": "Step 2 · Models",
         "overview.step2Desc": "Choose the model you need and switch download sources.", "overview.step3": "Step 3 · Images", "overview.step3Desc": "Upload, filter, rename, and export source images.",
@@ -106,10 +106,10 @@ const dictionary = {
         "ai.tagSuccess": "Tags updated", "ai.tagHint": "Describe the target style or effect you want, preferably in English.<br>Examples:<br>- Transform into Ghibli anime style<br>- Transform into inkwash painting style<br>- Add glasses to the character", "ai.platformTitle": "AI Platform",
         "ai.platformProvider": "Provider", "ai.platformModelPreset": "Model Preset", "ai.platformCustomModel": "Custom Model", "ai.platformCustomModelPlaceholder": "Enter a custom model name...", "ai.platformApiKey": "API Key", "ai.platformBaseUrl": "Base URL (optional, for custom or proxy access)",
         "ai.platformTestBtn": "Test Connection", "ai.platformTestOk": "Connection test passed", "ai.platformTestFail": "Connection test failed", "ai.platformErrorModelMissing": "Choose a model or enter a custom one first.", "ai.platformErrorApiKeyMissing": "Enter the API key for the selected provider.",
-        "ai.platformErrorBaseUrlMissing": "Enter a Base URL when using a custom provider.", "ai.cleanTitle": "AI Image Clean", "ai.cleanPageDesc": "Edit the prompt and let the model extract structured tags from each image for later filtering.", "ai.cleanPromptPlaceholder": "Enter a prompt...",
-        "ai.cleanPromptHint": "The prompt is editable so you can adapt the cleaning dimensions to your workflow.", "ai.cleanSelectionHint": "All images will be used when none are selected", "ai.cleanRunBtn": "Run Clean", "ai.cleanResetBtn": "Reset Filters", "ai.cleanResultTitle": "AI Clean Results",
-        "ai.cleanNoTags": "No tags yet. Run AI image cleaning first.", "ai.cleanDimension.main_subject": "Subject", "ai.cleanDimension.appearance": "Appearance", "ai.cleanDimension.action_state": "Action / State", "ai.cleanDimension.environment": "Environment", "ai.cleanDimension.visual_style": "Visual Style",
-        "step.next": "Next", "step.prev": "Back", "step.finish": "Finish", "step.progress": "Step {{current}} / {{total}}", "step.pageBadge": "Step {{current}} / {{total}}", "console.desc": "View live status and logs here for setup, model downloads, AI generation, and AI image cleaning.",
+        "ai.platformErrorBaseUrlMissing": "Enter a Base URL when using a custom provider.", "ai.cleanTitle": "AI Image Tagging", "ai.cleanPageDesc": "Edit the prompt and let the model extract structured tags from each image for later filtering.", "ai.cleanPromptPlaceholder": "Enter a prompt...",
+        "ai.cleanPromptHint": "The prompt is editable so you can adapt the tagging dimensions to your workflow.", "ai.cleanSelectionHint": "All images will be used when none are selected", "ai.cleanRunBtn": "Run Tagging", "ai.cleanResetBtn": "Reset Filters", "ai.cleanResultTitle": "AI Image Tagging Results",
+        "ai.cleanNoTags": "No tags yet. Run AI image tagging first.", "ai.cleanDimension.main_subject": "Subject", "ai.cleanDimension.appearance": "Appearance", "ai.cleanDimension.action_state": "Action / State", "ai.cleanDimension.environment": "Environment", "ai.cleanDimension.visual_style": "Visual Style",
+        "step.next": "Next", "step.prev": "Back", "step.finish": "Finish", "step.progress": "Step {{current}} / {{total}}", "step.pageBadge": "Step {{current}} / {{total}}", "console.desc": "View live status and logs here for setup, model downloads, AI generation, and AI image tagging.",
         "console.setupTitle": "Setup Logs", "console.downloadTitle": "Download Logs", "console.copy": "Copy", "status.label": "Status: ", "status.idle": "Idle", "status.queued": "Queued", "status.running": "Running", "status.success": "Done", "status.error": "Error",
         "log.waiting": "Waiting for task...", "modal.title": "Notice", "modal.close": "Close", "toast.copyOk": "Copied", "toast.copyFail": "Copy failed", "toast.preview": "Preview mode is active", "update.title": "New Version Available", "update.current": "Current:", "update.latest": "Latest:", "update.notes": "Release notes:",
         "update.btn": "Open Update", "update.checking": "Checking for updates...", "update.latestMsg": "You are already on the latest version", "update.fail": "Failed to check for updates", "toolbar.theme": "Toggle theme", "toolbar.language": "Switch language", "toolbar.update": "Check for updates"
@@ -150,7 +150,7 @@ export function updateStepText() {
 
 export function applyTranslations() {
     document.querySelectorAll("[data-i18n]").forEach((element) => {
-        if ([dom.imageGrid, dom.aiGrid, dom.aiCleanGrid].includes(element)) return;
+        if ([dom.imageGrid, dom.aiGrid, dom.aiTagGrid].includes(element)) return;
         element.textContent = getText(element.dataset.i18n);
     });
     document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {

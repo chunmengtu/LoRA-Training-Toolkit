@@ -20,11 +20,11 @@ export function updateGamifiedProgress(pageId, percent, isActive) {
 
 export function applySectionState(section, data) {
     if (!data) return;
-    const prefixMap = {setup: "setup", download: "download", generation: "generation", ai_clean: "aiClean"};
+    const prefixMap = {setup: "setup", download: "download", generation: "generation", ai_tag: "aiTag"};
     const prefix = prefixMap[section];
     if (!prefix) return;
 
-    const pageMap = {setup: "setup", download: "download", generation: "ai", ai_clean: "ai-clean"};
+    const pageMap = {setup: "setup", download: "download", generation: "ai", ai_tag: "ai-tag"};
     updateGamifiedProgress(pageMap[section], typeof data.progress === "number" ? data.progress : 0, data.status === "running");
 
     const progressEl = dom[`${prefix}Progress`];
@@ -56,5 +56,5 @@ export function initConsoleModule() {
     bindCopy(dom.copySetupLog, dom.setupLog);
     bindCopy(dom.copyDownloadLog, dom.downloadLog);
     bindCopy(dom.copyGenerationLog, dom.generationLog);
-    bindCopy(dom.copyAiCleanLog, dom.aiCleanLog);
+    bindCopy(dom.copyAiTagLog, dom.aiTagLog);
 }

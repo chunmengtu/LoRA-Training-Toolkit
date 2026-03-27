@@ -4,7 +4,7 @@ export const storageKeys = {
     lang: "aitoolkit-lang",
 };
 
-export const STEPS = ["overview", "environment", "download", "images", "ai", "ai-clean", "console"];
+export const STEPS = ["overview", "environment", "download", "images", "ai", "ai-tag", "console"];
 export const STATUS_KEYS = {
     idle: "status.idle",
     queued: "status.queued",
@@ -13,7 +13,7 @@ export const STATUS_KEYS = {
     error: "status.error",
 };
 
-export const DEFAULT_AI_CLEAN_PROMPT = `# Role
+export const DEFAULT_AI_TAG_PROMPT = `# Role
 你是一个用于图像理解的视觉标注助手，负责将图片内容提炼成结构化 JSON 数据。
 
 # Objective
@@ -37,7 +37,7 @@ JSON 结构如下：
 3. 适用于人物、动物、物体、场景等各种类型的图片。
 4. 某个维度不适用时，返回空数组 []。`;
 
-export const AI_CLEAN_DIMENSIONS = [
+export const AI_TAG_DIMENSIONS = [
     {key: "main_subject", labelKey: "ai.cleanDimension.main_subject"},
     {key: "appearance", labelKey: "ai.cleanDimension.appearance"},
     {key: "action_state", labelKey: "ai.cleanDimension.action_state"},
@@ -67,7 +67,7 @@ export const state = {
     extraReference: {
         files: [],
     },
-    aiCleaning: {
+    aiTagging: {
         baseItems: [],
         itemsByPath: new Map(),
         processing: new Set(),
@@ -103,8 +103,8 @@ export const state = {
     },
 };
 
-export function resetAiCleaningFilters() {
-    state.aiCleaning.selectedTags = {
+export function resetAiTaggingFilters() {
+    state.aiTagging.selectedTags = {
         main_subject: new Set(),
         appearance: new Set(),
         action_state: new Set(),
