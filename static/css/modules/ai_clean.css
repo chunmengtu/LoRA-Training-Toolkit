@@ -1,0 +1,17 @@
+.ai-clean-reference { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-alt); }
+.ai-clean-reference.hidden { display: none; }
+.ai-clean-reference .reference-item-thumb { width: 72px; flex: 0 0 72px; }
+.ai-clean-reference-meta strong { font-size: 12px; display: block; }
+
+.ai-clean-score { position: absolute; top: 8px; left: 8px; font-size: 11px; padding: 2px 6px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); color: #fff; }
+
+.ai-clean-export-panel { display: flex; flex-direction: column; }
+.ai-clean-export-panel .ai-clean-export-form { flex: 1; }
+.ai-clean-export-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; }
+.ai-clean-export-row .form-label { margin: 0; }
+.ai-clean-export-row input { min-width: 0; }
+.ai-clean-export-actions { margin-top: auto; }
+
+@media (max-width: 768px) {
+    .ai-clean-export-row { grid-template-columns: 1fr; }
+}

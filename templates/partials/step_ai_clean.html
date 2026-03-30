@@ -1,0 +1,86 @@
+<div class="wizard-page" data-page="ai-clean">
+    <div class="page-header">
+        <span class="page-badge">步骤 6 / 8</span>
+        <h1 class="page-title" data-i18n="ai.imageCleanTitle">AI 图片清洗</h1>
+        <p class="page-subtitle" data-i18n="ai.imageCleanDesc">
+            上传参考图后自动筛选最相似的素材图片，并按概率从高到低排序。
+        </p>
+        <div id="gamifiedProgress_ai-clean" class="gamified-progress hidden">
+            <div id="gamifiedTrack_ai-clean" class="gamified-track"></div>
+            <div id="gamifiedThumb_ai-clean" class="gamified-thumb">
+                <img src="{{ url_for('static', filename='img/minecraft-grass-block.gif') }}" alt="progress">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body page-body-scroll">
+        <div class="tools-grid">
+            <div class="tool-panel">
+                <h3 data-i18n="ai.imageCleanToolTitle">筛选相似图片</h3>
+                <form id="aiCleanForm" class="tool-form">
+                    <label id="aiCleanUploadZone" class="upload-zone ai-clean-upload-zone">
+                        <input id="aiCleanReferenceInput" name="reference" type="file" accept="image/*">
+                        <div class="upload-icon">↑</div>
+                        <p data-i18n="ai.imageCleanUploadDrop">拖拽图片到此处，或点击选择参考图</p>
+                    </label>
+                    <p id="aiCleanUploadNote" class="upload-note" data-i18n="ai.imageCleanUploadNote">仅支持上传 1 张参考图</p>
+                    <div id="aiCleanReferencePreview" class="ai-clean-reference hidden">
+                        <div class="reference-item-thumb">
+                            <img id="aiCleanReferenceImg" alt="reference" loading="lazy">
+                        </div>
+                        <div class="ai-clean-reference-meta">
+                            <strong data-i18n="ai.imageCleanReferencePreview">参考图预览</strong>
+                        </div>
+                    </div>
+
+                    <p class="tool-hint" data-i18n="ai.imageCleanHint">概率越接近 100% 表示越相似。</p>
+                    <div class="tool-actions">
+                        <button id="aiCleanRunBtn" type="submit" class="btn-tool primary" data-i18n="ai.imageCleanRunBtn">筛选相似图片</button>
+                        <button id="aiCleanRemoveRefBtn" type="button" class="btn-tool secondary" data-i18n="ai.imageCleanRemoveRefBtn">删除参考图片</button>
+                        <button id="aiCleanResetBtn" type="button" class="btn-tool danger" data-i18n="ai.imageCleanResetBtn">清空结果</button>
+                    </div>
+                </form>
+            </div>
+            <div class="tool-panel ai-clean-export-panel">
+                <h3 data-i18n="ai.imageCleanExportTitle">导出筛选结果</h3>
+                <form id="aiCleanExportForm" class="tool-form ai-clean-export-form">
+                    <div class="ai-clean-export-row">
+                        <label class="form-label" for="aiCleanMinScoreInput" data-i18n="ai.imageCleanMinScoreLabel">最低相似度</label>
+                        <input id="aiCleanMinScoreInput" type="number" min="0" max="100" step="0.1" placeholder="80">
+                    </div>
+                    <div class="ai-clean-export-row">
+                        <label class="form-label" for="aiCleanTopCountInput" data-i18n="ai.imageCleanTopCountLabel">导出数量</label>
+                        <input id="aiCleanTopCountInput" type="number" min="1" step="1" placeholder="50">
+                    </div>
+                    <p class="tool-hint" data-i18n="ai.imageCleanExportHint">可选择图片后导出，或按相似度/数量导出当前排序结果。</p>
+                    <div class="tool-actions ai-clean-export-actions">
+                        <button id="aiCleanExportSelectedBtn" type="button" class="btn-tool" data-i18n="ai.imageCleanExportSelectedBtn">导出所选</button>
+                        <button id="aiCleanExportFilteredBtn" type="button" class="btn-tool primary" data-i18n="ai.imageCleanExportFilteredBtn">按条件导出</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3 data-i18n="ai.imageCleanResultTitle">相似图片结果</h3>
+                <div class="gallery-filter">
+                    <input id="aiCleanGalleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                    <button id="applyAiCleanFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                </div>
+            </div>
+            <div id="aiCleanGrid" class="image-gallery" data-i18n="ai.imageCleanEmpty">暂无图片</div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <button class="btn-nav btn-prev" data-prev="ai">
+            <span>←</span>
+            <span data-i18n="step.prev">上一步</span>
+        </button>
+        <button class="btn-nav btn-next" data-next="ai-tag">
+            <span data-i18n="step.next">下一步</span>
+            <span>→</span>
+        </button>
+    </div>
+</div>
