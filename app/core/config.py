@@ -3,7 +3,7 @@ import platform
 from pathlib import Path
 
 
-CURRENT_VERSION = "0.0.8"
+CURRENT_VERSION = "0.0.9"
 GITEE_REPO = "rcangbaohz/lora-training-toolkit"
 
 SYSTEM_NAME = platform.system()
