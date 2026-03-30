@@ -3,31 +3,59 @@ import datetime
 from flask import Blueprint, request, send_file
 
 from app.core.responses import error_response, success_response
-from .schemas import normalize_similarity_payload
+from .schemas import normalize_ai_clean_payload
 from .service import build_export_zip, find_similar_images
+from .pose_service import build_reference_pose_preview, find_pose_similar_images
 
 
 bp = Blueprint("ai_clean", __name__, url_prefix="/api")
 blueprints = [bp]
 
+@bp.route("/ai/clean/pose/reference", methods=["POST"])
+def ai_clean_pose_reference():
+    reference = request.files.get("reference")
+    if not reference:
+        return error_response("请上传一张参考图")
+    try:
+        payload = build_reference_pose_preview(reference)
+        persons = payload.get("persons") or []
+        message = "参考图骨骼点解析完成" if persons else "参考图未检测到人体/关键点"
+        return success_response(message, **payload)
+    except ValueError as exc:
+        return error_response(str(exc))
+    except Exception as exc:
+        return error_response(f"解析失败：{exc}", status_code=500)
+
 
 @bp.route("/ai/clean/similar", methods=["POST"])
 def ai_clean_similar():
     reference = request.files.get("reference")
-    if not reference:
-        return error_response("请上传一张参考图")
-
     data: dict = {}
     data.update(request.args.to_dict(flat=True))
     data.update(request.form.to_dict(flat=True))
-    payload = normalize_similarity_payload(data)
+    payload = normalize_ai_clean_payload(data)
 
     try:
-        matches = find_similar_images(
-            reference,
-            bucket=payload["bucket"],
-            targets=payload["targets"],
-        )
+        if payload["mode"] == "pose":
+            if not reference:
+                return error_response("请上传一张参考图")
+            reference_person_id = payload.get("reference_person_id")
+            if reference_person_id is None:
+                return error_response("请先选择参考图中的基准人体")
+            matches = find_pose_similar_images(
+                reference,
+                reference_person_id=reference_person_id,
+                bucket=payload["bucket"],
+                targets=payload["targets"],
+            )
+        else:
+            if not reference:
+                return error_response("请上传一张参考图")
+            matches = find_similar_images(
+                reference,
+                bucket=payload["bucket"],
+                targets=payload["targets"],
+            )
     except ValueError as exc:
         return error_response(str(exc))
     except Exception as exc:

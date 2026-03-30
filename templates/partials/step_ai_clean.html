@@ -18,6 +18,25 @@
             <div class="tool-panel">
                 <h3 data-i18n="ai.imageCleanToolTitle">筛选相似图片</h3>
                 <form id="aiCleanForm" class="tool-form">
+                    <div class="form-inline ai-clean-mode-row">
+                        <label class="form-label" data-i18n="ai.imageCleanModeLabel">筛选模式</label>
+                        <div class="radio-group" id="aiCleanModeGroup">
+                            <label class="radio-card">
+                                <input type="radio" name="aiCleanMode" value="similarity" checked>
+                                <div class="radio-content">
+                                    <div class="radio-title" data-i18n="ai.imageCleanModeSimilarity">相似度筛选</div>
+                                    <div class="radio-desc" data-i18n="ai.imageCleanModeSimilarityDesc">上传参考图，按相似度概率排序</div>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="aiCleanMode" value="pose">
+                                <div class="radio-content">
+                                    <div class="radio-title" data-i18n="ai.imageCleanModePose">骨骼点相似度筛选</div>
+                                    <div class="radio-desc" data-i18n="ai.imageCleanModePoseDesc">检测骨骼点并匹配参考姿态，按相似度排序</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                     <label id="aiCleanUploadZone" class="upload-zone ai-clean-upload-zone">
                         <input id="aiCleanReferenceInput" name="reference" type="file" accept="image/*">
                         <div class="upload-icon">↑</div>
@@ -32,6 +51,20 @@
                             <strong data-i18n="ai.imageCleanReferencePreview">参考图预览</strong>
                         </div>
                     </div>
+                    <div id="aiCleanPosePicker" class="ai-clean-pose-picker hidden">
+                        <div class="ai-clean-pose-stage">
+                            <img id="aiCleanPosePickerImg" alt="reference pose" loading="lazy">
+                            <canvas id="aiCleanPosePickerCanvas" class="ai-clean-pose-canvas"></canvas>
+                            <div id="aiCleanPosePickerOverlay" class="ai-clean-pose-overlay"></div>
+                        </div>
+                        <p id="aiCleanPosePickerHint" class="tool-hint" data-i18n="ai.imageCleanPosePickHint">点击框选基准人体后再开始筛选</p>
+                        <p id="aiCleanPosePickerSelected" class="tool-hint hidden"></p>
+                    </div>
+
+                    <label id="aiCleanPoseOverlayRow" class="checkbox-label ai-clean-pose-toggle hidden">
+                        <input id="aiCleanPoseOverlayToggle" type="checkbox">
+                        <span data-i18n="ai.imageCleanPoseOverlay">显示骨架叠加</span>
+                    </label>
 
                     <p class="tool-hint" data-i18n="ai.imageCleanHint">概率越接近 100% 表示越相似。</p>
                     <div class="tool-actions">

@@ -4,6 +4,19 @@ import {formatText, getText, registerTranslationHook} from "../core/i18n.js";
 import {showModal} from "../core/modal.js";
 import {state} from "../core/state.js";
 
+const COCO_KEYPOINT_EDGES = [
+    [5, 7], [7, 9],
+    [6, 8], [8, 10],
+    [5, 6],
+    [5, 11], [6, 12],
+    [11, 12],
+    [11, 13], [13, 15],
+    [12, 14], [14, 16],
+    [0, 1], [0, 2],
+    [1, 3], [2, 4],
+    [3, 5], [4, 6],
+];
+
 async function postForm(url, formData) {
     const response = await fetch(url, {method: "POST", body: formData});
     const data = await response.json();
@@ -17,6 +30,17 @@ function disposeReferencePreview() {
     if (state.aiCleaning.referencePreviewUrl) {
         URL.revokeObjectURL(state.aiCleaning.referencePreviewUrl);
         state.aiCleaning.referencePreviewUrl = null;
+    }
+}
+
+function clearPoseReferenceState() {
+    state.aiCleaning.referencePersons = [];
+    state.aiCleaning.referencePersonId = null;
+    state.aiCleaning.referenceImageSize = null;
+    if (dom.aiCleanPosePickerOverlay) dom.aiCleanPosePickerOverlay.innerHTML = "";
+    if (dom.aiCleanPosePickerSelected) {
+        dom.aiCleanPosePickerSelected.textContent = "";
+        dom.aiCleanPosePickerSelected.classList.add("hidden");
     }
 }
 
@@ -38,6 +62,141 @@ function renderReferencePreview() {
     }
 }
 
+function updateAiCleanRunLabel() {
+    if (!dom.aiCleanRunBtn) return;
+    dom.aiCleanRunBtn.textContent = state.aiCleaning.mode === "pose"
+        ? getText("ai.imageCleanPoseRunBtn")
+        : getText("ai.imageCleanRunBtn");
+}
+
+function syncAiCleanModeUi() {
+    const isPose = state.aiCleaning.mode === "pose";
+    const hasReference = Boolean(state.aiCleaning.referencePreviewUrl);
+    if (dom.aiCleanPosePicker) dom.aiCleanPosePicker.classList.toggle("hidden", !isPose || !hasReference);
+    if (dom.aiCleanPoseOverlayRow) dom.aiCleanPoseOverlayRow.classList.toggle("hidden", !isPose);
+    if (dom.aiCleanPoseOverlayToggle) dom.aiCleanPoseOverlayToggle.checked = Boolean(state.aiCleaning.showPoseOverlay);
+    if (dom.aiCleanReferencePreview) dom.aiCleanReferencePreview.classList.toggle("hidden", isPose || !state.aiCleaning.referencePreviewUrl);
+    if (dom.aiCleanPosePickerImg) {
+        if (isPose && state.aiCleaning.referencePreviewUrl) {
+            dom.aiCleanPosePickerImg.src = state.aiCleaning.referencePreviewUrl;
+        } else {
+            dom.aiCleanPosePickerImg.removeAttribute("src");
+        }
+    }
+    updateAiCleanRunLabel();
+}
+
+async function loadReferencePosePreview() {
+    const reference = state.aiCleaning.referenceFile;
+    if (!reference) {
+        clearPoseReferenceState();
+        return;
+    }
+    if (!dom.aiCleanPosePickerHint) return;
+
+    dom.aiCleanPosePickerHint.textContent = getText("ai.imageCleanPoseLoading");
+    clearPoseReferenceState();
+
+    try {
+        const formData = new FormData();
+        formData.append("reference", reference);
+        const response = await postForm("/api/ai/clean/pose/reference", formData);
+        const persons = Array.isArray(response.persons) ? response.persons : [];
+        state.aiCleaning.referencePersons = persons;
+        state.aiCleaning.referenceImageSize = response.image_size || null;
+
+        if (!persons.length) {
+            dom.aiCleanPosePickerHint.textContent = getText("ai.imageCleanPoseNoPersons");
+            return;
+        }
+        dom.aiCleanPosePickerHint.textContent = getText("ai.imageCleanPosePickHint");
+
+        if (persons.length === 1) {
+            state.aiCleaning.referencePersonId = 0;
+        }
+        renderPosePickerOverlay();
+    } catch (error) {
+        dom.aiCleanPosePickerHint.textContent = getText("ai.imageCleanPosePickHint");
+        showModal(getText("modal.title"), error.message || getText("ai.imageCleanFail"));
+    }
+}
+
+function setSelectedReferencePerson(personId) {
+    state.aiCleaning.referencePersonId = Number.isFinite(Number(personId)) ? Number(personId) : null;
+    renderPosePickerOverlay();
+}
+
+function renderPosePickerOverlay(imageSize) {
+    if (!dom.aiCleanPosePickerOverlay) return;
+    const persons = Array.isArray(state.aiCleaning.referencePersons) ? state.aiCleaning.referencePersons : [];
+    dom.aiCleanPosePickerOverlay.innerHTML = "";
+    if (!persons.length) return;
+
+    const size = imageSize || state.aiCleaning.referenceImageSize || {w: 1, h: 1};
+    const width = Number(size?.w) || 1;
+    const height = Number(size?.h) || 1;
+
+    persons.forEach((person) => {
+        const personId = Number(person.person_id);
+        const bbox = Array.isArray(person.bbox_xyxy) ? person.bbox_xyxy : [0, 0, 0, 0];
+        const [x1, y1, x2, y2] = bbox.map((value) => Number(value) || 0);
+        const box = document.createElement("button");
+        box.type = "button";
+        box.className = "ai-clean-pose-box";
+        if (state.aiCleaning.referencePersonId === personId) box.classList.add("selected");
+        box.style.left = `${Math.max(0, (x1 / width) * 100)}%`;
+        box.style.top = `${Math.max(0, (y1 / height) * 100)}%`;
+        box.style.width = `${Math.max(0, ((x2 - x1) / width) * 100)}%`;
+        box.style.height = `${Math.max(0, ((y2 - y1) / height) * 100)}%`;
+        box.addEventListener("click", () => setSelectedReferencePerson(personId));
+
+        const label = document.createElement("span");
+        label.className = "ai-clean-pose-box-label";
+        label.textContent = `${personId + 1}`;
+        box.appendChild(label);
+        dom.aiCleanPosePickerOverlay.appendChild(box);
+    });
+
+    if (!dom.aiCleanPosePickerSelected) return;
+    if (state.aiCleaning.referencePersonId === null || state.aiCleaning.referencePersonId === undefined) {
+        dom.aiCleanPosePickerSelected.textContent = "";
+        dom.aiCleanPosePickerSelected.classList.add("hidden");
+        renderReferencePoseOverlay();
+        return;
+    }
+    dom.aiCleanPosePickerSelected.textContent = formatText("ai.imageCleanPoseSelected", {id: state.aiCleaning.referencePersonId + 1});
+    dom.aiCleanPosePickerSelected.classList.remove("hidden");
+    renderReferencePoseOverlay();
+}
+
+function renderReferencePoseOverlay() {
+    if (!dom.aiCleanPosePickerCanvas || !dom.aiCleanPosePickerImg) return;
+    const shouldShow = state.aiCleaning.mode === "pose"
+        && Boolean(state.aiCleaning.showPoseOverlay)
+        && state.aiCleaning.referencePersonId !== null
+        && state.aiCleaning.referencePersonId !== undefined;
+
+    dom.aiCleanPosePickerCanvas.style.display = shouldShow ? "" : "none";
+    if (!shouldShow) return;
+
+    const stage = dom.aiCleanPosePickerImg.parentElement;
+    if (!stage) return;
+
+    const persons = Array.isArray(state.aiCleaning.referencePersons) ? state.aiCleaning.referencePersons : [];
+    const person = persons.find((item) => Number(item?.person_id) === Number(state.aiCleaning.referencePersonId))
+        || persons[Number(state.aiCleaning.referencePersonId)];
+    const keypoints = person?.keypoints_norm;
+    if (!Array.isArray(keypoints) || !keypoints.length) return;
+
+    const rect = stage.getBoundingClientRect();
+    const w = Math.max(1, Math.floor(rect.width));
+    const h = Math.max(1, Math.floor(rect.height));
+    const dpr = window.devicePixelRatio || 1;
+    dom.aiCleanPosePickerCanvas.width = Math.floor(w * dpr);
+    dom.aiCleanPosePickerCanvas.height = Math.floor(h * dpr);
+    drawPoseOverlay(dom.aiCleanPosePickerCanvas, keypoints);
+}
+
 function setReferenceFile(file, {clearResults = true} = {}) {
     if (file && file.type && !file.type.startsWith("image/")) {
         showModal(getText("modal.title"), getText("ai.imageCleanRefNotImage"));
@@ -45,6 +204,7 @@ function setReferenceFile(file, {clearResults = true} = {}) {
     }
 
     disposeReferencePreview();
+    clearPoseReferenceState();
     state.aiCleaning.referenceFile = file;
     if (clearResults) {
         state.aiCleaning.displayItems = state.aiCleaning.baseItems.slice();
@@ -54,7 +214,57 @@ function setReferenceFile(file, {clearResults = true} = {}) {
     state.aiCleaning.referencePreviewUrl = file ? URL.createObjectURL(file) : null;
     updateUploadNote();
     renderReferencePreview();
+    syncAiCleanModeUi();
+    if (state.aiCleaning.mode === "pose" && file) {
+        loadReferencePosePreview();
+    }
     renderAiCleanResults();
+}
+
+function drawPoseOverlay(canvas, keypoints) {
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    const width = canvas.width;
+    const height = canvas.height;
+    context.clearRect(0, 0, width, height);
+
+    const dpr = window.devicePixelRatio || 1;
+    context.save();
+    context.scale(dpr, dpr);
+    const w = width / dpr;
+    const h = height / dpr;
+
+    const kp = Array.isArray(keypoints) ? keypoints : [];
+    const valid = (index) => {
+        const item = kp[index];
+        if (!Array.isArray(item) || item.length < 3) return null;
+        const [x, y, c] = item;
+        if (!Number.isFinite(Number(x)) || !Number.isFinite(Number(y)) || Number(c) < 0.3) return null;
+        return {x: Number(x) * w, y: Number(y) * h};
+    };
+
+    context.lineWidth = 2;
+    context.strokeStyle = "rgba(34, 197, 94, 0.9)";
+    COCO_KEYPOINT_EDGES.forEach(([a, b]) => {
+        const left = valid(a);
+        const right = valid(b);
+        if (!left || !right) return;
+        context.beginPath();
+        context.moveTo(left.x, left.y);
+        context.lineTo(right.x, right.y);
+        context.stroke();
+    });
+
+    context.fillStyle = "rgba(34, 197, 94, 0.95)";
+    kp.forEach((_, index) => {
+        const point = valid(index);
+        if (!point) return;
+        context.beginPath();
+        context.arc(point.x, point.y, 3, 0, Math.PI * 2);
+        context.fill();
+    });
+
+    context.restore();
 }
 
 function renderAiCleanResults() {
@@ -95,6 +305,32 @@ function renderAiCleanResults() {
             </div>
             ${showScore ? `<span class="ai-clean-score">${scoreLabel}</span>` : ""}
         `;
+
+        if (state.aiCleaning.mode === "pose" && state.aiCleaning.showPoseOverlay && Array.isArray(image.pose_keypoints)) {
+            const thumb = card.querySelector(".image-thumb");
+            const img = card.querySelector("img");
+            if (thumb && img) {
+                thumb.style.position = "relative";
+                const canvas = document.createElement("canvas");
+                canvas.className = "ai-clean-pose-canvas";
+                thumb.appendChild(canvas);
+                const redraw = () => {
+                    const rect = thumb.getBoundingClientRect();
+                    const w = Math.max(1, Math.floor(rect.width));
+                    const h = Math.max(1, Math.floor(rect.height));
+                    const dpr = window.devicePixelRatio || 1;
+                    canvas.width = Math.floor(w * dpr);
+                    canvas.height = Math.floor(h * dpr);
+                    drawPoseOverlay(canvas, image.pose_keypoints);
+                };
+                if (img.complete) {
+                    requestAnimationFrame(redraw);
+                } else {
+                    img.addEventListener("load", () => requestAnimationFrame(redraw), {once: true});
+                }
+            }
+        }
+
         card.addEventListener("click", () => {
             if (state.aiCleaning.selected.has(image.relative_path)) {
                 state.aiCleaning.selected.delete(image.relative_path);
@@ -124,12 +360,24 @@ async function handleAiCleanSubmit(event) {
     if (state.aiCleaning.running) return;
     const reference = state.aiCleaning.referenceFile;
     if (!reference) return showModal(getText("modal.title"), getText("ai.imageCleanMissingRef"));
+    if (state.aiCleaning.mode === "pose") {
+        if (!Array.isArray(state.aiCleaning.referencePersons) || state.aiCleaning.referencePersons.length === 0) {
+            return showModal(getText("modal.title"), getText("ai.imageCleanPoseNoPersons"));
+        }
+        if (state.aiCleaning.referencePersonId === null || state.aiCleaning.referencePersonId === undefined) {
+            return showModal(getText("modal.title"), getText("ai.imageCleanPoseNeedPick"));
+        }
+    }
 
     state.aiCleaning.running = true;
     dom.aiCleanRunBtn.disabled = true;
     try {
         const formData = new FormData();
         formData.append("reference", reference);
+        formData.append("mode", state.aiCleaning.mode || "similarity");
+        if (state.aiCleaning.mode === "pose") {
+            formData.append("reference_person_id", String(state.aiCleaning.referencePersonId));
+        }
 
         const response = await postForm("/api/ai/clean/similar", formData);
         state.aiCleaning.displayItems = Array.isArray(response.items) ? response.items : [];
@@ -294,6 +542,19 @@ export function initAiCleanModule() {
     dom.aiCleanForm?.addEventListener("submit", handleAiCleanSubmit);
     dom.aiCleanRemoveRefBtn?.addEventListener("click", handleAiCleanRemoveReference);
     dom.aiCleanResetBtn?.addEventListener("click", handleAiCleanReset);
+    dom.aiCleanPoseOverlayToggle?.addEventListener("change", () => {
+        state.aiCleaning.showPoseOverlay = Boolean(dom.aiCleanPoseOverlayToggle.checked);
+        renderAiCleanResults();
+        renderReferencePoseOverlay();
+    });
+    dom.aiCleanModeGroup?.addEventListener("change", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        if (target.name !== "aiCleanMode") return;
+        state.aiCleaning.mode = target.value === "pose" ? "pose" : "similarity";
+        syncAiCleanModeUi();
+        if (state.aiCleaning.mode === "pose" && state.aiCleaning.referenceFile) loadReferencePosePreview();
+    });
     dom.applyAiCleanFilterBtn?.addEventListener("click", applyAiCleanGalleryFilter);
     dom.aiCleanGalleryFilter?.addEventListener("keydown", (event) => {
         if (event.key !== "Enter") return;
@@ -304,9 +565,12 @@ export function initAiCleanModule() {
     dom.aiCleanExportFilteredBtn?.addEventListener("click", handleExportFiltered);
     bindReferenceUploadZone();
     loadAiCleanGallery();
+    syncAiCleanModeUi();
+    dom.aiCleanPosePickerImg?.addEventListener("load", renderReferencePoseOverlay);
 
     registerTranslationHook(() => {
         updateUploadNote();
+        updateAiCleanRunLabel();
         renderAiCleanResults();
     });
 }

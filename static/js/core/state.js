@@ -88,6 +88,11 @@ export const state = {
         },
     },
     aiCleaning: {
+        mode: "similarity",
+        showPoseOverlay: false,
+        referencePersons: [],
+        referencePersonId: null,
+        referenceImageSize: null,
         referenceFile: null,
         referencePreviewUrl: null,
         filterKeyword: "",

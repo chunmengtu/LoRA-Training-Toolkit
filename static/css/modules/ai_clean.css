@@ -5,6 +5,23 @@
 
 .ai-clean-score { position: absolute; top: 8px; left: 8px; font-size: 11px; padding: 2px 6px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); color: #fff; }
 
+.ai-clean-mode-row { flex-direction: column !important; gap: 10px; margin-bottom: 6px; }
+.ai-clean-mode-row .form-label { margin-bottom: 0; }
+
+.ai-clean-pose-picker.hidden { display: none; }
+.ai-clean-pose-picker { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-alt); }
+.ai-clean-pose-stage { position: relative; width: 100%; max-width: 360px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.08); }
+.ai-clean-pose-stage img { width: 100%; height: auto; display: block; }
+.ai-clean-pose-canvas { z-index: 1; }
+.ai-clean-pose-overlay { position: absolute; inset: 0; z-index: 2; }
+.ai-clean-pose-box { position: absolute; border: 2px solid rgba(99, 102, 241, 0.7); border-radius: 10px; background: rgba(99, 102, 241, 0.08); cursor: pointer; }
+.ai-clean-pose-box:hover { border-color: rgba(99, 102, 241, 1); background: rgba(99, 102, 241, 0.12); }
+.ai-clean-pose-box.selected { border-color: rgba(34, 197, 94, 0.9); background: rgba(34, 197, 94, 0.12); }
+.ai-clean-pose-box-label { position: absolute; top: 6px; left: 6px; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,0.55); color: #fff; }
+.ai-clean-pose-toggle.hidden { display: none; }
+
+.ai-clean-pose-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
 .ai-clean-export-panel { display: flex; flex-direction: column; }
 .ai-clean-export-panel .ai-clean-export-form { flex: 1; }
 .ai-clean-export-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; }
