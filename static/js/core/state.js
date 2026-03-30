@@ -4,7 +4,7 @@ export const storageKeys = {
     lang: "aitoolkit-lang",
 };
 
-export const STEPS = ["overview", "environment", "download", "images", "ai", "ai-tag", "console"];
+export const STEPS = ["overview", "environment", "download", "images", "ai", "ai-clean", "ai-tag", "console"];
 export const STATUS_KEYS = {
     idle: "status.idle",
     queued: "status.queued",
@@ -69,6 +69,7 @@ export const state = {
     },
     aiTagging: {
         baseItems: [],
+        filterKeyword: "",
         itemsByPath: new Map(),
         processing: new Set(),
         selectedTags: {
@@ -85,6 +86,16 @@ export const state = {
             environment: new Set(),
             visual_style: new Set(),
         },
+    },
+    aiCleaning: {
+        referenceFile: null,
+        referencePreviewUrl: null,
+        filterKeyword: "",
+        baseItems: [],
+        displayItems: [],
+        hasSimilarity: false,
+        selected: new Set(),
+        running: false,
     },
     generating: {
         active: false,

@@ -6,12 +6,13 @@ const translationHooks = new Set();
 const dictionary = {
     zh: {
         "brand.eyebrow": "AI Toolkit", "brand.title": "LoRA 训练工具箱", "nav.overview": "概览", "nav.environment": "环境初始化",
-        "nav.download": "模型下载", "nav.images": "图像处理", "nav.ai": "AI 处理", "nav.aiTag": "AI 图片标签", "nav.console": "控制台",
+        "nav.download": "模型下载", "nav.images": "图像处理", "nav.ai": "AI 处理", "nav.aiClean": "AI 图片清洗", "nav.aiTag": "AI 图片标签", "nav.console": "控制台",
         "nav.system": "系统", "nav.linux": "状态", "overview.title": "一站式部署与训练流程面板", "overview.lead": "先阅读每个阶段的说明，再按顺序执行命令。系统会自动记录日志、状态和处理进度。",
-        "overview.step1": "步骤 1 · 初始化", "overview.step1Desc": "安装依赖，准备 Python、Node.js 与工具链。", "overview.step2": "步骤 2 · 选择模型",
-        "overview.step2Desc": "选择训练或编辑模型，并切换下载来源。", "overview.step3": "步骤 3 · 图像处理", "overview.step3Desc": "上传、筛选、重命名和导出素材图片。",
-        "overview.step5": "步骤 5 · AI 处理", "overview.step5Desc": "AI 批量生成、打标与结果导出。", "overview.step4": "步骤 6 · 监控",
-        "overview.step4Desc": "在控制台查看进度、复制日志并处理异常提示。", "environment.title": "环境初始化向导", "environment.desc": "自动执行依赖安装与工具准备。Linux 会顺序安装相关组件，Windows 会调用 Easy Install 脚本。",
+        "overview.step1": "步骤 1 · 概览", "overview.step1Desc": "了解整体流程与注意事项。", "overview.step2": "步骤 2 · 环境初始化", "overview.step2Desc": "安装依赖，准备 Python、Node.js 与工具链。",
+        "overview.step3": "步骤 3 · 模型下载", "overview.step3Desc": "选择模型并切换下载来源。", "overview.step4": "步骤 4 · 图像处理", "overview.step4Desc": "上传、筛选、重命名和导出素材图片。",
+        "overview.step5": "步骤 5 · AI 处理", "overview.step5Desc": "AI 批量生成、批量打标与结果导出。", "overview.step6": "步骤 6 · AI 图片清洗", "overview.step6Desc": "上传参考图后筛选最相似的素材图片，并按概率排序。",
+        "overview.step7": "步骤 7 · AI 图片标签", "overview.step7Desc": "调用大模型自动生成结构化标签，便于筛选和整理。", "overview.step8": "步骤 8 · 控制台", "overview.step8Desc": "查看实时状态与日志。",
+        "environment.title": "环境初始化向导", "environment.desc": "自动执行依赖安装与工具准备。Linux 会顺序安装相关组件，Windows 会调用 Easy Install 脚本。",
         "environment.button": "开始执行", "environment.startBtn": "启动训练界面", "environment.executionTitle": "执行内容", "environment.item1": "安装 huggingface_hub 与 modelscope",
         "environment.item2": "配置 Node.js 20 源并安装 nodejs", "environment.item3": "克隆或更新 ai-toolkit，安装 requirements",
         "environment.item4": "启动 ai-toolkit，Linux 默认端口 6006，Windows 默认端口 7867", "environment.alertTitle": "温馨提醒：", "environment.alertDesc": "当前界面会持续记录完整的命令日志，执行期间请勿重复点击同一操作。",
@@ -60,6 +61,17 @@ const dictionary = {
         "ai.cleanPromptPlaceholder": "输入提示词...", "ai.cleanPromptHint": "提示词支持自定义，适合按业务调整标签维度。", "ai.cleanSelectionHint": "未选择图片时默认处理全部", "ai.cleanRunBtn": "开始打标",
         "ai.cleanResetBtn": "重置筛选", "ai.cleanResultTitle": "AI 图片标签结果", "ai.cleanNoTags": "尚未生成标签，请先运行 AI 图片标签。", "ai.cleanDimension.main_subject": "主体",
         "ai.cleanDimension.appearance": "外观", "ai.cleanDimension.action_state": "动作状态", "ai.cleanDimension.environment": "环境物件", "ai.cleanDimension.visual_style": "视觉风格",
+        "ai.imageCleanTitle": "AI 图片清洗", "ai.imageCleanDesc": "上传参考图后自动筛选最相似的素材图片，并按概率从高到低排序。", "ai.imageCleanToolTitle": "筛选相似图片",
+        "ai.imageCleanReferenceLabel": "参考图", "ai.imageCleanSelectRefBtn": "选择参考图", "ai.imageCleanRefSummaryIdle": "未选择文件", "ai.imageCleanReferencePreview": "参考图预览",
+        "ai.imageCleanLimitLabel": "展示数量", "ai.imageCleanHint": "概率越接近 100% 表示越相似。", "ai.imageCleanRunBtn": "筛选相似图片", "ai.imageCleanResetBtn": "清空结果",
+        "ai.imageCleanResultTitle": "相似图片结果", "ai.imageCleanEmpty": "暂无图片", "ai.imageCleanMissingRef": "请先上传参考图", "ai.imageCleanDone": "筛选完成",
+        "ai.imageCleanFail": "筛选失败", "ai.imageCleanUploadDrop": "拖拽图片到此处，或点击选择参考图", "ai.imageCleanUploadNote": "仅支持上传 1 张参考图",
+        "ai.imageCleanUploadSelected": "已选择：{{name}}", "ai.imageCleanRefTooMany": "一次只支持上传 1 张参考图，请重新选择。", "ai.imageCleanRefNotImage": "请选择图片文件。",
+        "ai.imageCleanRemoveRefBtn": "删除参考图片", "ai.imageCleanLogTitle": "AI 图片清洗日志", "ai.imageCleanSelectionHint": "清空结果会恢复默认排序。", "ai.imageCleanDeleteConfirm": "确定删除 {{count}} 张筛选图片？该操作无法撤销。",
+        "ai.imageCleanExportTitle": "导出筛选结果", "ai.imageCleanMinScoreLabel": "最低相似度", "ai.imageCleanTopCountLabel": "导出数量",
+        "ai.imageCleanExportHint": "可选择图片后导出，或按相似度/数量导出当前排序结果。", "ai.imageCleanExportSelectedBtn": "导出所选",
+        "ai.imageCleanExportFilteredBtn": "按条件导出", "ai.imageCleanExportNeedSimilarity": "请先筛选相似图片再按条件导出。",
+        "ai.imageCleanExportEmpty": "未找到可导出的图片", "ai.imageCleanExportFail": "导出失败",
         "step.next": "下一步", "step.prev": "上一步", "step.finish": "完成", "step.progress": "第 {{current}} / {{total}} 步", "step.pageBadge": "步骤 {{current}} / {{total}}",
         "console.desc": "在这里查看环境安装、模型下载、AI 生成和 AI 图片标签的实时状态与日志。", "console.setupTitle": "环境执行日志", "console.downloadTitle": "模型下载日志", "console.copy": "复制",
         "status.label": "状态：", "status.idle": "待命", "status.queued": "排队中", "status.running": "运行中", "status.success": "已完成", "status.error": "异常",
@@ -69,11 +81,12 @@ const dictionary = {
     },
     en: {
         "brand.eyebrow": "AI Toolkit", "brand.title": "LoRA Training Toolkit", "nav.overview": "Overview", "nav.environment": "Setup", "nav.download": "Models",
-        "nav.images": "Images", "nav.ai": "AI Processing", "nav.aiTag": "AI Image Tagging", "nav.console": "Console", "nav.system": "System", "nav.linux": "Status",
+        "nav.images": "Images", "nav.ai": "AI Processing", "nav.aiClean": "AI Image Cleaning", "nav.aiTag": "AI Image Tagging", "nav.console": "Console", "nav.system": "System", "nav.linux": "Status",
         "overview.title": "One Panel for Setup and Training Flow", "overview.lead": "Read each section first, then run actions in order. The app keeps status, progress, and logs in sync.",
-        "overview.step1": "Step 1 · Setup", "overview.step1Desc": "Install dependencies and prepare Python, Node.js, and the toolchain.", "overview.step2": "Step 2 · Models",
-        "overview.step2Desc": "Choose the model you need and switch download sources.", "overview.step3": "Step 3 · Images", "overview.step3Desc": "Upload, filter, rename, and export source images.",
-        "overview.step5": "Step 5 · AI Processing", "overview.step5Desc": "Run AI generation, tagging, and exports.", "overview.step4": "Step 6 · Monitoring", "overview.step4Desc": "Track progress, copy logs, and catch errors in one place.",
+        "overview.step1": "Step 1 · Overview", "overview.step1Desc": "Get familiar with the workflow and key notes.", "overview.step2": "Step 2 · Environment Setup", "overview.step2Desc": "Install dependencies and prepare Python, Node.js, and the toolchain.",
+        "overview.step3": "Step 3 · Model Download", "overview.step3Desc": "Pick a model and switch download sources.", "overview.step4": "Step 4 · Images", "overview.step4Desc": "Upload, filter, rename, and export source images.",
+        "overview.step5": "Step 5 · AI Processing", "overview.step5Desc": "Run AI generation, batch tagging, and exports.", "overview.step6": "Step 6 · AI Image Cleaning", "overview.step6Desc": "Upload a reference image and find the most similar dataset images by score.",
+        "overview.step7": "Step 7 · AI Image Tagging", "overview.step7Desc": "Generate structured tags with a vision model for filtering and management.", "overview.step8": "Step 8 · Console", "overview.step8Desc": "View real-time status and logs.",
         "environment.title": "Environment Setup", "environment.desc": "Run dependency and toolchain setup automatically. Linux installs components in sequence, while Windows uses the Easy Install script.", "environment.button": "Run Setup",
         "environment.startBtn": "Launch UI", "environment.executionTitle": "What Will Run", "environment.item1": "Install huggingface_hub and modelscope", "environment.item2": "Configure the Node.js 20 source and install nodejs",
         "environment.item3": "Clone or update ai-toolkit and install requirements", "environment.item4": "Launch ai-toolkit on port 6006 for Linux or 7867 for Windows", "environment.alertTitle": "Reminder:",
@@ -109,6 +122,17 @@ const dictionary = {
         "ai.platformErrorBaseUrlMissing": "Enter a Base URL when using a custom provider.", "ai.cleanTitle": "AI Image Tagging", "ai.cleanPageDesc": "Edit the prompt and let the model extract structured tags from each image for later filtering.", "ai.cleanPromptPlaceholder": "Enter a prompt...",
         "ai.cleanPromptHint": "The prompt is editable so you can adapt the tagging dimensions to your workflow.", "ai.cleanSelectionHint": "All images will be used when none are selected", "ai.cleanRunBtn": "Run Tagging", "ai.cleanResetBtn": "Reset Filters", "ai.cleanResultTitle": "AI Image Tagging Results",
         "ai.cleanNoTags": "No tags yet. Run AI image tagging first.", "ai.cleanDimension.main_subject": "Subject", "ai.cleanDimension.appearance": "Appearance", "ai.cleanDimension.action_state": "Action / State", "ai.cleanDimension.environment": "Environment", "ai.cleanDimension.visual_style": "Visual Style",
+        "ai.imageCleanTitle": "AI Image Cleaning", "ai.imageCleanDesc": "Upload a reference image, find the most similar dataset images, and sort by score.", "ai.imageCleanToolTitle": "Find Similar Images",
+        "ai.imageCleanReferenceLabel": "Reference", "ai.imageCleanSelectRefBtn": "Select Reference", "ai.imageCleanRefSummaryIdle": "No file selected", "ai.imageCleanReferencePreview": "Reference Preview",
+        "ai.imageCleanLimitLabel": "Show Top", "ai.imageCleanHint": "Scores closer to 100% indicate higher similarity.", "ai.imageCleanRunBtn": "Find Similar Images", "ai.imageCleanResetBtn": "Clear Results",
+        "ai.imageCleanResultTitle": "Similarity Results", "ai.imageCleanEmpty": "No images", "ai.imageCleanMissingRef": "Please upload a reference image first.", "ai.imageCleanDone": "Filtering complete",
+        "ai.imageCleanFail": "Filtering failed", "ai.imageCleanUploadDrop": "Drop an image here, or click to choose a reference", "ai.imageCleanUploadNote": "Only 1 reference image is supported",
+        "ai.imageCleanUploadSelected": "Selected: {{name}}", "ai.imageCleanRefTooMany": "Only 1 reference image is supported. Please reselect.", "ai.imageCleanRefNotImage": "Please choose an image file.",
+        "ai.imageCleanRemoveRefBtn": "Remove Reference", "ai.imageCleanLogTitle": "AI Image Cleaning Logs", "ai.imageCleanSelectionHint": "Clear results restores the default order.", "ai.imageCleanDeleteConfirm": "Delete {{count}} filtered images? This cannot be undone.",
+        "ai.imageCleanExportTitle": "Export Results", "ai.imageCleanMinScoreLabel": "Min Similarity", "ai.imageCleanTopCountLabel": "Export Count",
+        "ai.imageCleanExportHint": "Export selected images, or export by similarity score/count based on current order.", "ai.imageCleanExportSelectedBtn": "Export Selected",
+        "ai.imageCleanExportFilteredBtn": "Export by Criteria", "ai.imageCleanExportNeedSimilarity": "Run similarity filtering before exporting by criteria.",
+        "ai.imageCleanExportEmpty": "No images to export", "ai.imageCleanExportFail": "Export failed",
         "step.next": "Next", "step.prev": "Back", "step.finish": "Finish", "step.progress": "Step {{current}} / {{total}}", "step.pageBadge": "Step {{current}} / {{total}}", "console.desc": "View live status and logs here for setup, model downloads, AI generation, and AI image tagging.",
         "console.setupTitle": "Setup Logs", "console.downloadTitle": "Download Logs", "console.copy": "Copy", "status.label": "Status: ", "status.idle": "Idle", "status.queued": "Queued", "status.running": "Running", "status.success": "Done", "status.error": "Error",
         "log.waiting": "Waiting for task...", "modal.title": "Notice", "modal.close": "Close", "toast.copyOk": "Copied", "toast.copyFail": "Copy failed", "toast.preview": "Preview mode is active", "update.title": "New Version Available", "update.current": "Current:", "update.latest": "Latest:", "update.notes": "Release notes:",
@@ -150,7 +174,7 @@ export function updateStepText() {
 
 export function applyTranslations() {
     document.querySelectorAll("[data-i18n]").forEach((element) => {
-        if ([dom.imageGrid, dom.aiGrid, dom.aiTagGrid].includes(element)) return;
+        if ([dom.imageGrid, dom.aiGrid, dom.aiTagGrid, dom.aiCleanGrid].includes(element)) return;
         element.textContent = getText(element.dataset.i18n);
     });
     document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {

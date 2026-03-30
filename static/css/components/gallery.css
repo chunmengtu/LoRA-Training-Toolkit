@@ -1,6 +1,8 @@
 .gallery-section { padding: 24px; }
 .gallery-header, .console-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
+.gallery-filter { align-items: center; }
 .gallery-filter input { width: 200px; min-width: 0; flex: 1 1 180px; }
+.gallery-filter .btn-tool { flex: 0 0 auto; white-space: nowrap; min-width: 72px; }
 
 .upload-progress-tray { border: 1px dashed var(--border); border-radius: 12px; padding: 16px; background: var(--panel-alt); margin-bottom: 20px; }
 .upload-progress-tray.hidden { display: none; }

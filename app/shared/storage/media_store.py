@@ -287,6 +287,29 @@ def create_export_zip(bucket: str = "source") -> io.BytesIO:
     return memory_file
 
 
+def create_export_zip_for_targets(targets: List[str], bucket: str = "source") -> Tuple[io.BytesIO, int]:
+    bucket_root = safe_bucket_path(bucket)
+    memory_file = io.BytesIO()
+    added = 0
+    seen: set[str] = set()
+    with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as archive:
+        for relative in targets:
+            normalized = normalize_relative_path(relative)
+            if not normalized or normalized in seen:
+                continue
+            try:
+                file_path = safe_bucket_path(bucket, normalized)
+            except ValueError:
+                continue
+            if not file_path.exists() or not allowed_image(file_path.name):
+                continue
+            archive.write(file_path, Path(normalized))
+            seen.add(normalized)
+            added += 1
+    memory_file.seek(0)
+    return memory_file, added
+
+
 def create_ai_export_zip() -> io.BytesIO:
     memory_file = io.BytesIO()
     with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as archive:

@@ -44,6 +44,16 @@ task_state: Dict[str, Dict] = {
         "processed": 0,
         "bucket": "source",
     },
+    "ai_clean": {
+        "status": "idle",
+        "progress": 0,
+        "message": "等待筛选任务",
+        "log": [],
+        "last_updated": None,
+        "total": 0,
+        "processed": 0,
+        "bucket": "source",
+    },
 }
 
 state_lock = threading.RLock()

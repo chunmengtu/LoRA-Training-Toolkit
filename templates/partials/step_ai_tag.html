@@ -50,6 +50,10 @@
         <div class="gallery-section">
             <div class="gallery-header">
                 <h3 data-i18n="ai.cleanResultTitle">AI 图片标签结果</h3>
+                <div class="gallery-filter">
+                    <input id="aiTagGalleryFilter" type="text" placeholder="搜索..." data-i18n-placeholder="images.galleryFilter">
+                    <button id="applyAiTagFilterBtn" class="btn-tool" data-i18n="images.filterBtn">搜索</button>
+                </div>
             </div>
             <div id="aiTagFilters" class="clean-filter-panel"></div>
             <div id="aiTagGrid" class="image-gallery" data-i18n="images.galleryEmpty">暂未上传图片</div>
@@ -57,7 +61,7 @@
     </div>
 
     <div class="page-footer">
-        <button class="btn-nav btn-prev" data-prev="ai">
+        <button class="btn-nav btn-prev" data-prev="ai-clean">
             <span>←</span>
             <span data-i18n="step.prev">上一步</span>
         </button>

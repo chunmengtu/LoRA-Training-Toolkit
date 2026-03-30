@@ -79,8 +79,10 @@ export function renderAiTagGallery() {
         return;
     }
 
+    const keyword = (state.aiTagging.filterKeyword || "").trim().toLowerCase();
     const hasFilter = Object.values(state.aiTagging.selectedTags).some((tagSet) => tagSet.size > 0);
     const filtered = sourceItems.filter((image) => {
+        if (keyword && !String(image?.name || "").toLowerCase().includes(keyword)) return false;
         if (state.aiTagging.itemsByPath.size === 0) return true;
         const payload = state.aiTagging.itemsByPath.get(image.relative_path);
         if (!payload?.tags) return !hasFilter;
@@ -119,6 +121,11 @@ export function renderAiTagGallery() {
         }
         dom.aiTagGrid.appendChild(card);
     });
+}
+
+function applyAiTagGalleryFilter() {
+    state.aiTagging.filterKeyword = dom.aiTagGalleryFilter?.value.trim() || "";
+    renderAiTagGallery();
 }
 
 function applyTaggingResults(items) {
@@ -189,6 +196,12 @@ export function initAiTagModule() {
     if (dom.aiTagPromptInput && !dom.aiTagPromptInput.value) dom.aiTagPromptInput.value = DEFAULT_AI_TAG_PROMPT;
     dom.aiTestConfigBtn?.addEventListener("click", handleAiConfigTestClick);
     dom.aiTagForm?.addEventListener("submit", handleAiTagSubmit);
+    dom.applyAiTagFilterBtn?.addEventListener("click", applyAiTagGalleryFilter);
+    dom.aiTagGalleryFilter?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        applyAiTagGalleryFilter();
+    });
     dom.aiTagResetBtn?.addEventListener("click", () => {
         resetAiTaggingFilters();
         computeAiTagDimensionTags();

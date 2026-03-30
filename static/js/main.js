@@ -7,6 +7,7 @@ import {state, STEPS, storageKeys} from "./core/state.js";
 import {applyTheme, toggleTheme} from "./core/theme.js";
 import {showToast} from "./core/toast.js";
 import {initAiTagModule, renderAiTagFilters, renderAiTagGallery, syncTagBaseFromGallery, updateAiTagSelectionHint} from "./modules/ai_tag.js";
+import {initAiCleanModule, loadAiCleanGallery} from "./modules/ai_clean.js";
 import {initAiGenerateModule, initializeGenerationDefaults, loadAiGallery, renderExtraReferenceList} from "./modules/ai_generate.js";
 import {applySectionState, initConsoleModule} from "./modules/console.js";
 import {initDownloadModule} from "./modules/download.js";
@@ -27,6 +28,7 @@ function goToStep(stepIndex) {
 
     const stepName = STEPS[stepIndex];
     if (stepName === "ai") loadAiGallery(state.aiGallery.filterKeyword);
+    if (stepName === "ai-clean") loadAiCleanGallery();
     if (stepName === "ai-tag") {
         if (!state.aiTagging.baseItems.length) {
             loadGallery(state.gallery.filterKeyword || "");
@@ -82,6 +84,7 @@ function handleStatusPayload(data) {
     applySectionState("setup", data.setup);
     applySectionState("download", data.download);
     applySectionState("generation", data.image_generation);
+    applySectionState("ai_clean", data.ai_clean);
     applySectionState("ai_tag", data.ai_tag);
     if (data.image_generation.status === "running" && STEPS[state.currentStepIndex] === "ai") loadAiGallery(state.aiGallery.filterKeyword);
     if (data.image_generation.status !== "running" && state.generating.active) {
@@ -106,6 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initDownloadModule();
     initImagesModule();
     initAiGenerateModule();
+    initAiCleanModule();
     initAiTagModule();
     registerGalleryHook(syncTagBaseFromGallery);
     registerGalleryHook(updateAiTagSelectionHint);
