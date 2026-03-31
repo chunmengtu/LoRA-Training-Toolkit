@@ -54,8 +54,12 @@
                     <div id="aiCleanPosePicker" class="ai-clean-pose-picker hidden">
                         <div class="ai-clean-pose-stage">
                             <img id="aiCleanPosePickerImg" alt="reference pose" loading="lazy">
-                            <canvas id="aiCleanPosePickerCanvas" class="ai-clean-pose-canvas"></canvas>
+                            <canvas id="aiCleanPoseReferenceCanvas" class="ai-clean-pose-canvas"></canvas>
                             <div id="aiCleanPosePickerOverlay" class="ai-clean-pose-overlay"></div>
+                            <div id="aiCleanPoseParsingOverlay" class="ai-clean-parsing hidden">
+                                <div class="ai-clean-parsing-spinner"></div>
+                                <span data-i18n="ai.imageCleanPoseLoading">参考图解析中...</span>
+                            </div>
                         </div>
                         <p id="aiCleanPosePickerHint" class="tool-hint" data-i18n="ai.imageCleanPosePickHint">点击框选基准人体后再开始筛选</p>
                         <p id="aiCleanPosePickerSelected" class="tool-hint hidden"></p>

@@ -80,12 +80,73 @@ function bootstrapPreferences() {
     setLanguage(localStorage.getItem(storageKeys.lang) || "zh");
 }
 
+const lastErrorKeyBySection = {};
+
+function resolveSectionLabel(section) {
+    const map = {
+        setup: "nav.environment",
+        download: "nav.download",
+        generation: "nav.ai",
+        ai_clean: "nav.aiClean",
+        ai_tag: "nav.aiTag",
+    };
+    return getText(map[section] || "nav.console");
+}
+
+function buildErrorKey(data) {
+    if (!data) return "";
+    const lastUpdated = data.last_updated || "";
+    const message = data.message || "";
+    const logLine = Array.isArray(data.log) && data.log.length ? data.log[data.log.length - 1] : "";
+    return `${lastUpdated}|${message}|${logLine}`;
+}
+
+function showSectionErrorIfNeeded(section, data) {
+    if (!data || data.status !== "error") {
+        lastErrorKeyBySection[section] = "";
+        return false;
+    }
+
+    const key = buildErrorKey(data);
+    if (key && lastErrorKeyBySection[section] === key) return false;
+    lastErrorKeyBySection[section] = key;
+
+    const stepLabel = resolveSectionLabel(section);
+    const errorMessage = (Array.isArray(data.log) && data.log.length ? data.log[data.log.length - 1] : data.message) || getText("console.errorUnknown");
+    showModal(
+        getText("console.errorTitle"),
+        "",
+        [
+            {
+                label: getText("console.goto"),
+                variant: "primary",
+                handler: () => {
+                    hideModal();
+                    goToStep(STEPS.indexOf("console"));
+                },
+            },
+        ],
+        {
+            force: true,
+            html: `<div style="text-align:left"><p><strong>${getText("console.errorStep")}</strong> ${stepLabel}</p><p><strong>${getText("console.errorDetail")}</strong></p><pre style="white-space:pre-wrap;word-break:break-word;background:var(--panel-alt);padding:10px;border-radius:8px;max-height:240px;overflow:auto">${errorMessage}</pre></div>`,
+        },
+    );
+    return true;
+}
+
 function handleStatusPayload(data) {
     applySectionState("setup", data.setup);
     applySectionState("download", data.download);
     applySectionState("generation", data.image_generation);
     applySectionState("ai_clean", data.ai_clean);
     applySectionState("ai_tag", data.ai_tag);
+
+    if (showSectionErrorIfNeeded("setup", data.setup)) return;
+    if (showSectionErrorIfNeeded("download", data.download)) return;
+    if (showSectionErrorIfNeeded("generation", data.image_generation)) return;
+    if (showSectionErrorIfNeeded("ai_clean", data.ai_clean)) return;
+    if (showSectionErrorIfNeeded("ai_tag", data.ai_tag)) return;
+
     if (data.image_generation.status === "running" && STEPS[state.currentStepIndex] === "ai") loadAiGallery(state.aiGallery.filterKeyword);
     if (data.image_generation.status !== "running" && state.generating.active) {
         state.generating.active = false;

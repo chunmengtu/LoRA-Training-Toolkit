@@ -66,6 +66,7 @@ const dictionary = {
         "ai.imageCleanModePose": "骨骼点相似度筛选", "ai.imageCleanModePoseDesc": "检测骨骼点并匹配参考姿态，按相似度排序",
         "ai.imageCleanPoseRunBtn": "开始骨骼点筛选", "ai.imageCleanPoseOverlay": "显示骨架叠加", "ai.imageCleanPoseLoading": "正在解析参考图骨骼点…",
         "ai.imageCleanPosePickHint": "点击框选基准人体后再开始筛选", "ai.imageCleanPoseSelected": "已选择：人 {{id}}", "ai.imageCleanPoseNeedPick": "请先在参考图中选择基准人体",
+        "ai.imageCleanPoseWait": "请等待参考图解析完毕",
         "ai.imageCleanPoseNoPersons": "参考图未检测到人体/关键点",
         "ai.imageCleanReferenceLabel": "参考图", "ai.imageCleanSelectRefBtn": "选择参考图", "ai.imageCleanRefSummaryIdle": "未选择文件", "ai.imageCleanReferencePreview": "参考图预览",
         "ai.imageCleanLimitLabel": "展示数量", "ai.imageCleanHint": "概率越接近 100% 表示越相似。", "ai.imageCleanRunBtn": "筛选相似图片", "ai.imageCleanResetBtn": "清空结果",
@@ -80,6 +81,8 @@ const dictionary = {
         "step.next": "下一步", "step.prev": "上一步", "step.finish": "完成", "step.progress": "第 {{current}} / {{total}} 步", "step.pageBadge": "步骤 {{current}} / {{total}}",
         "console.desc": "在这里查看环境安装、模型下载、AI 生成和 AI 图片标签的实时状态与日志。", "console.setupTitle": "环境执行日志", "console.downloadTitle": "模型下载日志", "console.copy": "复制",
         "status.label": "状态：", "status.idle": "待命", "status.queued": "排队中", "status.running": "运行中", "status.success": "已完成", "status.error": "异常",
+        "console.errorTitle": "任务执行异常", "console.errorStep": "异常步骤：", "console.errorDetail": "错误内容：", "console.errorUnknown": "未知错误",
+        "console.goto": "跳转到控制台",
         "log.waiting": "等待任务...", "modal.title": "提示", "modal.close": "知道了", "toast.copyOk": "已复制", "toast.copyFail": "复制失败", "toast.preview": "当前处于预览模式",
         "update.title": "发现新版本", "update.current": "当前版本：", "update.latest": "最新版本：", "update.notes": "更新说明：", "update.btn": "立即更新",
         "update.checking": "正在检查更新...", "update.latestMsg": "当前已是最新版本", "update.fail": "检查更新失败", "toolbar.theme": "主题切换", "toolbar.language": "语言切换", "toolbar.update": "检查更新"
@@ -132,6 +135,7 @@ const dictionary = {
         "ai.imageCleanModePose": "Pose Similarity", "ai.imageCleanModePoseDesc": "Detect keypoints and match pose against reference",
         "ai.imageCleanPoseRunBtn": "Run Pose Matching", "ai.imageCleanPoseOverlay": "Show Pose Overlay", "ai.imageCleanPoseLoading": "Analyzing pose keypoints...",
         "ai.imageCleanPosePickHint": "Click a box to choose the reference person before running", "ai.imageCleanPoseSelected": "Selected: Person {{id}}", "ai.imageCleanPoseNeedPick": "Choose a reference person first",
+        "ai.imageCleanPoseWait": "Please wait until the reference pose is parsed",
         "ai.imageCleanPoseNoPersons": "No person/keypoints detected in the reference image",
         "ai.imageCleanReferenceLabel": "Reference", "ai.imageCleanSelectRefBtn": "Select Reference", "ai.imageCleanRefSummaryIdle": "No file selected", "ai.imageCleanReferencePreview": "Reference Preview",
         "ai.imageCleanLimitLabel": "Show Top", "ai.imageCleanHint": "Scores closer to 100% indicate higher similarity.", "ai.imageCleanRunBtn": "Find Similar Images", "ai.imageCleanResetBtn": "Clear Results",
@@ -145,6 +149,8 @@ const dictionary = {
         "ai.imageCleanExportEmpty": "No images to export", "ai.imageCleanExportFail": "Export failed",
         "step.next": "Next", "step.prev": "Back", "step.finish": "Finish", "step.progress": "Step {{current}} / {{total}}", "step.pageBadge": "Step {{current}} / {{total}}", "console.desc": "View live status and logs here for setup, model downloads, AI generation, and AI image tagging.",
         "console.setupTitle": "Setup Logs", "console.downloadTitle": "Download Logs", "console.copy": "Copy", "status.label": "Status: ", "status.idle": "Idle", "status.queued": "Queued", "status.running": "Running", "status.success": "Done", "status.error": "Error",
+        "console.errorTitle": "Task Error", "console.errorStep": "Step:", "console.errorDetail": "Error:", "console.errorUnknown": "Unknown error",
+        "console.goto": "Go to Console",
         "log.waiting": "Waiting for task...", "modal.title": "Notice", "modal.close": "Close", "toast.copyOk": "Copied", "toast.copyFail": "Copy failed", "toast.preview": "Preview mode is active", "update.title": "New Version Available", "update.current": "Current:", "update.latest": "Latest:", "update.notes": "Release notes:",
         "update.btn": "Open Update", "update.checking": "Checking for updates...", "update.latestMsg": "You are already on the latest version", "update.fail": "Failed to check for updates", "toolbar.theme": "Toggle theme", "toolbar.language": "Switch language", "toolbar.update": "Check for updates"
     },

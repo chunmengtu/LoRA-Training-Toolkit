@@ -1,9 +1,10 @@
 import os
+import re
 import subprocess
 from typing import Dict, List
 
 from app.core.config import BASE_MODEL_DIR, IS_LINUX, PROJECT_ROOT
-from app.core.state import append_log, update_state
+from app.core.state import append_log, state_lock, task_state, update_state
 from app.core.utils import get_timestamp
 
 
@@ -19,25 +20,97 @@ LINUX_BOOTSTRAP_COMMANDS: List[str] = [
 WINDOWS_SETUP_SCRIPT = PROJECT_ROOT / "AI-Toolkit-Easy-Install.bat"
 WINDOWS_BOOTSTRAP_COMMANDS: List[str] = [f'call "{WINDOWS_SETUP_SCRIPT}"']
 
+ANSI_ESCAPE_SEQUENCE_RE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
+CONTROL_CHAR_RE = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]")
+TASK_PROGRESS_RE = re.compile(
+    r"(?i)\b(processing|fetching|downloading)\b\s+\d+(?:\.\d+)?\s+(items|files)\s*:\s*(?P<pct>\d{1,3})%"
+)
 
-def run_command_sequence(section: str, commands: List[str]) -> None:
+
+def sanitize_console_text(text: str) -> str:
+    if not text:
+        return ""
+
+    sanitized = text.replace("\r", "\n")
+    sanitized = ANSI_ESCAPE_SEQUENCE_RE.sub("", sanitized)
+    sanitized = sanitized.replace("\x1b", "")
+    sanitized = CONTROL_CHAR_RE.sub("", sanitized)
+    return sanitized
+
+
+def extract_section_progress(section: str, line: str) -> int | None:
+    if not section or not line:
+        return None
+
+    if section != "download":
+        return None
+
+    match = TASK_PROGRESS_RE.search(line)
+    if not match:
+        return None
+
+    try:
+        percent = int(match.group("pct"))
+    except (TypeError, ValueError):
+        return None
+
+    return max(0, min(100, percent))
+
+
+def decode_process_output(raw: object) -> str:
+    if not isinstance(raw, (bytes, bytearray, memoryview)):
+        return str(raw)
+
+    raw_bytes = bytes(raw)
+    for encoding in ("utf-8", "gbk"):
+        try:
+            return raw_bytes.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+        except Exception:
+            break
+
+    return raw_bytes.decode("utf-8", errors="replace")
+
+
+def run_command_sequence(section: str, commands: List[str], *, preserve_progress: bool = False) -> None:
     total = len(commands)
-    update_state(section, status="running", progress=0)
+    initial_progress = 0
+    if preserve_progress:
+        with state_lock:
+            initial_progress = int(task_state.get(section, {}).get("progress") or 0)
+    update_state(section, status="running", progress=initial_progress)
     for index, command in enumerate(commands, start=1):
         append_log(section, f"[{get_timestamp()}] $ {command}")
         try:
+            env = os.environ.copy()
+            env.setdefault("PYTHONUTF8", "1")
+            env.setdefault("PYTHONIOENCODING", "utf-8")
             process = subprocess.Popen(
                 command,
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                text=True,
+                env=env,
             )
-            for line in process.stdout or []:
-                clean_line = line.rstrip()
-                if clean_line:
-                    append_log(section, clean_line)
-                    update_state(section, message=clean_line)
+            observed_progress = initial_progress
+            if process.stdout:
+                for raw_line in iter(process.stdout.readline, b""):
+                    decoded = decode_process_output(raw_line)
+                    sanitized = sanitize_console_text(decoded).strip()
+                    if not sanitized:
+                        continue
+
+                    for clean_line in sanitized.splitlines():
+                        clean_line = clean_line.strip()
+                        if not clean_line:
+                            continue
+                        append_log(section, clean_line)
+                        update_state(section, message=clean_line)
+                        percent = extract_section_progress(section, clean_line)
+                        if percent is not None and percent > observed_progress:
+                            observed_progress = percent
+                            update_state(section, progress=observed_progress)
             return_code = process.wait()
         except Exception as exc:
             append_log(section, f"执行异常: {exc}")
@@ -140,7 +213,7 @@ def run_download_command(command_template: str, model_name: str, source: str) ->
     update_state(
         "download",
         status="running",
-        progress=5,
+        progress=0,
         message=f"准备下载 {model_name}",
         model=model_name,
         source=source,

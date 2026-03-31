@@ -90,6 +90,7 @@ export const state = {
     aiCleaning: {
         mode: "similarity",
         showPoseOverlay: false,
+        referencePoseLoading: false,
         referencePersons: [],
         referencePersonId: null,
         referenceImageSize: null,
