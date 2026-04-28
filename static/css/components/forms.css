@@ -2,7 +2,7 @@
 .form-section, .tool-panel, .content-card, .gallery-section { padding: 24px; background: var(--panel); border-radius: 14px; border: 1px solid var(--border); }
 .form-label { display: block; font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
 .radio-group { display: flex; flex-direction: column; gap: 10px; }
-.radio-card { display: flex; align-items: center; padding: 14px 18px; background: var(--panel-alt); border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s ease; }
+.radio-card { position: relative; display: flex; align-items: center; padding: 14px 18px; background: var(--panel-alt); border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s ease; }
 .radio-card:hover { border-color: var(--accent); }
 .radio-card input { position: absolute; opacity: 0; }
 .radio-card:has(input:checked) { background: var(--accent); color: #fff; border-color: var(--accent); }

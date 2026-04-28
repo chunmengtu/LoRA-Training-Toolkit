@@ -39,12 +39,13 @@ def ai_clean_similar():
         if payload["mode"] == "pose":
             if not reference:
                 return error_response("请上传一张参考图")
-            reference_person_id = payload.get("reference_person_id")
-            if reference_person_id is None:
+            reference_person_ids = payload.get("reference_person_ids") or []
+            if not reference_person_ids:
                 return error_response("请先选择参考图中的基准人体")
             matches = find_pose_similar_images(
                 reference,
-                reference_person_id=reference_person_id,
+                reference_person_ids=reference_person_ids,
+                pose_match_mode=payload.get("pose_match_mode") or "any",
                 bucket=payload["bucket"],
                 targets=payload["targets"],
             )

@@ -14,6 +14,9 @@
 .ai-clean-pose-stage img { width: 100%; height: auto; display: block; }
 .ai-clean-pose-canvas { z-index: 1; }
 .ai-clean-pose-overlay { position: absolute; inset: 0; z-index: 2; }
+.ai-clean-pose-match-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; }
+.ai-clean-pose-match-row .form-label { margin: 0; }
+.ai-clean-pose-match-row select { min-width: 0; height: 42px; padding: 0 12px; font-size: 15px; }
 .ai-clean-parsing { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center; background: rgba(10, 10, 14, 0.42); backdrop-filter: blur(1px); color: #fff; font-size: 12px; text-align: center; padding: 12px; }
 .ai-clean-parsing.hidden { display: none; }
 .ai-clean-parsing-spinner { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); border-top-color: rgba(255,255,255,0.95); animation: aiCleanSpin 0.8s linear infinite; }
@@ -35,4 +38,5 @@
 
 @media (max-width: 768px) {
     .ai-clean-export-row { grid-template-columns: 1fr; }
+    .ai-clean-pose-match-row { grid-template-columns: 1fr; }
 }

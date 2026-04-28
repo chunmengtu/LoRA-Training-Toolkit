@@ -63,6 +63,14 @@
                         </div>
                         <p id="aiCleanPosePickerHint" class="tool-hint" data-i18n="ai.imageCleanPosePickHint">点击框选基准人体后再开始筛选</p>
                         <p id="aiCleanPosePickerSelected" class="tool-hint hidden"></p>
+                        <div id="aiCleanPoseMatchModeRow" class="form-inline ai-clean-pose-match-row hidden">
+                            <label class="form-label" data-i18n="ai.imageCleanPoseMatchMode">匹配方式</label>
+                            <select id="aiCleanPoseMatchModeSelect" class="ai-clean-pose-match-select">
+                                <option value="any" data-i18n="ai.imageCleanPoseMatchAny">任意匹配</option>
+                                <option value="precise" data-i18n="ai.imageCleanPoseMatchPrecise">精准匹配</option>
+                            </select>
+                        </div>
+                        <p id="aiCleanPoseMatchModeHint" class="tool-hint hidden" data-i18n="ai.imageCleanPoseMatchAnyDesc">任意一个动作匹配即可</p>
                     </div>
 
                     <label id="aiCleanPoseOverlayRow" class="checkbox-label ai-clean-pose-toggle hidden">

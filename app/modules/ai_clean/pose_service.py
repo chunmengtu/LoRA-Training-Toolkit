@@ -20,6 +20,60 @@ _model_lock = threading.RLock()
 _pose_model = None
 
 
+def _find_full_bipartite_matching(ref_to_cands: List[List[int]], cand_count: int) -> dict[int, int] | None:
+    matched_to_ref = [-1] * cand_count
+
+    def dfs(ref_index: int, seen: List[bool]) -> bool:
+        for cand_index in ref_to_cands[ref_index]:
+            if seen[cand_index]:
+                continue
+            seen[cand_index] = True
+            if matched_to_ref[cand_index] == -1 or dfs(matched_to_ref[cand_index], seen):
+                matched_to_ref[cand_index] = ref_index
+                return True
+        return False
+
+    match = 0
+    for ref_index in range(len(ref_to_cands)):
+        if dfs(ref_index, [False] * cand_count):
+            match += 1
+
+    if match != len(ref_to_cands):
+        return None
+
+    result: dict[int, int] = {}
+    for cand_index, ref_index in enumerate(matched_to_ref):
+        if ref_index != -1:
+            result[int(ref_index)] = int(cand_index)
+    if len(result) != len(ref_to_cands):
+        return None
+    return result
+
+
+def _bottleneck_assignment_min_similarity(matrix: List[List[float]]) -> tuple[float | None, dict[int, int] | None]:
+    if not matrix or not matrix[0]:
+        return None, None
+
+    ref_count = len(matrix)
+    cand_count = len(matrix[0])
+    if cand_count < ref_count:
+        return None, None
+
+    unique_scores = sorted({round(value, 2) for row in matrix for value in row if value > 0}, reverse=True)
+    if not unique_scores:
+        return None, None
+
+    for threshold in unique_scores:
+        ref_to_cands = []
+        for row in matrix:
+            ref_to_cands.append([index for index, value in enumerate(row) if value >= threshold])
+        matching = _find_full_bipartite_matching(ref_to_cands, cand_count)
+        if matching is not None:
+            return float(threshold), matching
+
+    return None, None
+
+
 def _ensure_pose_model():
     global _pose_model
     with _model_lock:
@@ -247,7 +301,8 @@ def _resolve_pose_candidates(targets: List[str], bucket: str) -> List[dict]:
 def find_pose_similar_images(
     reference_storage,
     *,
-    reference_person_id: int,
+    reference_person_ids: List[int],
+    pose_match_mode: str = "any",
     bucket: str = "source",
     targets: List[str] | None = None,
 ) -> List[dict]:
@@ -278,9 +333,41 @@ def find_pose_similar_images(
         update_state("ai_clean", status="error", progress=100, message="参考图未检测到人体/关键点")
         append_log("ai_clean", f"[{get_timestamp()}] ❌ 参考图未检测到人体/关键点")
         raise ValueError("参考图未检测到人体/关键点")
-    if reference_person_id < 0 or reference_person_id >= len(persons):
+    if not reference_person_ids:
+        raise ValueError("请先在参考图中选择基准人体")
+
+    valid_reference_ids = [rid for rid in reference_person_ids if isinstance(rid, int) and 0 <= rid < len(persons)]
+    if not valid_reference_ids:
         raise ValueError("参考图基准人体选择无效，请重新选择")
-    reference_kps = persons[reference_person_id].get("keypoints_norm") or []
+
+    pose_match_mode = (pose_match_mode or "any").strip().lower()
+    if pose_match_mode not in {"any", "precise"}:
+        pose_match_mode = "any"
+
+    reference_kps_list: List[List[List[float]]] = []
+    for rid in valid_reference_ids:
+        reference_kps_list.append(persons[rid].get("keypoints_norm") or [])
+
+    def best_similarity_any(cand_kps: List[List[float]]) -> float:
+        return max((_compute_pose_similarity_percent(ref_kps, cand_kps) for ref_kps in reference_kps_list), default=0.0)
+
+    def best_similarity_precise(cand_people: List[dict]) -> tuple[float | None, dict[int, int] | None]:
+        if not cand_people:
+            return None, None
+        ref_count = len(reference_kps_list)
+        if len(cand_people) < ref_count:
+            return None, None
+
+        matrix: List[List[float]] = []
+        for ref_kps in reference_kps_list:
+            row = []
+            for cand in cand_people:
+                row.append(_compute_pose_similarity_percent(ref_kps, cand.get("keypoints_norm") or []))
+            matrix.append(row)
+        threshold, matching = _bottleneck_assignment_min_similarity(matrix)
+        if threshold is None or matching is None:
+            return None, None
+        return float(threshold), matching
 
     total = len(candidates)
     processed = 0
@@ -297,12 +384,34 @@ def find_pose_similar_images(
             predictions = model(str(image_path), verbose=False)
             persons_pred = _sort_persons(_extract_persons_from_result(predictions[0] if predictions else None))
             people_count = len(persons_pred)
-            for person in persons_pred:
-                cand_kps = person.get("keypoints_norm") or []
-                score = _compute_pose_similarity_percent(reference_kps, cand_kps)
-                if score > best_score:
-                    best_score = score
-                    best_kps = cand_kps
+            if pose_match_mode == "precise":
+                score, matching = best_similarity_precise(persons_pred)
+                if score is None:
+                    continue
+                best_score = float(score)
+                if matching:
+                    matched_keypoints: List[List[List[float]]] = []
+                    best_value = 0.0
+                    best_kps = None
+                    for ref_index, cand_index in matching.items():
+                        if not (0 <= cand_index < len(persons_pred)):
+                            continue
+                        cand_kps = persons_pred[cand_index].get("keypoints_norm") or []
+                        if cand_kps:
+                            matched_keypoints.append(cand_kps)
+                        value = _compute_pose_similarity_percent(reference_kps_list[ref_index], cand_kps)
+                        if value > best_value:
+                            best_value = value
+                            best_kps = cand_kps or None
+                    if matched_keypoints:
+                        item = {**item, "pose_keypoints_list": matched_keypoints}
+            else:
+                for person in persons_pred:
+                    cand_kps = person.get("keypoints_norm") or []
+                    score = best_similarity_any(cand_kps)
+                    if score > best_score:
+                        best_score = score
+                        best_kps = cand_kps
         except Exception:
             pass
         finally:
@@ -314,6 +423,9 @@ def find_pose_similar_images(
                     processed=processed,
                     message=f"已处理 {processed}/{total} 张图片",
                 )
+
+        if best_score <= 0:
+            continue
 
         payload = {**item, "probability": round(float(best_score), 2), "pose_people": people_count}
         if best_kps:
